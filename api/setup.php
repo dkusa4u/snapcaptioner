@@ -20,18 +20,19 @@ require_once __DIR__ . '/db.php';
 
 header('Content-Type: text/html; charset=UTF-8');
 
-// ── Token gate (temporarily bypassed — re-enable after DB setup) ───────────
-// $provided = trim($_GET['token'] ?? '');
-// $expected = defined('SETUP_TOKEN') ? SETUP_TOKEN : '';
-// if (!$expected || $provided !== $expected) {
-//     http_response_code(403);
-//     echo '<!DOCTYPE html><html><head><title>403</title></head><body>';
-//     echo '<h2>403 — Access Denied</h2>';
-//     echo '<p>Add <code>define("SETUP_TOKEN", "your-secret");</code> to <code>api/config.php</code>';
-//     echo ' then visit <code>?token=your-secret</code>.</p>';
-//     echo '</body></html>';
-//     exit;
-// }
+// ── Token gate ─────────────────────────────────────────────────────────────
+$provided = trim($_GET['token'] ?? '');
+$expected = defined('SETUP_TOKEN') ? SETUP_TOKEN : '';
+
+if (!$expected || $provided !== $expected) {
+    http_response_code(403);
+    echo '<!DOCTYPE html><html><head><title>403</title></head><body>';
+    echo '<h2>403 — Access Denied</h2>';
+    echo '<p>Add <code>define("SETUP_TOKEN", "your-secret");</code> to <code>api/config.php</code>';
+    echo ' then visit <code>?token=your-secret</code>.</p>';
+    echo '</body></html>';
+    exit;
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
