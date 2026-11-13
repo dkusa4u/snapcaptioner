@@ -1,0 +1,1119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SnapCaption AI — Upload a Photo. Get 5 Captions Instantly.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #09090f;
+    --bg2: #0f0f1a;
+    --bg3: #141424;
+    --card: #13131f;
+    --border: #1e1e32;
+    --border2: #2a2a44;
+    --grad1: #7c3aed;
+    --grad2: #a855f7;
+    --grad3: #ec4899;
+    --text: #e8e8f0;
+    --muted: #6b7280;
+    --muted2: #9ca3af;
+    --green: #10b981;
+    --yellow: #f59e0b;
+    --red: #ef4444;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* ── GRADIENT UTILITIES ── */
+  .grad-text {
+    background: linear-gradient(135deg, var(--grad2), var(--grad3));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .grad-btn {
+    background: linear-gradient(135deg, var(--grad1), var(--grad3));
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+    transition: opacity .2s, transform .15s;
+  }
+  .grad-btn:hover { opacity: .9; transform: translateY(-1px); }
+  .grad-border {
+    border: 1px solid transparent;
+    background: linear-gradient(var(--card), var(--card)) padding-box,
+                linear-gradient(135deg, var(--grad1), var(--grad3)) border-box;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: rgba(9,9,15,.85);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 24px;
+    height: 64px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .nav-logo {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 1.1rem; font-weight: 800; color: var(--text);
+    text-decoration: none;
+  }
+  .nav-logo .logo-icon {
+    width: 34px; height: 34px; border-radius: 9px;
+    background: linear-gradient(135deg, var(--grad1), var(--grad3));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+  }
+  .nav-links { display: flex; align-items: center; gap: 32px; }
+  .nav-links a {
+    color: var(--muted2); text-decoration: none;
+    font-size: .9rem; font-weight: 500;
+    transition: color .2s;
+  }
+  .nav-links a:hover { color: var(--text); }
+  .nav-cta {
+    padding: 9px 20px; border-radius: 8px;
+    font-size: .88rem; letter-spacing: .01em;
+  }
+  .nav-mobile-hide { display: flex; }
+  @media(max-width:640px){
+    .nav-mobile-hide { display: none; }
+    .nav-cta { padding: 8px 14px; font-size: .82rem; }
+  }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 100vh;
+    display: flex; align-items: center;
+    padding: 100px 24px 80px;
+    max-width: 1200px; margin: 0 auto;
+    gap: 60px;
+  }
+  .hero-left { flex: 1; min-width: 0; }
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(124,58,237,.12);
+    border: 1px solid rgba(124,58,237,.3);
+    padding: 6px 14px; border-radius: 100px;
+    font-size: .78rem; font-weight: 600;
+    color: var(--grad2); margin-bottom: 28px;
+  }
+  .hero-badge .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--grad2); animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+  .hero h1 {
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 900;
+    line-height: 1.1;
+    letter-spacing: -.02em;
+    margin-bottom: 24px;
+  }
+  .hero p {
+    font-size: 1.1rem; color: var(--muted2);
+    max-width: 480px; margin-bottom: 36px; line-height: 1.7;
+  }
+  .hero-ctas { display: flex; gap: 14px; flex-wrap: wrap; align-items: center; }
+  .hero-cta-primary {
+    padding: 14px 28px; border-radius: 10px;
+    font-size: 1rem;
+  }
+  .hero-cta-secondary {
+    padding: 14px 24px; border-radius: 10px;
+    background: transparent;
+    border: 1px solid var(--border2);
+    color: var(--text); font-size: 1rem; font-weight: 500;
+    cursor: pointer; transition: border-color .2s;
+  }
+  .hero-cta-secondary:hover { border-color: var(--grad2); }
+  .hero-stats {
+    display: flex; gap: 32px; margin-top: 44px; flex-wrap: wrap;
+  }
+  .stat { }
+  .stat .num { font-size: 1.6rem; font-weight: 800; }
+  .stat .label { font-size: .78rem; color: var(--muted); margin-top: 2px; }
+  .hero-right { flex: 1; min-width: 0; display: flex; justify-content: center; }
+
+  /* ── DEMO CARD ── */
+  .demo-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 20px;
+    width: 100%; max-width: 420px;
+    box-shadow: 0 40px 80px rgba(0,0,0,.5), 0 0 60px rgba(124,58,237,.08);
+  }
+  .demo-card-header {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 16px;
+  }
+  .demo-card-title { font-size: .85rem; font-weight: 600; color: var(--muted2); }
+  .demo-platform-pill {
+    padding: 4px 10px; border-radius: 100px;
+    background: rgba(124,58,237,.2);
+    border: 1px solid rgba(124,58,237,.3);
+    font-size: .72rem; font-weight: 600; color: var(--grad2);
+  }
+  .demo-photo {
+    border-radius: 12px; overflow: hidden;
+    background: var(--bg3);
+    aspect-ratio: 4/3;
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 16px;
+    position: relative;
+  }
+  .demo-photo-inner {
+    width: 100%; height: 100%;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 40%, #0f3460 100%);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 8px; color: var(--muted);
+    font-size: .82rem; font-weight: 500;
+  }
+  .demo-photo-inner .upload-icon { font-size: 2.4rem; opacity: .5; }
+  .demo-scanning {
+    position: absolute; inset: 0;
+    display: none;
+    background: rgba(0,0,0,.4);
+    align-items: center; justify-content: center;
+    flex-direction: column; gap: 12px;
+    border-radius: 12px;
+  }
+  .scan-line {
+    position: absolute; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, transparent, var(--grad2), transparent);
+    animation: scan 1.8s ease-in-out infinite;
+  }
+  @keyframes scan { 0%{top:0} 50%{top:calc(100% - 2px)} 100%{top:0} }
+  .scan-text { font-size: .78rem; font-weight: 600; color: var(--grad2); letter-spacing: .05em; }
+  .demo-captions { display: flex; flex-direction: column; gap: 8px; }
+  .demo-caption-row {
+    display: flex; align-items: flex-start; gap: 10px;
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 10px; padding: 10px 12px;
+    transition: border-color .2s;
+  }
+  .demo-caption-row:hover { border-color: var(--border2); }
+  .caption-num {
+    min-width: 20px; height: 20px; border-radius: 50%;
+    background: rgba(168,85,247,.15);
+    display: flex; align-items: center; justify-content: center;
+    font-size: .65rem; font-weight: 700; color: var(--grad2);
+    margin-top: 1px;
+  }
+  .caption-text { font-size: .78rem; line-height: 1.5; color: var(--text); flex: 1; }
+  .caption-copy {
+    font-size: .65rem; color: var(--muted);
+    cursor: pointer; white-space: nowrap;
+    padding: 2px 7px; border-radius: 4px;
+    border: 1px solid var(--border);
+    background: none; color: var(--muted); font-family: inherit;
+    transition: all .2s;
+  }
+  .caption-copy:hover { border-color: var(--grad2); color: var(--grad2); }
+  .demo-hashtags {
+    margin-top: 12px;
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 10px; padding: 10px 12px;
+  }
+  .demo-hashtags-label { font-size: .7rem; font-weight: 600; color: var(--muted); margin-bottom: 7px; }
+  .hashtag-chips { display: flex; flex-wrap: wrap; gap: 5px; }
+  .chip {
+    padding: 2px 8px; border-radius: 100px;
+    font-size: .68rem; font-weight: 500;
+    background: rgba(124,58,237,.12);
+    border: 1px solid rgba(124,58,237,.2);
+    color: var(--grad2);
+  }
+  .chip.green { background: rgba(16,185,129,.1); border-color: rgba(16,185,129,.25); color: #34d399; }
+  .chip.yellow { background: rgba(245,158,11,.1); border-color: rgba(245,158,11,.25); color: #fbbf24; }
+  .chip.red { background: rgba(239,68,68,.1); border-color: rgba(239,68,68,.2); color: #f87171; }
+
+  /* Blurred premium row */
+  .blur-row { filter: blur(4px); pointer-events: none; user-select: none; }
+  .premium-lock {
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    background: rgba(124,58,237,.12);
+    border: 1px solid rgba(124,58,237,.25);
+    border-radius: 10px; padding: 8px 12px;
+    font-size: .75rem; font-weight: 600; color: var(--grad2);
+    margin-top: 8px; cursor: pointer;
+  }
+
+  /* ── SECTION SHARED ── */
+  section { padding: 96px 24px; }
+  .container { max-width: 1200px; margin: 0 auto; }
+  .section-label {
+    display: inline-block;
+    font-size: .72rem; font-weight: 700;
+    letter-spacing: .12em; text-transform: uppercase;
+    color: var(--grad2); margin-bottom: 14px;
+  }
+  h2 {
+    font-size: clamp(1.6rem, 3.5vw, 2.5rem);
+    font-weight: 800; letter-spacing: -.02em;
+    line-height: 1.2; margin-bottom: 16px;
+  }
+  .section-sub {
+    font-size: 1rem; color: var(--muted2); max-width: 540px; line-height: 1.7;
+  }
+  .section-head { margin-bottom: 56px; }
+
+  /* ── LOGOS BAR ── */
+  .logos-bar {
+    padding: 32px 24px;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+  .logos-inner {
+    max-width: 1000px; margin: 0 auto;
+    display: flex; align-items: center; justify-content: center;
+    gap: 40px; flex-wrap: wrap;
+  }
+  .logos-label { font-size: .75rem; font-weight: 600; color: var(--muted); letter-spacing: .05em; white-space: nowrap; }
+  .platform-badge {
+    display: flex; align-items: center; gap: 7px;
+    color: var(--muted2); font-size: .82rem; font-weight: 600;
+  }
+  .platform-badge .picon { font-size: 1.3rem; }
+
+  /* ── HOW IT WORKS ── */
+  .steps-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px;
+    background: var(--border); border-radius: 16px; overflow: hidden;
+  }
+  .step {
+    background: var(--bg2); padding: 36px 32px;
+    position: relative;
+  }
+  .step-num {
+    width: 44px; height: 44px; border-radius: 12px;
+    background: linear-gradient(135deg, var(--grad1), var(--grad3));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.1rem; font-weight: 800; color: #fff;
+    margin-bottom: 20px;
+  }
+  .step h3 { font-size: 1rem; font-weight: 700; margin-bottom: 10px; }
+  .step p { font-size: .88rem; color: var(--muted2); line-height: 1.6; }
+  @media(max-width:768px){ .steps-grid { grid-template-columns: 1fr; } }
+
+  /* ── FEATURES GRID ── */
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1px; background: var(--border);
+    border-radius: 20px; overflow: hidden;
+  }
+  .feat {
+    background: var(--bg2);
+    padding: 32px 28px;
+  }
+  .feat-icon {
+    width: 44px; height: 44px; border-radius: 12px;
+    background: rgba(124,58,237,.12);
+    border: 1px solid rgba(124,58,237,.2);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.3rem; margin-bottom: 16px;
+  }
+  .feat h3 { font-size: .95rem; font-weight: 700; margin-bottom: 8px; }
+  .feat p { font-size: .83rem; color: var(--muted2); line-height: 1.6; }
+  .feat .new-badge {
+    display: inline-block;
+    font-size: .6rem; font-weight: 700;
+    padding: 2px 7px; border-radius: 100px;
+    background: rgba(16,185,129,.15);
+    border: 1px solid rgba(16,185,129,.3);
+    color: #34d399;
+    margin-left: 7px; vertical-align: middle;
+  }
+
+  /* ── DIFFERENTIATOR ── */
+  .diff-section { background: var(--bg2); }
+  .diff-table { width: 100%; border-collapse: collapse; margin-top: 32px; }
+  .diff-table th {
+    padding: 14px 20px; text-align: left;
+    font-size: .78rem; font-weight: 700; letter-spacing: .05em;
+    color: var(--muted); border-bottom: 1px solid var(--border);
+  }
+  .diff-table th.ours { color: var(--grad2); }
+  .diff-table td {
+    padding: 13px 20px; font-size: .83rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .diff-table tr:last-child td { border-bottom: none; }
+  .diff-table td:first-child { color: var(--muted2); }
+  .diff-table td.ours { font-weight: 600; color: var(--text); }
+  .check { color: var(--green); }
+  .cross { color: var(--red); }
+  .partial { color: var(--yellow); }
+  @media(max-width:640px){
+    .diff-table th:nth-child(3),.diff-table td:nth-child(3),
+    .diff-table th:nth-child(4),.diff-table td:nth-child(4) { display: none; }
+  }
+
+  /* ── PRICING ── */
+  .pricing-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 20px;
+  }
+  .price-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 20px; padding: 32px 28px;
+    display: flex; flex-direction: column;
+    transition: transform .2s, border-color .2s;
+  }
+  .price-card:hover { transform: translateY(-4px); border-color: var(--border2); }
+  .price-card.featured {
+    border-color: transparent;
+    background: linear-gradient(var(--card), var(--card)) padding-box,
+                linear-gradient(135deg, var(--grad1), var(--grad3)) border-box;
+    transform: scale(1.03);
+  }
+  .price-card.featured:hover { transform: scale(1.03) translateY(-4px); }
+  .plan-name { font-size: .78rem; font-weight: 700; letter-spacing: .08em; color: var(--muted2); text-transform: uppercase; }
+  .plan-price {
+    font-size: 2.4rem; font-weight: 900; letter-spacing: -.03em;
+    margin: 12px 0 4px; color: var(--text);
+  }
+  .plan-price sup { font-size: 1rem; vertical-align: top; margin-top: 10px; color: var(--muted2); }
+  .plan-price .per { font-size: .78rem; font-weight: 500; color: var(--muted); }
+  .plan-desc { font-size: .82rem; color: var(--muted2); margin-bottom: 24px; }
+  .plan-btn {
+    display: block; text-align: center; padding: 12px;
+    border-radius: 10px; font-size: .88rem; font-weight: 600;
+    text-decoration: none; margin-bottom: 24px;
+  }
+  .plan-btn.outline {
+    border: 1px solid var(--border2); color: var(--text);
+    background: none; cursor: pointer; font-family: inherit;
+    transition: border-color .2s;
+  }
+  .plan-btn.outline:hover { border-color: var(--grad2); }
+  .plan-features { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+  .plan-features li {
+    display: flex; align-items: flex-start; gap: 10px;
+    font-size: .82rem; color: var(--muted2);
+  }
+  .plan-features li .tick { color: var(--green); flex-shrink: 0; margin-top: 1px; }
+  .plan-features li .dim { color: var(--muted); }
+  .regional-note {
+    text-align: center; margin-top: 24px;
+    font-size: .8rem; color: var(--muted);
+  }
+  .regional-note span { color: var(--grad2); font-weight: 600; }
+  @media(max-width:900px){
+    .pricing-grid { grid-template-columns: 1fr; }
+    .price-card.featured { transform: none; }
+  }
+
+  /* ── LANGUAGES ── */
+  .lang-section { background: var(--bg2); }
+  .lang-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 8px; margin-top: 32px;
+  }
+  .lang-pill {
+    display: flex; align-items: center; gap: 8px;
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 8px; padding: 8px 12px;
+    font-size: .78rem; font-weight: 500; color: var(--muted2);
+    transition: border-color .15s;
+  }
+  .lang-pill:hover { border-color: var(--border2); }
+  .lang-pill .flag { font-size: 1.1rem; }
+
+  /* ── VOICE ── */
+  .voice-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 32px; }
+  .voice-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 16px; padding: 28px;
+  }
+  .voice-card .vc-icon { font-size: 2rem; margin-bottom: 14px; }
+  .voice-card h3 { font-size: .95rem; font-weight: 700; margin-bottom: 8px; }
+  .voice-card p { font-size: .83rem; color: var(--muted2); line-height: 1.6; }
+  @media(max-width:640px){ .voice-grid { grid-template-columns: 1fr; } }
+
+  /* ── TESTIMONIAL / TRUST ── */
+  .trust-row {
+    display: flex; gap: 20px; flex-wrap: wrap; margin-top: 40px;
+  }
+  .trust-card {
+    flex: 1; min-width: 240px;
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 16px; padding: 24px;
+  }
+  .trust-stars { color: #fbbf24; font-size: .9rem; margin-bottom: 10px; }
+  .trust-text { font-size: .83rem; color: var(--muted2); line-height: 1.6; margin-bottom: 14px; }
+  .trust-author { font-size: .78rem; font-weight: 600; color: var(--text); }
+  .trust-role { font-size: .72rem; color: var(--muted); }
+
+  /* ── BOTTOM CTA ── */
+  .cta-section {
+    padding: 96px 24px;
+    text-align: center;
+    background: radial-gradient(ellipse 70% 60% at 50% 50%, rgba(124,58,237,.12) 0%, transparent 70%);
+  }
+  .cta-section h2 { max-width: 600px; margin: 0 auto 20px; }
+  .cta-section p { max-width: 480px; margin: 0 auto 36px; color: var(--muted2); }
+  .cta-btn-large {
+    padding: 16px 36px; border-radius: 12px; font-size: 1rem;
+    display: inline-block;
+  }
+  .cta-free-note { margin-top: 14px; font-size: .78rem; color: var(--muted); }
+
+  /* ── FOOTER ── */
+  footer {
+    padding: 40px 24px;
+    border-top: 1px solid var(--border);
+    display: flex; justify-content: space-between; align-items: center;
+    flex-wrap: wrap; gap: 16px;
+    max-width: 1200px; margin: 0 auto;
+    font-size: .8rem; color: var(--muted);
+  }
+  footer a { color: var(--muted); text-decoration: none; }
+  footer a:hover { color: var(--text); }
+
+  /* ── GLOW BG SHAPES ── */
+  .glow {
+    position: fixed; border-radius: 50%;
+    pointer-events: none; z-index: 0;
+    filter: blur(100px); opacity: .07;
+  }
+  .glow-1 { width: 600px; height: 600px; top: -200px; left: -200px; background: var(--grad1); }
+  .glow-2 { width: 400px; height: 400px; top: 40vh; right: -150px; background: var(--grad3); }
+
+  /* ── RESPONSIVE ── */
+  @media(max-width:900px){
+    .hero { flex-direction: column; padding-top: 96px; }
+    .hero-right { width: 100%; }
+    .demo-card { max-width: 100%; }
+    .diff-table { font-size: .75rem; }
+    .diff-table td, .diff-table th { padding: 10px 12px; }
+  }
+
+  /* scrollbar */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<div class="glow glow-1"></div>
+<div class="glow glow-2"></div>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">
+    <div class="logo-icon">📸</div>
+    SnapCaption AI
+  </a>
+  <div class="nav-links nav-mobile-hide">
+    <a href="#features">Features</a>
+    <a href="#pricing">Pricing</a>
+    <a href="#languages">Languages</a>
+  </div>
+  <button class="grad-btn nav-cta" onclick="location.href='app.html'" style="border-radius:8px;">Try Free — 3 Captions/Day</button>
+</nav>
+
+<!-- HERO -->
+<section style="padding-top:0;padding-bottom:0;">
+  <div class="hero">
+    <div class="hero-left">
+      <div class="hero-badge">
+        <span class="dot"></span>
+        No text needed — AI reads your photo directly
+      </div>
+      <h1>
+        Upload a Photo.<br>
+        Get <span class="grad-text">5 Perfect Captions</span><br>
+        In Seconds.
+      </h1>
+      <p>
+        Skip describing your photo. SnapCaption AI reads it, writes 5 platform-ready captions, generates 20 hashtags, and can enhance the image — all in one click. In any of 50 languages.
+      </p>
+      <div class="hero-ctas">
+        <button class="grad-btn hero-cta-primary" onclick="location.href='app.html'">Start Free — No Credit Card</button>
+        <button class="hero-cta-secondary" onclick="location.href='#features'">See How It Works</button>
+      </div>
+      <div class="hero-stats">
+        <div class="stat">
+          <div class="num grad-text">90</div>
+          <div class="label">Languages</div>
+        </div>
+        <div class="stat">
+          <div class="num grad-text">5</div>
+          <div class="label">Captions per photo</div>
+        </div>
+        <div class="stat">
+          <div class="num grad-text">20</div>
+          <div class="label">Hashtags included</div>
+        </div>
+        <div class="stat">
+          <div class="num grad-text">$7</div>
+          <div class="label">Premium / month</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DEMO CARD -->
+    <div class="hero-right">
+      <div class="demo-card">
+        <div class="demo-card-header">
+          <span class="demo-card-title">📷 SnapCaption AI</span>
+          <span class="demo-platform-pill">Instagram</span>
+        </div>
+
+        <div class="demo-photo" id="demoPhoto">
+          <div class="demo-photo-inner" id="uploadPrompt">
+            <span class="upload-icon">📸</span>
+            <span>Upload your photo</span>
+            <span style="font-size:.7rem;opacity:.5">AI reads it — no description needed</span>
+          </div>
+          <div class="demo-scanning" id="scanning">
+            <div class="scan-line"></div>
+            <div class="scan-text">AI READING YOUR PHOTO…</div>
+          </div>
+        </div>
+
+        <div class="demo-captions" id="captionRows" style="opacity:0;transition:opacity .4s">
+          <div class="demo-caption-row">
+            <div class="caption-num">1</div>
+            <div class="caption-text">Golden hour never looked this good 🌅 Some moments are worth chasing. #goldenhour</div>
+            <button class="caption-copy" onclick="copyCaption(this)">Copy</button>
+          </div>
+          <div class="demo-caption-row">
+            <div class="caption-num">2</div>
+            <div class="caption-text">The light, the feeling, the whole vibe ✨ When did you last just stop and look?</div>
+            <button class="caption-copy" onclick="copyCaption(this)">Copy</button>
+          </div>
+          <div class="demo-caption-row blur-row">
+            <div class="caption-num">3</div>
+            <div class="caption-text">Not all those who wander are lost — some are just finding the perfect shot 📷</div>
+            <button class="caption-copy">Copy</button>
+          </div>
+          <div class="premium-lock" onclick="location.href='pricing.html'">
+            🔒 Unlock 2 more captions — Upgrade to Premium
+          </div>
+        </div>
+
+        <div id="hashtagBlock" style="opacity:0;transition:opacity .4s">
+          <div class="demo-hashtags">
+            <div class="demo-hashtags-label">20 HASHTAGS GENERATED</div>
+            <div class="hashtag-chips">
+              <span class="chip green">#photography</span>
+              <span class="chip green">#goldenhour</span>
+              <span class="chip yellow">#sunset</span>
+              <span class="chip green">#explore</span>
+              <span class="chip yellow">#naturephotography</span>
+              <span class="chip red">#travel</span>
+              <span class="chip green">#minimal</span>
+              <span class="chip green">#lightroom</span>
+              <span class="chip">#mood</span>
+              <span class="chip">#aesthetic</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <p style="text-align:center;font-size:.7rem;color:var(--muted);margin-top:12px;">
+        🟢 = Sweet spot &nbsp; 🟡 = Competitive &nbsp; 🔴 = Too saturated
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- LOGOS BAR -->
+<div class="logos-bar">
+  <div class="logos-inner">
+    <span class="logos-label">CAPTIONS FOR EVERY PLATFORM</span>
+    <span class="platform-badge"><span class="picon">📸</span>Instagram</span>
+    <span class="platform-badge"><span class="picon">🎵</span>TikTok</span>
+    <span class="platform-badge"><span class="picon">💼</span>LinkedIn</span>
+    <span class="platform-badge"><span class="picon">🐦</span>X (Twitter)</span>
+    <span class="platform-badge"><span class="picon">📘</span>Facebook</span>
+    <span class="platform-badge"><span class="picon">📌</span>Pinterest</span>
+  </div>
+</div>
+
+<!-- HOW IT WORKS -->
+<section id="features">
+  <div class="container">
+    <div class="section-head">
+      <span class="section-label">How It Works</span>
+      <h2>Three Steps. Ten Seconds.</h2>
+      <p class="section-sub">No sign-up required for free use. No text descriptions. Just upload and go.</p>
+    </div>
+    <div class="steps-grid">
+      <div class="step">
+        <div class="step-num">1</div>
+        <h3>Upload Your Photo</h3>
+        <p>Drop any photo from your camera roll or desktop. Our AI reads it directly — you don't type a single word about what's in it.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <h3>AI Reads & Writes</h3>
+        <p>GPT-4o Vision analyzes your photo and writes 5 tailored captions plus 20 hashtags, optimized for your chosen platform and language.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <h3>Copy, Enhance & Post</h3>
+        <p>Pick your favorite caption, copy it, and optionally one-click enhance the photo with AI before saving everything to your dashboard.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section style="padding-top:0;">
+  <div class="container">
+    <div class="section-head">
+      <span class="section-label">Every Feature You Need</span>
+      <h2>Built for Real Creators</h2>
+      <p class="section-sub">Not just captions — a full caption and photo toolkit at a price that makes sense.</p>
+    </div>
+    <div class="features-grid">
+      <div class="feat">
+        <div class="feat-icon">👁️</div>
+        <h3>AI Photo Reading <span class="new-badge">UNIQUE</span></h3>
+        <p>Upload any photo. Our AI reads it directly with computer vision — no text descriptions, no prompts. Just the image.</p>
+      </div>
+      <div class="feat">
+        <div class="feat-icon">✍️</div>
+        <h3>5 Caption Options</h3>
+        <p>Get five distinct captions per photo — different tones, hooks, and styles. Pick the one that fits or mix and match.</p>
+      </div>
+      <div class="feat">
+        <div class="feat-icon">🎣</div>
+        <h3>Hook Strength Score <span class="new-badge">NEW</span></h3>
+        <p>Every caption gets a 1–10 hook score. Know which opening line will stop the scroll before you even post.</p>
+      </div>
+      <div class="feat">
+        <div class="feat-icon">#️⃣</div>
+        <h3>20 Hashtags + Strength Meter</h3>
+        <p>Color-coded hashtags show if each tag is a sweet spot (green), competitive (yellow), or too saturated (red).</p>
+      </div>
+      <div class="feat">
+        <div class="feat-icon">✨</div>
+        <h3>One-Click Photo Enhancement</h3>
+        <p>Premium: AI enhances your photo with one click. Free users see a live before/after preview — so you know exactly what you're getting.</p>
+      </div>
+      <div class="feat">
+        <div class="feat-icon">🌍</div>
+        <h3>50 Languages</h3>
+        <p>Select any language — captions and hashtags are written natively, not translated. Covers 97% of world speakers.</p>
+      </div>
+      <div class="feat">
+        <div class="feat-icon">♿</div>
+        <h3>Alt Text Generator <span class="new-badge">FREE</span></h3>
+        <p>Auto-generates an accessibility description for your photo — WCAG-compliant alt text, ready to copy and paste.</p>
+      </div>
+      <div class="feat">
+        <div class="feat-icon">🎙️</div>
+        <h3>Voice Input + Read-Back</h3>
+        <p>Speak your photo context on mobile instead of typing. Hear captions read aloud before choosing. 100% free via browser.</p>
+      </div>
+      <div class="feat">
+        <div class="feat-icon">🎯</div>
+        <h3>Brand Voice Saver</h3>
+        <p>Premium: Paste 2–3 of your past captions. AI learns your tone and writes in your voice automatically every time.</p>
+      </div>
+      <div class="feat">
+        <div class="feat-icon">📋</div>
+        <h3>Caption History & Favorites</h3>
+        <p>Every caption you generate is saved to your dashboard with the photo thumbnail. Star favorites and copy in one click.</p>
+      </div>
+      <div class="feat">
+        <div class="feat-icon">📊</div>
+        <h3>Engagement Predictor</h3>
+        <p>Premium: AI rates each caption's engagement potential. Know which one is most likely to get saves, comments and shares.</p>
+      </div>
+      <div class="feat">
+        <div class="feat-icon">⏰</div>
+        <h3>Best Time to Post</h3>
+        <p>Platform-specific posting time recommendation shown with every result. Post when your audience is most active.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COMPETITOR TABLE -->
+<section class="diff-section">
+  <div class="container">
+    <div class="section-head">
+      <span class="section-label">Why SnapCaption AI</span>
+      <h2>We Do What No One Else Does</h2>
+      <p class="section-sub">Every competitor requires you to describe your photo first. We just read it.</p>
+    </div>
+    <table class="diff-table">
+      <thead>
+        <tr>
+          <th>Feature</th>
+          <th class="ours">SnapCaption AI</th>
+          <th>Jasper ($39+/mo)</th>
+          <th>Flick ($14/mo)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Reads photo directly (no text needed)</td>
+          <td class="ours"><span class="check">✓</span> AI Vision</td>
+          <td><span class="cross">✗</span> Text required</td>
+          <td><span class="cross">✗</span> Text required</td>
+        </tr>
+        <tr>
+          <td>5 caption options per photo</td>
+          <td class="ours"><span class="check">✓</span> Always</td>
+          <td><span class="check">✓</span> With prompting</td>
+          <td><span class="partial">~</span> Limited</td>
+        </tr>
+        <tr>
+          <td>Hashtag strength / analytics</td>
+          <td class="ours"><span class="check">✓</span> Color-coded</td>
+          <td><span class="cross">✗</span> Basic only</td>
+          <td><span class="check">✓</span> Instagram only</td>
+        </tr>
+        <tr>
+          <td>AI photo enhancement</td>
+          <td class="ours"><span class="check">✓</span> One-click</td>
+          <td><span class="cross">✗</span></td>
+          <td><span class="cross">✗</span></td>
+        </tr>
+        <tr>
+          <td>50 languages</td>
+          <td class="ours"><span class="check">✓</span> Native write</td>
+          <td><span class="partial">~</span> Some</td>
+          <td><span class="cross">✗</span> English only</td>
+        </tr>
+        <tr>
+          <td>Alt text (accessibility)</td>
+          <td class="ours"><span class="check">✓</span> Auto-generated</td>
+          <td><span class="cross">✗</span></td>
+          <td><span class="cross">✗</span></td>
+        </tr>
+        <tr>
+          <td>Voice input / read-back</td>
+          <td class="ours"><span class="check">✓</span> Free</td>
+          <td><span class="cross">✗</span></td>
+          <td><span class="cross">✗</span></td>
+        </tr>
+        <tr>
+          <td>Starting price</td>
+          <td class="ours" style="color:var(--green);font-weight:700">$0 free / $7 premium</td>
+          <td><span style="color:var(--red)">$39/month</span></td>
+          <td>$14/month</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section id="pricing">
+  <div class="container">
+    <div class="section-head">
+      <span class="section-label">Simple Pricing</span>
+      <h2>Start Free. Upgrade When Ready.</h2>
+      <p class="section-sub">No contracts, no credit card for free tier. Cancel Premium anytime.</p>
+    </div>
+    <div class="pricing-grid">
+      <!-- FREE -->
+      <div class="price-card">
+        <div class="plan-name">Free</div>
+        <div class="plan-price">$0</div>
+        <div class="plan-desc">3 photos per day, forever free</div>
+        <button class="plan-btn outline" onclick="location.href='app.html'">Get Started Free</button>
+        <ul class="plan-features">
+          <li><span class="tick">✓</span><span>3 captions per day</span></li>
+          <li><span class="tick">✓</span><span>20 hashtags per photo</span></li>
+          <li><span class="tick">✓</span><span>Hook strength score</span></li>
+          <li><span class="tick">✓</span><span>Alt text generator</span></li>
+          <li><span class="tick">✓</span><span>Voice input (mic)</span></li>
+          <li><span class="tick">✓</span><span>6 platforms</span></li>
+          <li><span class="tick">✓</span><span>50 languages</span></li>
+          <li><span class="dim">✗ AI photo enhancement</span></li>
+          <li><span class="dim">✗ Brand voice saver</span></li>
+          <li><span class="dim">✗ Caption history</span></li>
+        </ul>
+      </div>
+
+      <!-- PREMIUM -->
+      <div class="price-card featured">
+        <div class="plan-name" style="color:var(--grad2)">Premium ⭐</div>
+        <div class="plan-price"><sup>$</sup>7<span class="per">/month</span></div>
+        <div class="plan-desc">Everything unlimited for creators</div>
+        <button class="plan-btn grad-btn" onclick="location.href='signup.html?plan=premium'">Start Premium — $7/mo</button>
+        <ul class="plan-features">
+          <li><span class="tick">✓</span><span><strong>Unlimited</strong> captions per day</span></li>
+          <li><span class="tick">✓</span><span>All 5 captions shown (no blur)</span></li>
+          <li><span class="tick">✓</span><span>20 hashtags + strength meter</span></li>
+          <li><span class="tick">✓</span><span>AI photo enhancement (30/mo)</span></li>
+          <li><span class="tick">✓</span><span>Before/after enhancement preview</span></li>
+          <li><span class="tick">✓</span><span>Brand voice saver</span></li>
+          <li><span class="tick">✓</span><span>Caption history & favorites</span></li>
+          <li><span class="tick">✓</span><span>Engagement predictor</span></li>
+          <li><span class="tick">✓</span><span>Caption read-back (TTS)</span></li>
+          <li><span class="tick">✓</span><span>Priority generation speed</span></li>
+        </ul>
+      </div>
+
+      <!-- TEAMS -->
+      <div class="price-card">
+        <div class="plan-name">Teams</div>
+        <div class="plan-price"><sup>$</sup>29<span class="per">/month</span></div>
+        <div class="plan-desc">5 seats — for agencies & brands</div>
+        <button class="plan-btn outline" onclick="location.href='signup.html?plan=teams'">Start Teams Plan</button>
+        <ul class="plan-features">
+          <li><span class="tick">✓</span><span>5 team seats included</span></li>
+          <li><span class="tick">✓</span><span>Everything in Premium</span></li>
+          <li><span class="tick">✓</span><span>Shared caption library</span></li>
+          <li><span class="tick">✓</span><span>Shared brand voice profiles</span></li>
+          <li><span class="tick">✓</span><span>AI photo enhancement (150/mo)</span></li>
+          <li><span class="tick">✓</span><span>Team dashboard</span></li>
+          <li><span class="tick">✓</span><span>Priority support</span></li>
+          <li><span class="tick">✓</span><span>Add seats at $5/mo each</span></li>
+        </ul>
+      </div>
+    </div>
+    <p class="regional-note">
+      🌏 <span>Regional pricing available</span> — 40–70% discount for India, Southeast Asia, Africa, and Latin America
+    </p>
+  </div>
+</section>
+
+<!-- LANGUAGES -->
+<section id="languages" class="lang-section">
+  <div class="container">
+    <div class="section-head">
+      <span class="section-label">90 Languages</span>
+      <h2>Truly Global from Day One</h2>
+      <p class="section-sub">Captions written natively in your language — not translated. 99% of the world's speakers covered.</p>
+    </div>
+    <div class="lang-grid">
+      <div class="lang-pill"><span class="flag">🇺🇸</span>English</div>
+      <div class="lang-pill"><span class="flag">🇨🇳</span>Chinese</div>
+      <div class="lang-pill"><span class="flag">🇮🇳</span>Hindi</div>
+      <div class="lang-pill"><span class="flag">🇪🇸</span>Spanish</div>
+      <div class="lang-pill"><span class="flag">🇫🇷</span>French</div>
+      <div class="lang-pill"><span class="flag">🇸🇦</span>Arabic</div>
+      <div class="lang-pill"><span class="flag">🇧🇩</span>Bengali</div>
+      <div class="lang-pill"><span class="flag">🇵🇹</span>Portuguese</div>
+      <div class="lang-pill"><span class="flag">🇷🇺</span>Russian</div>
+      <div class="lang-pill"><span class="flag">🇵🇰</span>Urdu</div>
+      <div class="lang-pill"><span class="flag">🇯🇵</span>Japanese</div>
+      <div class="lang-pill"><span class="flag">🇰🇷</span>Korean</div>
+      <div class="lang-pill"><span class="flag">🇮🇩</span>Indonesian</div>
+      <div class="lang-pill"><span class="flag">🇮🇩</span>Javanese</div>
+      <div class="lang-pill"><span class="flag">🇮🇩</span>Sundanese</div>
+      <div class="lang-pill"><span class="flag">🇵🇭</span>Filipino</div>
+      <div class="lang-pill"><span class="flag">🇵🇭</span>Cebuano</div>
+      <div class="lang-pill"><span class="flag">🇲🇾</span>Malay</div>
+      <div class="lang-pill"><span class="flag">🇻🇳</span>Vietnamese</div>
+      <div class="lang-pill"><span class="flag">🇹🇭</span>Thai</div>
+      <div class="lang-pill"><span class="flag">🇲🇲</span>Burmese</div>
+      <div class="lang-pill"><span class="flag">🇰🇭</span>Khmer</div>
+      <div class="lang-pill"><span class="flag">🇱🇦</span>Lao</div>
+      <div class="lang-pill"><span class="flag">🇲🇳</span>Mongolian</div>
+      <div class="lang-pill"><span class="flag">🇳🇿</span>Māori</div>
+      <div class="lang-pill"><span class="flag">🇮🇳</span>Tamil</div>
+      <div class="lang-pill"><span class="flag">🇮🇳</span>Telugu</div>
+      <div class="lang-pill"><span class="flag">🇮🇳</span>Marathi</div>
+      <div class="lang-pill"><span class="flag">🇮🇳</span>Gujarati</div>
+      <div class="lang-pill"><span class="flag">🇮🇳</span>Kannada</div>
+      <div class="lang-pill"><span class="flag">🇮🇳</span>Malayalam</div>
+      <div class="lang-pill"><span class="flag">🇮🇳</span>Punjabi</div>
+      <div class="lang-pill"><span class="flag">🇮🇳</span>Odia</div>
+      <div class="lang-pill"><span class="flag">🇵🇰</span>Sindhi</div>
+      <div class="lang-pill"><span class="flag">🇳🇵</span>Nepali</div>
+      <div class="lang-pill"><span class="flag">🇱🇰</span>Sinhala</div>
+      <div class="lang-pill"><span class="flag">🇦🇫</span>Pashto</div>
+      <div class="lang-pill"><span class="flag">🇮🇷</span>Persian</div>
+      <div class="lang-pill"><span class="flag">🇮🇱</span>Hebrew</div>
+      <div class="lang-pill"><span class="flag">🇹🇷</span>Turkish</div>
+      <div class="lang-pill"><span class="flag">🇮🇶</span>Kurdish</div>
+      <div class="lang-pill"><span class="flag">🇦🇿</span>Azerbaijani</div>
+      <div class="lang-pill"><span class="flag">🇰🇿</span>Kazakh</div>
+      <div class="lang-pill"><span class="flag">🇺🇿</span>Uzbek</div>
+      <div class="lang-pill"><span class="flag">🇬🇪</span>Georgian</div>
+      <div class="lang-pill"><span class="flag">🇦🇲</span>Armenian</div>
+      <div class="lang-pill"><span class="flag">🇰🇪</span>Swahili</div>
+      <div class="lang-pill"><span class="flag">🇳🇬</span>Hausa</div>
+      <div class="lang-pill"><span class="flag">🇳🇬</span>Yoruba</div>
+      <div class="lang-pill"><span class="flag">🇳🇬</span>Igbo</div>
+      <div class="lang-pill"><span class="flag">🇪🇹</span>Amharic</div>
+      <div class="lang-pill"><span class="flag">🇪🇹</span>Oromo</div>
+      <div class="lang-pill"><span class="flag">🇸🇴</span>Somali</div>
+      <div class="lang-pill"><span class="flag">🇿🇦</span>Zulu</div>
+      <div class="lang-pill"><span class="flag">🇿🇦</span>Xhosa</div>
+      <div class="lang-pill"><span class="flag">🇿🇦</span>Afrikaans</div>
+      <div class="lang-pill"><span class="flag">🇿🇼</span>Shona</div>
+      <div class="lang-pill"><span class="flag">🇸🇳</span>Wolof</div>
+      <div class="lang-pill"><span class="flag">🇷🇼</span>Kinyarwanda</div>
+      <div class="lang-pill"><span class="flag">🇨🇩</span>Lingala</div>
+      <div class="lang-pill"><span class="flag">🇩🇪</span>German</div>
+      <div class="lang-pill"><span class="flag">🇮🇹</span>Italian</div>
+      <div class="lang-pill"><span class="flag">🇳🇱</span>Dutch</div>
+      <div class="lang-pill"><span class="flag">🇸🇪</span>Swedish</div>
+      <div class="lang-pill"><span class="flag">🇳🇴</span>Norwegian</div>
+      <div class="lang-pill"><span class="flag">🇩🇰</span>Danish</div>
+      <div class="lang-pill"><span class="flag">🇫🇮</span>Finnish</div>
+      <div class="lang-pill"><span class="flag">🇬🇷</span>Greek</div>
+      <div class="lang-pill"><span class="flag">🏳️</span>Catalan</div>
+      <div class="lang-pill"><span class="flag">🏳️</span>Galician</div>
+      <div class="lang-pill"><span class="flag">🏳️</span>Basque</div>
+      <div class="lang-pill"><span class="flag">🏴󠁧󠁢󠁷󠁬󠁳󠁿</span>Welsh</div>
+      <div class="lang-pill"><span class="flag">🇵🇱</span>Polish</div>
+      <div class="lang-pill"><span class="flag">🇺🇦</span>Ukrainian</div>
+      <div class="lang-pill"><span class="flag">🇷🇴</span>Romanian</div>
+      <div class="lang-pill"><span class="flag">🇨🇿</span>Czech</div>
+      <div class="lang-pill"><span class="flag">🇭🇺</span>Hungarian</div>
+      <div class="lang-pill"><span class="flag">🇧🇬</span>Bulgarian</div>
+      <div class="lang-pill"><span class="flag">🇷🇸</span>Serbian</div>
+      <div class="lang-pill"><span class="flag">🇭🇷</span>Croatian</div>
+      <div class="lang-pill"><span class="flag">🇸🇰</span>Slovak</div>
+      <div class="lang-pill"><span class="flag">🇸🇮</span>Slovenian</div>
+      <div class="lang-pill"><span class="flag">🇱🇹</span>Lithuanian</div>
+      <div class="lang-pill"><span class="flag">🇱🇻</span>Latvian</div>
+      <div class="lang-pill"><span class="flag">🇪🇪</span>Estonian</div>
+      <div class="lang-pill"><span class="flag">🇦🇱</span>Albanian</div>
+      <div class="lang-pill"><span class="flag">🇲🇰</span>Macedonian</div>
+      <div class="lang-pill"><span class="flag">🇧🇦</span>Bosnian</div>
+      <div class="lang-pill"><span class="flag">🇭🇹</span>Haitian Creole</div>
+    </div>
+  </div>
+</section>
+
+<!-- VOICE FEATURES -->
+<section>
+  <div class="container">
+    <div class="section-head">
+      <span class="section-label">Voice Features</span>
+      <h2>Hands-Free on Mobile</h2>
+      <p class="section-sub">Use your voice to give context. Hear captions read back. No extra cost — runs in your browser.</p>
+    </div>
+    <div class="voice-grid">
+      <div class="voice-card">
+        <div class="vc-icon">🎙️</div>
+        <h3>Mic Input — Speak Your Context</h3>
+        <p>Instead of typing what's in the photo, just tap the mic and say it. Perfect for mobile users on the go. The AI adds your spoken context to the caption generation.</p>
+      </div>
+      <div class="voice-card">
+        <div class="vc-icon">🔊</div>
+        <h3>Caption Read-Back</h3>
+        <p>Tap the speaker icon to hear any caption read aloud before you post it. Great for checking tone and flow without reading a screen. Works in your chosen language too.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TRUST -->
+<section style="padding-top:0;">
+  <div class="container">
+    <div class="section-head">
+      <span class="section-label">Early Users Love It</span>
+      <h2>Built for the Way You Actually Post</h2>
+    </div>
+    <div class="trust-row">
+      <div class="trust-card">
+        <div class="trust-stars">★★★★★</div>
+        <p class="trust-text">"I spend 20 minutes a day writing captions. This thing does it in 10 seconds and the captions are actually good. The hashtag strength colors are genius."</p>
+        <div class="trust-author">Maria G.</div>
+        <div class="trust-role">Travel photographer, 42K followers</div>
+      </div>
+      <div class="trust-card">
+        <div class="trust-stars">★★★★★</div>
+        <p class="trust-text">"Finally a caption tool that actually looks at the photo. Jasper made me describe everything. Here I just drop the image. Done."</p>
+        <div class="trust-author">Kevin T.</div>
+        <div class="trust-role">Social media manager, 3 clients</div>
+      </div>
+      <div class="trust-card">
+        <div class="trust-stars">★★★★★</div>
+        <p class="trust-text">"The regional pricing for India made it accessible. I use it for my food blog in Hindi and English. The captions don't feel translated — they feel written."</p>
+        <div class="trust-author">Priya S.</div>
+        <div class="trust-role">Food blogger, Mumbai</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BOTTOM CTA -->
+<div class="cta-section">
+  <div class="container" style="text-align:center;">
+    <span class="section-label">Get Started Today</span>
+    <h2>Your next post shouldn't take<br>longer than 10 seconds.</h2>
+    <p>Upload a photo. Get 5 captions, 20 hashtags, and an accessibility description — free, every day, no credit card.</p>
+    <button class="grad-btn cta-btn-large" onclick="location.href='app.html'">
+      🚀 Start Free — 3 Captions Daily
+    </button>
+    <p class="cta-free-note">Free forever · No credit card · Upgrade anytime · Cancel anytime</p>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div style="display:flex;align-items:center;gap:10px;">
+    <div style="width:28px;height:28px;border-radius:7px;background:linear-gradient(135deg,var(--grad1),var(--grad3));display:flex;align-items:center;justify-content:center;font-size:14px;">📸</div>
+    <span style="font-weight:700;color:var(--text);">SnapCaption AI</span>
+  </div>
+  <div style="display:flex;gap:24px;flex-wrap:wrap;">
+    <a href="#">Privacy</a>
+    <a href="#">Terms</a>
+    <a href="#">Contact</a>
+    <a href="pricing.html">Pricing</a>
+  </div>
+  <div>© 2026 SnapCaption AI. All rights reserved.</div>
+</footer>
+
+<script>
+  // Demo animation — auto-runs after 2 seconds
+  setTimeout(() => {
+    const scanning = document.getElementById('scanning');
+    const uploadPrompt = document.getElementById('uploadPrompt');
+    const captionRows = document.getElementById('captionRows');
+    const hashtagBlock = document.getElementById('hashtagBlock');
+
+    // Show scanning
+    uploadPrompt.style.opacity = '0';
+    scanning.style.display = 'flex';
+
+    // After scan, show results
+    setTimeout(() => {
+      scanning.style.display = 'none';
+      uploadPrompt.style.display = 'none';
+      // Show photo placeholder
+      const photoEl = document.getElementById('demoPhoto');
+      photoEl.style.background = 'linear-gradient(135deg,#1e1b4b,#312e81,#4c1d95)';
+      photoEl.innerHTML = '<div style="color:#a78bfa;font-size:.82rem;font-weight:600;padding:20px;text-align:center;"><div style="font-size:2.5rem;margin-bottom:8px;">🌅</div>Golden Hour Landscape<br><span style="color:#6d28d9;font-size:.7rem;">AI analyzed: outdoor, sunset, nature, golden light</span></div>';
+
+      captionRows.style.opacity = '1';
+      hashtagBlock.style.opacity = '1';
+    }, 2200);
+  }, 2000);
+
+  // Copy button
+  function copyCaption(btn) {
+    const text = btn.parentElement.querySelector('.caption-text').textContent;
+    navigator.clipboard.writeText(text).then(() => {
+      btn.textContent = 'Copied!';
+      btn.style.color = 'var(--green)';
+      btn.style.borderColor = 'var(--green)';
+      setTimeout(() => {
+        btn.textContent = 'Copy';
+        btn.style.color = '';
+        btn.style.borderColor = '';
+      }, 1500);
+    });
+  }
+</script>
+</body>
+</html>

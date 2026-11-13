@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard — SnapCaption AI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #09090f; --bg2: #0f0f1a; --bg3: #141424;
+    --card: #13131f; --border: #1e1e32; --border2: #2a2a44;
+    --grad1: #7c3aed; --grad2: #a855f7; --grad3: #ec4899;
+    --text: #e8e8f0; --muted: #6b7280; --muted2: #9ca3af;
+    --green: #10b981; --red: #ef4444; --yellow: #f59e0b;
+    --sidebar-w: 240px;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; min-height: 100vh; }
+
+  /* ── Layout ── */
+  .layout { display: flex; min-height: 100vh; }
+
+  /* ── Sidebar ── */
+  .sidebar {
+    width: var(--sidebar-w); background: var(--bg2);
+    border-right: 1px solid var(--border);
+    display: flex; flex-direction: column;
+    position: fixed; top: 0; left: 0; height: 100vh;
+    z-index: 20;
+  }
+  .sidebar-logo {
+    display: flex; align-items: center; gap: 10px;
+    padding: 20px 20px 16px; font-size: .95rem; font-weight: 800;
+    text-decoration: none; color: var(--text);
+    border-bottom: 1px solid var(--border);
+  }
+  .logo-icon {
+    width: 32px; height: 32px; border-radius: 8px;
+    background: linear-gradient(135deg, var(--grad1), var(--grad3));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 17px; flex-shrink: 0;
+  }
+  .sidebar-nav { flex: 1; padding: 12px 10px; overflow-y: auto; }
+  .nav-section-label {
+    font-size: .68rem; font-weight: 700; color: var(--muted);
+    letter-spacing: .08em; text-transform: uppercase;
+    padding: 10px 10px 4px;
+  }
+  .nav-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 9px 10px; border-radius: 8px;
+    font-size: .88rem; font-weight: 500; color: var(--muted2);
+    cursor: pointer; text-decoration: none;
+    transition: background .15s, color .15s;
+    margin-bottom: 2px;
+  }
+  .nav-item:hover { background: var(--bg3); color: var(--text); }
+  .nav-item.active { background: rgba(168,85,247,.12); color: var(--grad2); }
+  .nav-item-icon { font-size: 1rem; width: 20px; text-align: center; flex-shrink: 0; }
+  .nav-badge {
+    margin-left: auto; background: var(--grad2); color: #fff;
+    font-size: .66rem; font-weight: 700;
+    padding: 2px 7px; border-radius: 999px;
+  }
+  .sidebar-user {
+    padding: 14px 14px; border-top: 1px solid var(--border);
+    display: flex; align-items: center; gap: 10px;
+  }
+  .user-avatar {
+    width: 34px; height: 34px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--grad1), var(--grad3));
+    display: flex; align-items: center; justify-content: center;
+    font-size: .9rem; font-weight: 800; flex-shrink: 0;
+  }
+  .user-info { overflow: hidden; }
+  .user-name { font-size: .82rem; font-weight: 600; truncate: ellipsis; white-space: nowrap; overflow: hidden; }
+  .user-plan {
+    font-size: .7rem; font-weight: 600; padding: 1px 7px; border-radius: 999px;
+    display: inline-block; margin-top: 2px;
+  }
+  .plan-free { background: rgba(107,114,128,.2); color: var(--muted2); }
+  .plan-premium { background: rgba(168,85,247,.2); color: var(--grad2); }
+  .plan-teams { background: rgba(245,158,11,.2); color: var(--yellow); }
+  .user-logout {
+    margin-left: auto; background: none; border: none;
+    color: var(--muted); cursor: pointer; font-size: 1rem;
+    padding: 4px; border-radius: 4px; transition: color .2s;
+  }
+  .user-logout:hover { color: var(--red); }
+
+  /* ── Main ── */
+  .main { margin-left: var(--sidebar-w); flex: 1; display: flex; flex-direction: column; }
+  .topbar {
+    padding: 18px 28px; border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+    position: sticky; top: 0; background: var(--bg); z-index: 10;
+  }
+  .topbar-title { font-size: 1.1rem; font-weight: 800; }
+  .topbar-actions { display: flex; align-items: center; gap: 10px; }
+  .btn-primary {
+    display: inline-flex; align-items: center; gap: 7px;
+    padding: 9px 18px; border-radius: 9px;
+    background: linear-gradient(135deg, var(--grad1), var(--grad3));
+    color: #fff; font-size: .85rem; font-weight: 600;
+    border: none; cursor: pointer; text-decoration: none;
+    transition: opacity .2s;
+  }
+  .btn-primary:hover { opacity: .88; }
+  .btn-ghost {
+    padding: 9px 16px; border-radius: 9px;
+    background: none; border: 1px solid var(--border2);
+    color: var(--muted2); font-size: .85rem; font-weight: 500;
+    cursor: pointer; transition: border-color .15s, color .15s;
+  }
+  .btn-ghost:hover { border-color: var(--border2); color: var(--text); }
+
+  /* ── Page sections ── */
+  .page-section { display: none; padding: 28px; }
+  .page-section.active { display: block; }
+
+  /* ── Stats row ── */
+  .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 28px; }
+  .stat-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 14px; padding: 20px;
+  }
+  .stat-label { font-size: .78rem; color: var(--muted2); font-weight: 500; margin-bottom: 10px; }
+  .stat-value { font-size: 1.9rem; font-weight: 800; letter-spacing: -.03em; }
+  .stat-sub { font-size: .75rem; color: var(--muted); margin-top: 4px; }
+  .stat-bar-wrap { margin-top: 8px; height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
+  .stat-bar { height: 100%; border-radius: 2px; background: linear-gradient(90deg, var(--grad1), var(--grad2)); transition: width .4s; }
+
+  /* ── Usage meter (free users) ── */
+  .usage-banner {
+    background: linear-gradient(135deg, rgba(124,58,237,.12), rgba(236,72,153,.08));
+    border: 1px solid rgba(168,85,247,.2);
+    border-radius: 14px; padding: 20px 24px;
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 28px;
+  }
+  .usage-dots { display: flex; gap: 8px; }
+  .usage-dot {
+    width: 10px; height: 10px; border-radius: 50%;
+    background: var(--grad2); transition: opacity .3s;
+  }
+  .usage-dot.empty { background: var(--border2); }
+  .usage-text h3 { font-size: .95rem; font-weight: 700; margin-bottom: 3px; }
+  .usage-text p  { font-size: .82rem; color: var(--muted2); }
+
+  /* ── History table ── */
+  .history-toolbar {
+    display: flex; align-items: center; gap: 10px; margin-bottom: 16px; flex-wrap: wrap;
+  }
+  .filter-btn {
+    padding: 7px 14px; border-radius: 999px; font-size: .8rem; font-weight: 600;
+    border: 1px solid var(--border2); background: none; color: var(--muted2);
+    cursor: pointer; transition: all .15s;
+  }
+  .filter-btn.active { background: rgba(168,85,247,.15); border-color: var(--grad2); color: var(--grad2); }
+  .search-input {
+    margin-left: auto; padding: 8px 14px; border-radius: 9px;
+    background: var(--bg2); border: 1px solid var(--border);
+    color: var(--text); font-size: .84rem; font-family: 'Inter', sans-serif;
+    outline: none; width: 220px;
+  }
+  .search-input:focus { border-color: var(--grad2); }
+
+  .history-grid { display: grid; gap: 12px; }
+  .history-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 14px; padding: 18px 20px;
+    transition: border-color .15s;
+  }
+  .history-card:hover { border-color: var(--border2); }
+  .history-card-header {
+    display: flex; align-items: center; gap: 10px; margin-bottom: 10px;
+  }
+  .platform-badge {
+    font-size: .72rem; font-weight: 700; padding: 3px 10px;
+    border-radius: 999px; text-transform: uppercase; letter-spacing: .05em;
+  }
+  .pb-instagram { background: rgba(236,72,153,.15); color: #f472b6; }
+  .pb-tiktok    { background: rgba(16,185,129,.15);  color: #34d399; }
+  .pb-linkedin  { background: rgba(59,130,246,.15);  color: #60a5fa; }
+  .pb-facebook  { background: rgba(99,102,241,.15);  color: #818cf8; }
+  .pb-x         { background: rgba(107,114,128,.15); color: #9ca3af; }
+  .pb-pinterest { background: rgba(239,68,68,.15);   color: #f87171; }
+  .history-date { font-size: .75rem; color: var(--muted); margin-left: auto; }
+  .history-caption { font-size: .88rem; color: var(--muted2); line-height: 1.6; margin-bottom: 10px; }
+  .history-caption strong { color: var(--text); }
+  .history-actions { display: flex; align-items: center; gap: 8px; }
+  .hist-btn {
+    padding: 5px 12px; border-radius: 7px; font-size: .78rem; font-weight: 500;
+    border: 1px solid var(--border2); background: none; color: var(--muted2);
+    cursor: pointer; transition: all .15s;
+  }
+  .hist-btn:hover { background: var(--bg2); color: var(--text); }
+  .hist-btn.fav { border-color: rgba(245,158,11,.3); }
+  .hist-btn.fav.active { background: rgba(245,158,11,.12); color: var(--yellow); border-color: var(--yellow); }
+  .hist-btn.del:hover { background: rgba(239,68,68,.1); color: var(--red); border-color: var(--red); }
+  .hook-score {
+    margin-left: auto; display: flex; align-items: center; gap: 5px;
+    font-size: .78rem; color: var(--muted2);
+  }
+  .score-pill {
+    width: 24px; height: 24px; border-radius: 50%;
+    background: rgba(168,85,247,.15); color: var(--grad2);
+    font-size: .72rem; font-weight: 800;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  .empty-state {
+    text-align: center; padding: 60px 20px;
+    color: var(--muted2); font-size: .9rem;
+  }
+  .empty-icon { font-size: 2.5rem; margin-bottom: 14px; }
+  .empty-state h3 { font-size: 1rem; font-weight: 700; color: var(--text); margin-bottom: 6px; }
+
+  .pagination { display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 24px; }
+  .pg-btn {
+    padding: 7px 14px; border-radius: 8px; font-size: .82rem; font-weight: 500;
+    border: 1px solid var(--border2); background: none; color: var(--muted2); cursor: pointer;
+    transition: all .15s;
+  }
+  .pg-btn.active { background: rgba(168,85,247,.15); border-color: var(--grad2); color: var(--grad2); }
+  .pg-btn:disabled { opacity: .4; cursor: not-allowed; }
+
+  /* ── Brand Voice ── */
+  .brand-voice-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 14px; padding: 24px; max-width: 680px;
+  }
+  .bv-header { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
+  .bv-icon {
+    width: 42px; height: 42px; border-radius: 10px;
+    background: rgba(168,85,247,.15); display: flex; align-items: center; justify-content: center;
+    font-size: 1.3rem;
+  }
+  .bv-title { font-size: 1rem; font-weight: 700; }
+  .bv-sub   { font-size: .8rem; color: var(--muted2); margin-top: 2px; }
+  .bv-textarea {
+    width: 100%; padding: 14px; height: 160px;
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 10px; color: var(--text); font-family: 'Inter', sans-serif;
+    font-size: .88rem; resize: vertical; outline: none;
+    transition: border-color .2s;
+  }
+  .bv-textarea:focus { border-color: var(--grad2); }
+  .bv-hint { font-size: .78rem; color: var(--muted); margin: 8px 0 16px; }
+  .bv-examples { margin-bottom: 18px; }
+  .bv-example {
+    display: inline-block; padding: 6px 14px; border-radius: 999px; margin: 4px 4px 0 0;
+    background: var(--bg2); border: 1px solid var(--border2);
+    font-size: .78rem; color: var(--muted2); cursor: pointer;
+    transition: all .15s;
+  }
+  .bv-example:hover { border-color: var(--grad2); color: var(--grad2); }
+  .save-status { font-size: .8rem; margin-left: 12px; }
+  .save-status.ok  { color: var(--green); }
+  .save-status.err { color: var(--red); }
+  .upgrade-lock {
+    display: flex; align-items: center; gap: 12px; padding: 14px 18px;
+    background: rgba(168,85,247,.06); border: 1px solid rgba(168,85,247,.2);
+    border-radius: 10px; margin-bottom: 18px;
+  }
+  .upgrade-lock p { font-size: .84rem; color: var(--muted2); }
+  .upgrade-lock a { color: var(--grad2); font-weight: 600; text-decoration: none; }
+
+  /* ── Account settings ── */
+  .settings-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; max-width: 740px; }
+  .settings-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 14px; padding: 22px;
+  }
+  .settings-card h3 { font-size: .9rem; font-weight: 700; margin-bottom: 16px; }
+  .setting-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--border); }
+  .setting-row:last-child { border-bottom: none; padding-bottom: 0; }
+  .setting-label { font-size: .84rem; color: var(--muted2); }
+  .setting-value { font-size: .84rem; font-weight: 500; }
+
+  /* Mobile sidebar toggle */
+  .mobile-toggle {
+    display: none; position: fixed; top: 14px; left: 14px; z-index: 30;
+    background: var(--card); border: 1px solid var(--border2);
+    border-radius: 8px; padding: 8px 10px; cursor: pointer; color: var(--text);
+    font-size: 1.1rem;
+  }
+
+  @media(max-width: 768px) {
+    .mobile-toggle { display: flex; }
+    .sidebar { transform: translateX(-100%); transition: transform .25s; }
+    .sidebar.open { transform: translateX(0); }
+    .main { margin-left: 0; }
+    .stats-grid { grid-template-columns: 1fr 1fr; }
+    .settings-grid { grid-template-columns: 1fr; }
+    .topbar { padding-left: 56px; }
+    .page-section { padding: 20px 16px; }
+  }
+  @media(max-width: 460px) {
+    .stats-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<button class="mobile-toggle" onclick="toggleSidebar()">☰</button>
+
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <a href="index.html" class="sidebar-logo">
+      <div class="logo-icon">📸</div>
+      SnapCaption AI
+    </a>
+
+    <nav class="sidebar-nav">
+      <div class="nav-section-label">Menu</div>
+      <div class="nav-item active" onclick="showSection('overview', this)">
+        <span class="nav-item-icon">📊</span> Overview
+      </div>
+      <a href="app.html" class="nav-item">
+        <span class="nav-item-icon">✨</span> Generate Captions
+      </a>
+      <div class="nav-item" onclick="showSection('history', this)">
+        <span class="nav-item-icon">🕐</span> Caption History
+      </div>
+      <div class="nav-item" onclick="showSection('favorites', this)" id="nav-favorites">
+        <span class="nav-item-icon">⭐</span> Favorites
+      </div>
+
+      <div class="nav-section-label" style="margin-top:8px">Settings</div>
+      <div class="nav-item" onclick="showSection('brand-voice', this)">
+        <span class="nav-item-icon">🎙️</span> Brand Voice
+      </div>
+      <div class="nav-item" onclick="showSection('account', this)">
+        <span class="nav-item-icon">⚙️</span> Account
+      </div>
+      <a href="pricing.html" class="nav-item">
+        <span class="nav-item-icon">💎</span> Upgrade Plan
+      </a>
+    </nav>
+
+    <div class="sidebar-user">
+      <div class="user-avatar" id="user-avatar">D</div>
+      <div class="user-info">
+        <div class="user-name" id="user-name">Loading…</div>
+        <span class="user-plan plan-free" id="user-plan-badge">Free</span>
+      </div>
+      <button class="user-logout" title="Sign out" onclick="handleLogout()">⇥</button>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <div class="main">
+    <div class="topbar">
+      <div class="topbar-title" id="page-title">Overview</div>
+      <div class="topbar-actions">
+        <a href="app.html" class="btn-primary">✨ Generate Captions</a>
+      </div>
+    </div>
+
+    <!-- ── OVERVIEW ─────────────────────────────────────── -->
+    <div class="page-section active" id="section-overview">
+
+      <!-- Usage banner for free users -->
+      <div class="usage-banner" id="usage-banner" style="display:none">
+        <div>
+          <div class="usage-text">
+            <h3>Daily Usage — <span id="usage-count">0</span> of 3 sets used</h3>
+            <p>Resets at midnight · <a href="pricing.html" style="color:var(--grad2)">Upgrade to Premium for unlimited →</a></p>
+          </div>
+        </div>
+        <div class="usage-dots" id="usage-dots">
+          <div class="usage-dot" id="dot-1"></div>
+          <div class="usage-dot" id="dot-2"></div>
+          <div class="usage-dot" id="dot-3"></div>
+        </div>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-label">Total Sets Generated</div>
+          <div class="stat-value" id="stat-total">—</div>
+          <div class="stat-sub">all time</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Favorites Saved</div>
+          <div class="stat-value" id="stat-favs">—</div>
+          <div class="stat-sub">your best captions</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Today's Sets</div>
+          <div class="stat-value" id="stat-today">—</div>
+          <div class="stat-sub" id="stat-today-sub">of 3 free today</div>
+          <div class="stat-bar-wrap">
+            <div class="stat-bar" id="stat-today-bar" style="width:0%"></div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Most-Used Platform</div>
+          <div class="stat-value" id="stat-platform" style="font-size:1.3rem">—</div>
+          <div class="stat-sub" id="stat-platform-sub"></div>
+        </div>
+      </div>
+
+      <!-- Recent history preview -->
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+        <h2 style="font-size:.95rem;font-weight:700">Recent Captions</h2>
+        <button onclick="showSection('history', document.querySelector('[onclick*=history]'))" class="btn-ghost" style="font-size:.8rem;padding:6px 14px">View all</button>
+      </div>
+      <div class="history-grid" id="recent-grid">
+        <div class="empty-state" id="recent-empty" style="display:none">
+          <div class="empty-icon">📝</div>
+          <h3>No captions yet</h3>
+          <p>Generate your first set to see it here.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── HISTORY ─────────────────────────────────────── -->
+    <div class="page-section" id="section-history">
+      <div class="history-toolbar">
+        <button class="filter-btn active" onclick="setFilter('all', this)">All</button>
+        <button class="filter-btn" onclick="setFilter('instagram', this)">Instagram</button>
+        <button class="filter-btn" onclick="setFilter('tiktok', this)">TikTok</button>
+        <button class="filter-btn" onclick="setFilter('linkedin', this)">LinkedIn</button>
+        <input type="search" class="search-input" id="history-search" placeholder="Search captions…" oninput="searchHistory(this.value)">
+      </div>
+      <div class="history-grid" id="history-grid"></div>
+      <div class="pagination" id="history-pagination"></div>
+    </div>
+
+    <!-- ── FAVORITES ───────────────────────────────────── -->
+    <div class="page-section" id="section-favorites">
+      <div class="history-grid" id="favorites-grid"></div>
+    </div>
+
+    <!-- ── BRAND VOICE ─────────────────────────────────── -->
+    <div class="page-section" id="section-brand-voice">
+      <div class="brand-voice-card">
+        <div class="bv-header">
+          <div class="bv-icon">🎙️</div>
+          <div>
+            <div class="bv-title">Brand Voice Saver</div>
+            <div class="bv-sub">AI uses your tone in every caption</div>
+          </div>
+        </div>
+
+        <div class="upgrade-lock" id="bv-lock" style="display:none">
+          <span>🔒</span>
+          <p>Brand Voice Saver is a <a href="pricing.html?plan=premium">Premium feature</a>. Upgrade to unlock it.</p>
+        </div>
+
+        <div id="bv-form">
+          <div class="bv-examples">
+            <div style="font-size:.8rem;color:var(--muted2);margin-bottom:8px">Quick styles:</div>
+            <span class="bv-example" onclick="setBVExample('Playful, witty, uses emoji, casual vibes — like texting a friend')">😄 Playful</span>
+            <span class="bv-example" onclick="setBVExample('Professional, polished, authoritative — no slang, full sentences, clear CTA')">💼 Professional</span>
+            <span class="bv-example" onclick="setBVExample('Inspirational and motivational — short punchy lines, empowering language')">🔥 Inspirational</span>
+            <span class="bv-example" onclick="setBVExample('Minimalist — short, clean, one strong idea per caption, no filler words')">✨ Minimal</span>
+            <span class="bv-example" onclick="setBVExample('Storytelling — narrative hooks, build tension, end with a question')">📖 Storyteller</span>
+          </div>
+          <textarea class="bv-textarea" id="bv-text" placeholder="Describe your brand voice in your own words…&#10;&#10;Example: 'Warm and conversational. We speak like a knowledgeable friend — never preachy or salesy. Use contractions, ask questions, and always end with a CTA. No corporate jargon. Max 2 sentences per caption.'" maxlength="1000"></textarea>
+          <div class="bv-hint"><span id="bv-char">0</span>/1000 characters</div>
+          <button class="btn-primary" onclick="saveBrandVoice()" id="bv-save-btn">Save Brand Voice</button>
+          <span class="save-status" id="bv-status"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── ACCOUNT ──────────────────────────────────────── -->
+    <div class="page-section" id="section-account">
+      <div class="settings-grid">
+        <div class="settings-card">
+          <h3>Account Info</h3>
+          <div class="setting-row">
+            <span class="setting-label">Name</span>
+            <span class="setting-value" id="acc-name">—</span>
+          </div>
+          <div class="setting-row">
+            <span class="setting-label">Email</span>
+            <span class="setting-value" id="acc-email">—</span>
+          </div>
+          <div class="setting-row">
+            <span class="setting-label">Plan</span>
+            <span class="setting-value" id="acc-plan">—</span>
+          </div>
+          <div class="setting-row">
+            <span class="setting-label">Member since</span>
+            <span class="setting-value" id="acc-joined">—</span>
+          </div>
+        </div>
+        <div class="settings-card">
+          <h3>Subscription</h3>
+          <div class="setting-row">
+            <span class="setting-label">Current plan</span>
+            <span class="setting-value" id="sub-plan">Free</span>
+          </div>
+          <div class="setting-row" id="sub-upgrade-row">
+            <span class="setting-label">Upgrade</span>
+            <a href="pricing.html" class="btn-primary" style="font-size:.78rem;padding:7px 14px">Upgrade →</a>
+          </div>
+          <div class="setting-row">
+            <span class="setting-label">Billing</span>
+            <span class="setting-value" id="sub-billing">—</span>
+          </div>
+        </div>
+        <div class="settings-card">
+          <h3>Danger Zone</h3>
+          <div class="setting-row">
+            <span class="setting-label">Sign out</span>
+            <button class="hist-btn del" onclick="handleLogout()">Sign out</button>
+          </div>
+          <div class="setting-row">
+            <span class="setting-label">Delete account</span>
+            <button class="hist-btn del" onclick="alert('Contact support@snapcaption.ai to delete your account.')">Delete</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /main -->
+</div><!-- /layout -->
+
+<script>
+// ── Auth guard ───────────────────────────────────────────────────────────
+const token = localStorage.getItem('sc_token');
+const userRaw = localStorage.getItem('sc_user');
+let currentUser = null;
+
+if (!token || !userRaw) {
+  window.location.href = 'login.html?redirect=dashboard.html';
+}
+
+try { currentUser = JSON.parse(userRaw); } catch(e) { window.location.href = 'login.html'; }
+
+// ── Boot UI ──────────────────────────────────────────────────────────────
+function initUI() {
+  const { name, email, plan } = currentUser;
+  document.getElementById('user-name').textContent = name || email;
+  document.getElementById('user-avatar').textContent = (name || email)[0].toUpperCase();
+  const badge = document.getElementById('user-plan-badge');
+  badge.textContent = plan.charAt(0).toUpperCase() + plan.slice(1);
+  badge.className = `user-plan plan-${plan}`;
+  document.getElementById('acc-name').textContent = name || '—';
+  document.getElementById('acc-email').textContent = email;
+  document.getElementById('acc-plan').textContent = plan.charAt(0).toUpperCase() + plan.slice(1);
+  document.getElementById('sub-plan').textContent = plan.charAt(0).toUpperCase() + plan.slice(1);
+  document.getElementById('sub-billing').textContent = plan === 'free' ? 'No billing' : 'Manage at Stripe';
+  if (plan !== 'free') document.getElementById('sub-upgrade-row').style.display = 'none';
+}
+
+// ── Navigation ───────────────────────────────────────────────────────────
+const sectionTitles = {
+  overview: 'Overview', history: 'Caption History',
+  favorites: 'Favorites', 'brand-voice': 'Brand Voice',
+  account: 'Account Settings',
+};
+function showSection(id, el) {
+  document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('section-' + id)?.classList.add('active');
+  if (el) el.classList.add('active');
+  document.getElementById('page-title').textContent = sectionTitles[id] || id;
+
+  if (id === 'history')      loadHistory(1);
+  if (id === 'favorites')    loadFavorites();
+  if (id === 'brand-voice')  loadBrandVoice();
+  if (id === 'overview')     loadOverview();
+
+  document.getElementById('sidebar').classList.remove('open');
+}
+
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+}
+
+// ── API helpers ───────────────────────────────────────────────────────────
+async function api(url, options = {}) {
+  const res = await fetch(url, {
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+      ...(options.headers || {}),
+    },
+  });
+  if (res.status === 401) { handleLogout(); return null; }
+  return res.json();
+}
+
+// ── Overview ──────────────────────────────────────────────────────────────
+async function loadOverview() {
+  // Usage
+  const usage = await api('api/check-usage.php');
+  if (usage && currentUser.plan === 'free') {
+    document.getElementById('usage-banner').style.display = 'flex';
+    const count = usage.used || 0;
+    document.getElementById('usage-count').textContent = count;
+    for (let i = 1; i <= 3; i++) {
+      document.getElementById('dot-' + i).className = 'usage-dot' + (i <= count ? '' : ' empty');
+    }
+  }
+
+  // History stats
+  const hist = await api('api/caption-history.php?limit=5');
+  const favs = await api('api/caption-history.php?favorites=1&limit=1');
+
+  if (hist) {
+    document.getElementById('stat-total').textContent = hist.total || 0;
+    document.getElementById('stat-today').textContent = usage?.used || 0;
+    if (currentUser.plan === 'free') {
+      document.getElementById('stat-today-sub').textContent = `of 3 free today`;
+      document.getElementById('stat-today-bar').style.width = ((usage?.used || 0) / 3 * 100) + '%';
+    } else {
+      document.getElementById('stat-today-sub').textContent = 'unlimited';
+      document.getElementById('stat-today-bar').style.width = '100%';
+    }
+
+    // Platform distribution
+    const platforms = {};
+    (hist.data || []).forEach(c => platforms[c.platform] = (platforms[c.platform] || 0) + 1);
+    const top = Object.entries(platforms).sort((a,b)=>b[1]-a[1])[0];
+    if (top) {
+      const icons = {instagram:'📸',tiktok:'🎵',linkedin:'💼',facebook:'👥',x:'✖️',pinterest:'📌'};
+      document.getElementById('stat-platform').textContent = (icons[top[0]] || '📱') + ' ' + top[0].charAt(0).toUpperCase() + top[0].slice(1);
+      document.getElementById('stat-platform-sub').textContent = top[1] + ' sets generated';
+    }
+
+    // Recent grid
+    const grid = document.getElementById('recent-grid');
+    document.getElementById('recent-empty').style.display = hist.data?.length ? 'none' : 'block';
+    (hist.data || []).forEach(c => {
+      const card = buildHistoryCard(c);
+      grid.appendChild(card);
+    });
+  }
+
+  if (favs) {
+    document.getElementById('stat-favs').textContent = favs.total || 0;
+  }
+}
+
+// ── History ───────────────────────────────────────────────────────────────
+let historyFilter = 'all';
+let historySearch = '';
+let historyPage   = 1;
+
+async function loadHistory(page = 1) {
+  historyPage = page;
+  const grid = document.getElementById('history-grid');
+  grid.innerHTML = '<div style="color:var(--muted);font-size:.88rem;padding:40px;text-align:center">Loading…</div>';
+
+  let url = `api/caption-history.php?page=${page}&limit=10`;
+  if (historyFilter !== 'all') url += `&platform=${historyFilter}`;
+
+  const data = await api(url);
+  grid.innerHTML = '';
+
+  if (!data || !data.data?.length) {
+    grid.innerHTML = `<div class="empty-state">
+      <div class="empty-icon">🕐</div>
+      <h3>No captions yet</h3>
+      <p>Generate your first set of captions to see your history here.</p>
+    </div>`;
+    document.getElementById('history-pagination').innerHTML = '';
+    return;
+  }
+
+  let filtered = data.data;
+  if (historySearch) {
+    const q = historySearch.toLowerCase();
+    filtered = filtered.filter(c =>
+      (c.caption_1||'').toLowerCase().includes(q) ||
+      (c.context_text||'').toLowerCase().includes(q)
+    );
+  }
+
+  filtered.forEach(c => grid.appendChild(buildHistoryCard(c)));
+  buildPagination(data.pages, page, 'loadHistory');
+}
+
+async function loadFavorites() {
+  const grid = document.getElementById('favorites-grid');
+  grid.innerHTML = '';
+  const data = await api('api/caption-history.php?favorites=1&limit=50');
+
+  if (!data?.data?.length) {
+    grid.innerHTML = `<div class="empty-state">
+      <div class="empty-icon">⭐</div>
+      <h3>No favorites yet</h3>
+      <p>Star any caption in your history to save it here.</p>
+    </div>`;
+    return;
+  }
+  data.data.forEach(c => grid.appendChild(buildHistoryCard(c)));
+}
+
+function setFilter(f, btn) {
+  historyFilter = f;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  loadHistory(1);
+}
+
+let searchTimer;
+function searchHistory(q) {
+  historySearch = q;
+  clearTimeout(searchTimer);
+  searchTimer = setTimeout(() => loadHistory(1), 300);
+}
+
+function buildHistoryCard(c) {
+  const div = document.createElement('div');
+  div.className = 'history-card';
+  div.id = 'card-' + c.id;
+
+  const scores = c.hook_scores || [];
+  const score1 = scores[0] || null;
+  const capPreview = (c.caption_1 || '').slice(0, 140) + (c.caption_1?.length > 140 ? '…' : '');
+  const dateStr = new Date(c.created_at).toLocaleDateString('en-US', {month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'});
+
+  div.innerHTML = `
+    <div class="history-card-header">
+      <span class="platform-badge pb-${c.platform}">${c.platform}</span>
+      <span style="font-size:.75rem;color:var(--muted2)">${c.language} · ${c.tone}</span>
+      <span class="history-date">${dateStr}</span>
+    </div>
+    <div class="history-caption">
+      <strong>Caption 1:</strong> ${capPreview}
+    </div>
+    <div class="history-actions">
+      <button class="hist-btn" onclick="copyCaption(${c.id}, '${escHtml(c.caption_1)}')">📋 Copy</button>
+      <button class="hist-btn fav ${c.favorited ? 'active' : ''}" id="fav-${c.id}" onclick="toggleFavorite(${c.id})">
+        ${c.favorited ? '★ Favorited' : '☆ Favorite'}
+      </button>
+      <button class="hist-btn del" onclick="deleteCaption(${c.id})">🗑</button>
+      ${score1 ? `<div class="hook-score">Hook <span class="score-pill">${score1}</span></div>` : ''}
+    </div>
+  `;
+  return div;
+}
+
+function buildPagination(pages, current, fn) {
+  const pg = document.getElementById('history-pagination');
+  pg.innerHTML = '';
+  if (pages <= 1) return;
+
+  const prev = document.createElement('button');
+  prev.className = 'pg-btn'; prev.textContent = '← Prev';
+  prev.disabled = current === 1;
+  prev.onclick = () => window[fn](current - 1);
+  pg.appendChild(prev);
+
+  for (let i = 1; i <= pages; i++) {
+    const btn = document.createElement('button');
+    btn.className = 'pg-btn' + (i === current ? ' active' : '');
+    btn.textContent = i;
+    btn.onclick = () => window[fn](i);
+    pg.appendChild(btn);
+  }
+
+  const next = document.createElement('button');
+  next.className = 'pg-btn'; next.textContent = 'Next →';
+  next.disabled = current === pages;
+  next.onclick = () => window[fn](current + 1);
+  pg.appendChild(next);
+}
+
+async function copyCaption(id, text) {
+  await navigator.clipboard.writeText(text);
+  const btn = document.querySelector(`#card-${id} .hist-btn`);
+  if (btn) { btn.textContent = '✓ Copied!'; setTimeout(() => btn.textContent = '📋 Copy', 2000); }
+}
+
+async function toggleFavorite(id) {
+  const data = await api('api/caption-history.php', {
+    method: 'POST',
+    body: JSON.stringify({ action: 'favorite', id }),
+  });
+  if (data?.success) {
+    const btn = document.getElementById('fav-' + id);
+    if (btn) {
+      btn.classList.toggle('active', data.favorited);
+      btn.textContent = data.favorited ? '★ Favorited' : '☆ Favorite';
+    }
+  }
+}
+
+async function deleteCaption(id) {
+  if (!confirm('Delete this caption set?')) return;
+  const data = await api(`api/caption-history.php?id=${id}`, { method: 'DELETE' });
+  if (data?.success) {
+    document.getElementById('card-' + id)?.remove();
+  }
+}
+
+// ── Brand Voice ───────────────────────────────────────────────────────────
+async function loadBrandVoice() {
+  const isPremium = currentUser.plan !== 'free';
+  document.getElementById('bv-lock').style.display = isPremium ? 'none' : 'flex';
+  document.getElementById('bv-form').style.pointerEvents = isPremium ? 'auto' : 'none';
+  document.getElementById('bv-form').style.opacity = isPremium ? '1' : '.5';
+
+  if (!isPremium) return;
+
+  const data = await api('api/brand-voice.php');
+  if (data?.brand_voice) {
+    document.getElementById('bv-text').value = data.brand_voice;
+    updateBVChar();
+  }
+}
+
+function setBVExample(text) {
+  document.getElementById('bv-text').value = text;
+  updateBVChar();
+}
+function updateBVChar() {
+  document.getElementById('bv-char').textContent = document.getElementById('bv-text').value.length;
+}
+document.getElementById('bv-text').addEventListener('input', updateBVChar);
+
+async function saveBrandVoice() {
+  const text   = document.getElementById('bv-text').value;
+  const btn    = document.getElementById('bv-save-btn');
+  const status = document.getElementById('bv-status');
+  btn.disabled = true; btn.textContent = 'Saving…';
+  const data = await api('api/brand-voice.php', {
+    method: 'POST', body: JSON.stringify({ brand_voice: text }),
+  });
+  btn.disabled = false; btn.textContent = 'Save Brand Voice';
+  if (data?.success) {
+    status.textContent = '✓ Saved!'; status.className = 'save-status ok';
+  } else {
+    status.textContent = data?.message || 'Save failed'; status.className = 'save-status err';
+  }
+  setTimeout(() => status.textContent = '', 3000);
+}
+
+// ── Auth ──────────────────────────────────────────────────────────────────
+async function handleLogout() {
+  await api('api/auth-logout.php', { method: 'POST' }).catch(() => {});
+  localStorage.removeItem('sc_token');
+  localStorage.removeItem('sc_user');
+  window.location.href = 'index.html';
+}
+
+// ── Helpers ───────────────────────────────────────────────────────────────
+function escHtml(str) {
+  return (str || '').replace(/'/g, "\\'").replace(/"/g, '&quot;');
+}
+
+// ── Init ──────────────────────────────────────────────────────────────────
+initUI();
+loadOverview();
+</script>
+</body>
+</html>

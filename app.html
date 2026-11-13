@@ -1,0 +1,966 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>SnapCaption AI — Generate Captions</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #09090f;
+    --bg2: #0f0f1a;
+    --bg3: #141424;
+    --card: #13131f;
+    --border: #1e1e32;
+    --border2: #2a2a44;
+    --grad1: #7c3aed;
+    --grad2: #a855f7;
+    --grad3: #ec4899;
+    --text: #e8e8f0;
+    --muted: #6b7280;
+    --muted2: #9ca3af;
+    --green: #10b981;
+    --yellow: #f59e0b;
+    --red: #ef4444;
+    --green-bg: rgba(16,185,129,.1);
+    --yellow-bg: rgba(245,158,11,.1);
+    --red-bg: rgba(239,68,68,.1);
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    background: var(--bg); color: var(--text);
+    font-family: 'Inter', sans-serif; font-size: 16px;
+    line-height: 1.5; min-height: 100vh;
+  }
+  /* NAV */
+  nav {
+    position: sticky; top:0; z-index:50;
+    background: rgba(9,9,15,.9); backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+    height: 56px; padding: 0 20px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .nav-logo {
+    display: flex; align-items: center; gap: 8px;
+    font-size: .95rem; font-weight: 800; color: var(--text);
+    text-decoration: none;
+  }
+  .logo-icon {
+    width: 30px; height: 30px; border-radius: 8px;
+    background: linear-gradient(135deg,#7c3aed,#ec4899);
+    display: flex; align-items: center; justify-content: center; font-size: 15px;
+  }
+  .usage-pill {
+    display: flex; align-items: center; gap: 7px;
+    background: var(--bg3); border: 1px solid var(--border);
+    border-radius: 100px; padding: 6px 13px; font-size: .86rem;
+  }
+  .usage-dots { display: flex; gap: 4px; }
+  .usage-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--border2); }
+  .usage-dot.used { background: linear-gradient(135deg,var(--grad1),var(--grad3)); }
+  .upgrade-link {
+    font-size: .82rem; font-weight: 600; color: var(--grad2);
+    text-decoration: none; padding: 5px 11px; border-radius: 6px;
+    border: 1px solid rgba(168,85,247,.3);
+    background: rgba(168,85,247,.08);
+  }
+
+  /* LAYOUT */
+  .app-wrap {
+    max-width: 1100px; margin: 0 auto; padding: 24px 16px;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 20px;
+  }
+  @media(max-width:768px){ .app-wrap { grid-template-columns: 1fr; padding: 16px; } }
+
+  /* LEFT PANEL */
+  .panel {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 16px; overflow: hidden;
+  }
+  .panel-head {
+    padding: 16px 18px; border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .panel-head-title { font-size: .88rem; font-weight: 700; }
+  .panel-head-sub { font-size: .82rem; color: #b0b8d0; margin-left: auto; }
+
+  /* UPLOAD ZONE */
+  .upload-zone {
+    margin: 16px; border-radius: 12px;
+    border: 2px dashed var(--border2);
+    min-height: 280px;
+    display: flex; align-items: center; justify-content: center;
+    flex-direction: column; gap: 10px;
+    cursor: pointer; transition: border-color .2s, background .2s;
+    position: relative; overflow: hidden;
+    background: var(--bg2);
+  }
+  .upload-zone:hover, .upload-zone.drag-over {
+    border-color: var(--grad2); background: rgba(124,58,237,.04);
+  }
+  .upload-icon-big { font-size: 2.4rem; opacity: .6; }
+  .upload-label { font-size: .88rem; font-weight: 600; }
+  .upload-sub { font-size: .82rem; color: #b0b8d0; }
+  #fileInput { display: none; }
+  #photoPreview {
+    display: none; width: 100%; height: 100%;
+    position: absolute; inset: 0;
+    object-fit: contain;
+    background: #000;
+  }
+  .preview-overlay {
+    display: none;
+    position: absolute; inset: 0;
+    background: rgba(0,0,0,.55);
+    align-items: center; justify-content: center;
+    flex-direction: column; gap: 8px;
+  }
+  .upload-zone:hover .preview-overlay { display: flex; }
+  .preview-overlay span { font-size: .78rem; font-weight: 600; }
+
+  /* SELECTORS */
+  .selectors { padding: 0 16px 16px; display: flex; flex-direction: column; gap: 12px; }
+  .sel-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  label.sel-label {
+    font-size: .82rem; font-weight: 600; color: #c8cfe0;
+    letter-spacing: .05em; display: block; margin-bottom: 5px;
+  }
+  select, .context-input {
+    width: 100%;
+    background: var(--bg2); border: 1px solid var(--border);
+    color: var(--text); border-radius: 8px; padding: 10px 13px;
+    font-family: inherit; font-size: .92rem;
+    appearance: none; cursor: pointer;
+    transition: border-color .2s;
+  }
+  select:focus, .context-input:focus {
+    outline: none; border-color: var(--grad2);
+  }
+  .context-row { position: relative; }
+  .mic-btn {
+    position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
+    background: none; border: none; cursor: pointer; color: var(--muted);
+    font-size: 1rem; padding: 4px; border-radius: 6px;
+    transition: color .2s, background .2s;
+  }
+  .mic-btn:hover { color: var(--grad2); background: rgba(168,85,247,.1); }
+  .mic-btn.listening { color: var(--red); animation: micPulse 1s infinite; }
+  @keyframes micPulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+
+  /* GENERATE BTN */
+  .gen-btn {
+    margin: 0 16px 16px;
+    width: calc(100% - 32px); padding: 13px;
+    border-radius: 10px; border: none; cursor: pointer;
+    background: linear-gradient(135deg,#7c3aed,#ec4899);
+    color: #fff; font-family: inherit; font-size: .95rem; font-weight: 700;
+    transition: opacity .2s, transform .15s;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
+  .gen-btn:hover { opacity: .9; transform: translateY(-1px); }
+  .gen-btn:disabled { opacity: .4; cursor: not-allowed; transform: none; }
+  .gen-btn .spinner {
+    width: 16px; height: 16px; border-radius: 50%;
+    border: 2px solid rgba(255,255,255,.3);
+    border-top-color: #fff;
+    animation: spin .7s linear infinite;
+    display: none;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* RIGHT PANEL — RESULTS */
+  .results-panel { display: flex; flex-direction: column; gap: 16px; }
+
+  /* EMPTY STATE */
+  .empty-state {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 16px; padding: 48px 24px;
+    text-align: center; color: var(--muted);
+    display: flex; flex-direction: column; align-items: center; gap: 12px;
+  }
+  .empty-state .icon { font-size: 2.5rem; opacity: .4; }
+  .empty-state p { font-size: .85rem; line-height: 1.6; max-width: 240px; }
+
+  /* PLATFORM BADGE */
+  .plat-badge {
+    display: inline-flex; align-items: center; gap: 5px;
+    background: rgba(124,58,237,.12); border: 1px solid rgba(124,58,237,.25);
+    padding: 3px 10px; border-radius: 100px;
+    font-size: .8rem; font-weight: 600; color: var(--grad2); margin-left: auto;
+  }
+
+  /* CAPTION CARDS */
+  .captions-block { background: var(--card); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; }
+  .captions-header {
+    padding: 14px 16px; border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .caption-item {
+    padding: 14px 16px; border-bottom: 1px solid var(--border);
+    transition: background .15s;
+  }
+  .caption-item:last-child { border-bottom: none; }
+  .caption-item:hover { background: rgba(255,255,255,.02); }
+  .caption-top {
+    display: flex; align-items: flex-start; gap: 10px; margin-bottom: 8px;
+  }
+  .cap-num {
+    min-width: 22px; height: 22px; border-radius: 50%;
+    background: rgba(168,85,247,.15); border: 1px solid rgba(168,85,247,.2);
+    display: flex; align-items: center; justify-content: center;
+    font-size: .78rem; font-weight: 800; color: var(--grad2); flex-shrink: 0;
+  }
+  .cap-text { font-size: .93rem; line-height: 1.65; flex: 1; }
+  .cap-actions { display: flex; align-items: center; gap: 7px; margin-top: 8px; }
+  .cap-hook {
+    display: flex; align-items: center; gap: 5px;
+    font-size: .78rem; font-weight: 700; color: var(--muted2);
+  }
+  .hook-bar { height: 4px; border-radius: 2px; background: var(--border); flex: 1; max-width: 48px; overflow: hidden; }
+  .hook-fill { height: 100%; border-radius: 2px; background: linear-gradient(90deg,var(--grad1),var(--grad3)); }
+  .cap-btn {
+    padding: 5px 11px; border-radius: 6px;
+    border: 1px solid var(--border); background: none;
+    color: #b0b8d0; font-size: .78rem; font-weight: 600;
+    font-family: inherit; cursor: pointer; transition: all .15s;
+  }
+  .cap-btn:hover { border-color: var(--grad2); color: var(--grad2); }
+  .cap-btn.copied { border-color: var(--green); color: var(--green); }
+  .tts-btn {
+    background: none; border: 1px solid var(--border);
+    color: var(--muted); cursor: pointer;
+    padding: 4px 8px; border-radius: 6px; font-size: .78rem;
+    transition: all .15s;
+  }
+  .tts-btn:hover { border-color: var(--grad2); color: var(--grad2); }
+  .tts-btn.playing { color: var(--green); border-color: var(--green); }
+  .blurred-row { filter: blur(5px); pointer-events: none; user-select: none; }
+  .upgrade-banner {
+    padding: 12px 16px;
+    display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    background: rgba(124,58,237,.08); border-top: 1px solid rgba(124,58,237,.2);
+  }
+  .upgrade-banner span { font-size: .86rem; color: var(--muted2); }
+  .upgrade-banner a {
+    font-size: .86rem; font-weight: 700; color: var(--grad2);
+    text-decoration: none; padding: 5px 12px;
+    border: 1px solid rgba(168,85,247,.3); border-radius: 6px;
+    white-space: nowrap; transition: background .15s;
+  }
+  .upgrade-banner a:hover { background: rgba(168,85,247,.1); }
+
+  /* HASHTAGS */
+  .hashtag-block { background: var(--card); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; }
+  .hash-header { padding: 14px 16px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 8px; }
+  .hash-body { padding: 14px 16px; }
+  .hash-chips { display: flex; flex-wrap: wrap; gap: 7px; }
+  .hash-chip {
+    display: flex; align-items: center; gap: 5px;
+    padding: 5px 11px; border-radius: 100px; font-size: .82rem; font-weight: 600;
+    cursor: pointer; transition: opacity .15s;
+  }
+  .hash-chip:hover { opacity: .8; }
+  .hash-chip .str { font-size: .7rem; opacity: .8; }
+  .hash-chip.sweet { background: var(--green-bg); border: 1px solid rgba(16,185,129,.25); color: #34d399; }
+  .hash-chip.comp { background: var(--yellow-bg); border: 1px solid rgba(245,158,11,.25); color: #fbbf24; }
+  .hash-chip.sat { background: var(--red-bg); border: 1px solid rgba(239,68,68,.2); color: #f87171; }
+  .hash-legend { display: flex; gap: 14px; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border); flex-wrap: wrap; }
+  .hash-legend span { font-size: .78rem; color: #b0b8d0; display: flex; align-items: center; gap: 4px; }
+  .dot { width: 7px; height: 7px; border-radius: 50%; }
+
+  /* EXTRAS ROW */
+  .extras-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  @media(max-width:500px){ .extras-row { grid-template-columns: 1fr; } }
+  .extra-card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 14px; }
+  .extra-card .ec-icon { font-size: 1.3rem; margin-bottom: 8px; }
+  .extra-card .ec-label { font-size: .78rem; font-weight: 700; letter-spacing: .05em; color: #b0b8d0; text-transform: uppercase; margin-bottom: 6px; }
+  .extra-card .ec-val { font-size: .9rem; line-height: 1.5; color: var(--muted2); }
+  .extra-card .ec-val strong { color: var(--text); }
+
+  /* BEFORE/AFTER */
+  .enhance-block {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 16px; overflow: hidden;
+  }
+  .enh-header { padding: 14px 16px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 8px; }
+  .enh-body { padding: 16px; }
+  .ba-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+  .ba-side { border-radius: 10px; overflow: hidden; position: relative; }
+  .ba-label {
+    position: absolute; top: 8px; left: 8px;
+    font-size: .75rem; font-weight: 700; padding: 3px 8px;
+    border-radius: 4px; background: rgba(0,0,0,.7);
+  }
+  .ba-side img { width: 100%; aspect-ratio: 4/3; object-fit: cover; display: block; }
+  .ba-after-blur { filter: blur(8px); }
+  .ba-lock {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(0,0,0,.45); flex-direction: column; gap: 5px;
+  }
+  .ba-lock span { font-size: .82rem; font-weight: 700; color: #fff; }
+  .enh-btn {
+    width: 100%; padding: 10px;
+    border-radius: 8px; border: none; cursor: pointer;
+    background: linear-gradient(135deg,#7c3aed,#ec4899);
+    color: #fff; font-family: inherit; font-size: .82rem; font-weight: 700;
+    transition: opacity .2s;
+  }
+  .enh-btn:hover { opacity: .9; }
+  .enh-note { font-size: .82rem; color: #b0b8d0; text-align: center; margin-top: 8px; }
+
+  /* LOADING OVERLAY */
+  #loadingOverlay {
+    display: none; position: fixed; inset: 0; z-index: 200;
+    background: rgba(9,9,15,.85); backdrop-filter: blur(8px);
+    align-items: center; justify-content: center; flex-direction: column; gap: 20px;
+  }
+  .load-card {
+    background: var(--card); border: 1px solid var(--border2);
+    border-radius: 20px; padding: 40px 48px; text-align: center;
+    max-width: 340px; width: 90%;
+    box-shadow: 0 40px 80px rgba(0,0,0,.5);
+  }
+  .load-icon { font-size: 3rem; margin-bottom: 16px; animation: scanBounce 1.4s ease-in-out infinite; }
+  @keyframes scanBounce { 0%,100%{transform:scale(1)} 50%{transform:scale(1.12)} }
+  .load-title { font-size: 1rem; font-weight: 800; margin-bottom: 8px; }
+  .load-steps { font-size: .88rem; color: var(--muted2); line-height: 1.9; }
+  .load-step { display: flex; align-items: center; gap: 8px; }
+  .load-step .step-dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--border2); flex-shrink: 0;
+    transition: background .3s;
+  }
+  .load-step.active .step-dot { background: var(--grad2); }
+  .load-step.done .step-dot { background: var(--green); }
+  .load-progress {
+    margin-top: 20px; height: 3px; border-radius: 2px;
+    background: var(--border); overflow: hidden;
+  }
+  .load-bar {
+    height: 100%; border-radius: 2px;
+    background: linear-gradient(90deg,var(--grad1),var(--grad3));
+    width: 0%; transition: width .4s ease;
+  }
+
+  /* SCROLL */
+  ::-webkit-scrollbar { width: 5px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="index.html" class="nav-logo">
+    <div class="logo-icon">📸</div>
+    SnapCaption AI
+  </a>
+  <div style="display:flex;align-items:center;gap:10px;">
+    <div class="usage-pill" id="usagePill">
+      <div class="usage-dots">
+        <div class="usage-dot" id="d1"></div>
+        <div class="usage-dot" id="d2"></div>
+        <div class="usage-dot" id="d3"></div>
+      </div>
+      <span id="usageText" style="font-size:.86rem;color:var(--muted2);">3 left today</span>
+    </div>
+    <a href="pricing.html" class="upgrade-link">Upgrade $7</a>
+  </div>
+</nav>
+
+<!-- LOADING OVERLAY -->
+<div id="loadingOverlay">
+  <div class="load-card">
+    <div class="load-icon">🔍</div>
+    <div class="load-title">AI is reading your photo…</div>
+    <div class="load-steps" style="margin-top:14px;">
+      <div class="load-step" id="ls1" style="margin-bottom:6px;">
+        <div class="step-dot"></div>
+        <span>Analyzing photo content</span>
+      </div>
+      <div class="load-step" id="ls2" style="margin-bottom:6px;">
+        <div class="step-dot"></div>
+        <span>Writing 5 captions</span>
+      </div>
+      <div class="load-step" id="ls3" style="margin-bottom:6px;">
+        <div class="step-dot"></div>
+        <span>Generating 20 hashtags</span>
+      </div>
+      <div class="load-step" id="ls4">
+        <div class="step-dot"></div>
+        <span>Scoring & optimizing</span>
+      </div>
+    </div>
+    <div class="load-progress"><div class="load-bar" id="loadBar"></div></div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="app-wrap">
+
+  <!-- LEFT: UPLOAD + CONTROLS -->
+  <div>
+    <div class="panel">
+      <div class="panel-head">
+        <span style="font-size:1rem;">📷</span>
+        <span class="panel-head-title">Your Photo</span>
+        <span class="panel-head-sub">AI reads it directly</span>
+      </div>
+
+      <!-- Upload Zone -->
+      <div class="upload-zone" id="uploadZone" onclick="document.getElementById('fileInput').click()">
+        <span class="upload-icon-big">📸</span>
+        <span class="upload-label">Drop photo here or click to upload</span>
+        <span class="upload-sub">JPG, PNG, WEBP — up to 10MB</span>
+        <img id="photoPreview" alt="Preview">
+        <div class="preview-overlay"><span>🔄 Change photo</span></div>
+        <input type="file" id="fileInput" accept="image/*">
+      </div>
+
+      <!-- Selectors -->
+      <div class="selectors">
+
+        <!-- Platform + Language -->
+        <div class="sel-row">
+          <div>
+            <label class="sel-label">Platform</label>
+            <select id="platformSel">
+              <option value="Instagram">📸 Instagram</option>
+              <option value="TikTok">🎵 TikTok</option>
+              <option value="LinkedIn">💼 LinkedIn</option>
+              <option value="X">🐦 X (Twitter)</option>
+              <option value="Facebook">📘 Facebook</option>
+              <option value="Pinterest">📌 Pinterest</option>
+            </select>
+          </div>
+          <div>
+            <label class="sel-label">Language</label>
+            <select id="langSel">
+              <optgroup label="Most Spoken">
+                <option value="English">🇺🇸 English</option>
+                <option value="Mandarin Chinese">🇨🇳 Chinese (Mandarin)</option>
+                <option value="Hindi">🇮🇳 Hindi</option>
+                <option value="Spanish">🇪🇸 Spanish</option>
+                <option value="French">🇫🇷 French</option>
+                <option value="Arabic">🇸🇦 Arabic</option>
+                <option value="Bengali">🇧🇩 Bengali</option>
+                <option value="Portuguese">🇵🇹 Portuguese</option>
+                <option value="Russian">🇷🇺 Russian</option>
+                <option value="Urdu">🇵🇰 Urdu</option>
+              </optgroup>
+              <optgroup label="Asia Pacific">
+                <option value="Japanese">🇯🇵 Japanese</option>
+                <option value="Korean">🇰🇷 Korean</option>
+                <option value="Indonesian">🇮🇩 Indonesian</option>
+                <option value="Javanese">🇮🇩 Javanese</option>
+                <option value="Sundanese">🇮🇩 Sundanese</option>
+                <option value="Filipino">🇵🇭 Filipino</option>
+                <option value="Cebuano">🇵🇭 Cebuano</option>
+                <option value="Malay">🇲🇾 Malay</option>
+                <option value="Vietnamese">🇻🇳 Vietnamese</option>
+                <option value="Thai">🇹🇭 Thai</option>
+                <option value="Burmese">🇲🇲 Burmese</option>
+                <option value="Khmer">🇰🇭 Khmer</option>
+                <option value="Lao">🇱🇦 Lao</option>
+                <option value="Mongolian">🇲🇳 Mongolian</option>
+                <option value="Maori">🇳🇿 Māori</option>
+              </optgroup>
+              <optgroup label="South Asia">
+                <option value="Tamil">🇮🇳 Tamil</option>
+                <option value="Telugu">🇮🇳 Telugu</option>
+                <option value="Marathi">🇮🇳 Marathi</option>
+                <option value="Gujarati">🇮🇳 Gujarati</option>
+                <option value="Kannada">🇮🇳 Kannada</option>
+                <option value="Malayalam">🇮🇳 Malayalam</option>
+                <option value="Punjabi">🇮🇳 Punjabi</option>
+                <option value="Odia">🇮🇳 Odia</option>
+                <option value="Sindhi">🇵🇰 Sindhi</option>
+                <option value="Nepali">🇳🇵 Nepali</option>
+                <option value="Sinhala">🇱🇰 Sinhala</option>
+                <option value="Pashto">🇦🇫 Pashto</option>
+              </optgroup>
+              <optgroup label="Middle East & Central Asia">
+                <option value="Persian">🇮🇷 Persian (Farsi)</option>
+                <option value="Hebrew">🇮🇱 Hebrew</option>
+                <option value="Turkish">🇹🇷 Turkish</option>
+                <option value="Kurdish">🇮🇶 Kurdish</option>
+                <option value="Azerbaijani">🇦🇿 Azerbaijani</option>
+                <option value="Kazakh">🇰🇿 Kazakh</option>
+                <option value="Uzbek">🇺🇿 Uzbek</option>
+                <option value="Georgian">🇬🇪 Georgian</option>
+                <option value="Armenian">🇦🇲 Armenian</option>
+              </optgroup>
+              <optgroup label="Africa">
+                <option value="Swahili">🇰🇪 Swahili</option>
+                <option value="Hausa">🇳🇬 Hausa</option>
+                <option value="Yoruba">🇳🇬 Yoruba</option>
+                <option value="Igbo">🇳🇬 Igbo</option>
+                <option value="Amharic">🇪🇹 Amharic</option>
+                <option value="Oromo">🇪🇹 Oromo</option>
+                <option value="Somali">🇸🇴 Somali</option>
+                <option value="Zulu">🇿🇦 Zulu</option>
+                <option value="Xhosa">🇿🇦 Xhosa</option>
+                <option value="Afrikaans">🇿🇦 Afrikaans</option>
+                <option value="Shona">🇿🇼 Shona</option>
+                <option value="Wolof">🇸🇳 Wolof</option>
+                <option value="Kinyarwanda">🇷🇼 Kinyarwanda</option>
+                <option value="Lingala">🇨🇩 Lingala</option>
+              </optgroup>
+              <optgroup label="Western Europe">
+                <option value="German">🇩🇪 German</option>
+                <option value="Italian">🇮🇹 Italian</option>
+                <option value="Dutch">🇳🇱 Dutch</option>
+                <option value="Swedish">🇸🇪 Swedish</option>
+                <option value="Norwegian">🇳🇴 Norwegian</option>
+                <option value="Danish">🇩🇰 Danish</option>
+                <option value="Finnish">🇫🇮 Finnish</option>
+                <option value="Greek">🇬🇷 Greek</option>
+                <option value="Catalan">🏳️ Catalan</option>
+                <option value="Galician">🏳️ Galician</option>
+                <option value="Basque">🏳️ Basque</option>
+                <option value="Welsh">🏴󠁧󠁢󠁷󠁬󠁳󠁿 Welsh</option>
+              </optgroup>
+              <optgroup label="Eastern Europe">
+                <option value="Polish">🇵🇱 Polish</option>
+                <option value="Ukrainian">🇺🇦 Ukrainian</option>
+                <option value="Romanian">🇷🇴 Romanian</option>
+                <option value="Czech">🇨🇿 Czech</option>
+                <option value="Hungarian">🇭🇺 Hungarian</option>
+                <option value="Bulgarian">🇧🇬 Bulgarian</option>
+                <option value="Serbian">🇷🇸 Serbian</option>
+                <option value="Croatian">🇭🇷 Croatian</option>
+                <option value="Slovak">🇸🇰 Slovak</option>
+                <option value="Slovenian">🇸🇮 Slovenian</option>
+                <option value="Lithuanian">🇱🇹 Lithuanian</option>
+                <option value="Latvian">🇱🇻 Latvian</option>
+                <option value="Estonian">🇪🇪 Estonian</option>
+                <option value="Albanian">🇦🇱 Albanian</option>
+                <option value="Macedonian">🇲🇰 Macedonian</option>
+                <option value="Bosnian">🇧🇦 Bosnian</option>
+              </optgroup>
+              <optgroup label="Americas & Caribbean">
+                <option value="Haitian Creole">🇭🇹 Haitian Creole</option>
+              </optgroup>
+            </select>
+          </div>
+        </div>
+
+        <!-- Tone -->
+        <div>
+          <label class="sel-label">Caption Tone</label>
+          <select id="toneSel">
+            <option value="engaging">Engaging & Conversational</option>
+            <option value="funny">Funny & Witty</option>
+            <option value="inspirational">Inspirational & Motivational</option>
+            <option value="professional">Professional & Polished</option>
+            <option value="storytelling">Storytelling & Personal</option>
+            <option value="minimal">Minimal & Clean</option>
+          </select>
+        </div>
+
+        <!-- Optional voice context -->
+        <div>
+          <label class="sel-label">Add Context (optional)</label>
+          <div class="context-row">
+            <input type="text" class="context-input" id="contextInput"
+              placeholder="e.g. 'Sunday hike with friends at Mount Tamalpais…'">
+            <button class="mic-btn" id="micBtn" onclick="toggleMic()" title="Speak your context">🎙️</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Generate Button -->
+      <button class="gen-btn" id="genBtn" onclick="generateCaptions()">
+        <div class="spinner" id="btnSpinner"></div>
+        <span id="btnText">✨ Generate 5 Captions</span>
+      </button>
+    </div>
+
+    <!-- Free limit info -->
+    <div style="padding:10px 4px;font-size:.72rem;color:var(--muted);text-align:center;line-height:1.6;">
+      Free plan: 3 captions/day · 90 languages · <a href="pricing.html" style="color:var(--grad2);font-weight:600;">Upgrade for unlimited</a>
+    </div>
+  </div>
+
+  <!-- RIGHT: RESULTS -->
+  <div class="results-panel" id="resultsPanel">
+    <!-- Empty state -->
+    <div class="empty-state" id="emptyState">
+      <div class="icon">✨</div>
+      <strong style="font-size:.9rem;">Results appear here</strong>
+      <p>Upload a photo and click Generate — AI will read it and write 5 platform-ready captions.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ── State ──────────────────────────────────────────────
+  let currentImageBase64 = null;
+  let usageCount = parseInt(localStorage.getItem('sc_usage') || '0');
+  let usageDate = localStorage.getItem('sc_date') || '';
+  const today = new Date().toDateString();
+  if (usageDate !== today) { usageCount = 0; localStorage.setItem('sc_date', today); }
+  const FREE_LIMIT = 3;
+  updateUsageUI();
+
+  // ── Upload ─────────────────────────────────────────────
+  const uploadZone = document.getElementById('uploadZone');
+  const fileInput = document.getElementById('fileInput');
+  const preview = document.getElementById('photoPreview');
+
+  ['dragover','dragleave','drop'].forEach(evt => {
+    uploadZone.addEventListener(evt, e => {
+      e.preventDefault();
+      if (evt === 'dragover') uploadZone.classList.add('drag-over');
+      else uploadZone.classList.remove('drag-over');
+      if (evt === 'drop' && e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]);
+    });
+  });
+  fileInput.addEventListener('change', e => {
+    if (e.target.files[0]) handleFile(e.target.files[0]);
+  });
+
+  function handleFile(file) {
+    if (!file.type.startsWith('image/')) return alert('Please upload an image file.');
+    if (file.size > 10 * 1024 * 1024) return alert('Image too large. Max 10MB.');
+    const reader = new FileReader();
+    reader.onload = e => {
+      const dataUrl = e.target.result;
+      currentImageBase64 = dataUrl.split(',')[1];
+      preview.src = dataUrl;
+      preview.style.display = 'block';
+      uploadZone.querySelector('.upload-icon-big').style.display = 'none';
+      uploadZone.querySelector('.upload-label').style.display = 'none';
+      uploadZone.querySelector('.upload-sub').style.display = 'none';
+    };
+    reader.readAsDataURL(file);
+  }
+
+  // ── Mic Input ──────────────────────────────────────────
+  let recognition = null;
+  function toggleMic() {
+    if (!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
+      alert('Voice input not supported in this browser. Try Chrome.');
+      return;
+    }
+    const btn = document.getElementById('micBtn');
+    if (recognition) {
+      recognition.stop(); recognition = null;
+      btn.classList.remove('listening'); btn.textContent = '🎙️'; return;
+    }
+    recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+    recognition.lang = 'en-US'; recognition.continuous = false;
+    recognition.interimResults = false;
+    recognition.onstart = () => { btn.classList.add('listening'); btn.textContent = '🔴'; };
+    recognition.onresult = e => {
+      document.getElementById('contextInput').value = e.results[0][0].transcript;
+    };
+    recognition.onend = () => {
+      btn.classList.remove('listening'); btn.textContent = '🎙️'; recognition = null;
+    };
+    recognition.start();
+  }
+
+  // ── Loading animation ──────────────────────────────────
+  let loadInterval;
+  function showLoading() {
+    document.getElementById('loadingOverlay').style.display = 'flex';
+    const steps = ['ls1','ls2','ls3','ls4'];
+    let i = 0; const bar = document.getElementById('loadBar');
+    steps.forEach(id => {
+      const s = document.getElementById(id);
+      s.classList.remove('active','done');
+      s.querySelector('.step-dot').style.background = 'var(--border2)';
+    });
+    bar.style.width = '0%';
+    function tick() {
+      if (i > 0) {
+        document.getElementById(steps[i-1]).classList.remove('active');
+        document.getElementById(steps[i-1]).classList.add('done');
+      }
+      if (i < steps.length) {
+        document.getElementById(steps[i]).classList.add('active');
+        bar.style.width = ((i+1)/steps.length * 100) + '%';
+        i++;
+        loadInterval = setTimeout(tick, 700);
+      }
+    }
+    tick();
+  }
+  function hideLoading() {
+    clearTimeout(loadInterval);
+    document.getElementById('loadingOverlay').style.display = 'none';
+  }
+
+  // ── Generate ───────────────────────────────────────────
+  async function generateCaptions() {
+    if (!currentImageBase64) {
+      alert('Please upload a photo first.');
+      return;
+    }
+    if (usageCount >= FREE_LIMIT) {
+      alert('You\'ve used all 3 free captions for today.\nUpgrade to Premium for unlimited!');
+      location.href = 'pricing.html';
+      return;
+    }
+    const btn = document.getElementById('genBtn');
+    const spinner = document.getElementById('btnSpinner');
+    const btnText = document.getElementById('btnText');
+    btn.disabled = true;
+    spinner.style.display = 'block';
+    btnText.textContent = 'Generating…';
+    showLoading();
+
+    const platform = document.getElementById('platformSel').value;
+    const language = document.getElementById('langSel').value;
+    const tone     = document.getElementById('toneSel').value;
+    const context  = document.getElementById('contextInput').value;
+
+    let data = null;
+    try {
+      const res = await fetch('api/generate-captions.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ image: currentImageBase64, platform, language, tone, context })
+      });
+      if (!res.ok) throw new Error('API error');
+      data = await res.json();
+    } catch (err) {
+      // Demo fallback when API isn't connected yet
+      data = getDemoData(platform, language, tone);
+    }
+
+    // Update usage
+    usageCount++;
+    localStorage.setItem('sc_usage', usageCount);
+    updateUsageUI();
+
+    hideLoading();
+    renderResults(data, platform);
+    btn.disabled = false;
+    spinner.style.display = 'none';
+    btnText.textContent = '✨ Generate 5 Captions';
+
+    // Scroll to results on mobile
+    if (window.innerWidth < 768) {
+      document.getElementById('resultsPanel').scrollIntoView({ behavior: 'smooth' });
+    }
+  }
+
+  // ── Render Results ─────────────────────────────────────
+  function renderResults(data, platform) {
+    const panel = document.getElementById('resultsPanel');
+    const isPremium = false; // switch to true once auth is added
+
+    const platIcons = {
+      Instagram:'📸', TikTok:'🎵', LinkedIn:'💼', X:'🐦', Facebook:'📘', Pinterest:'📌'
+    };
+    const icon = platIcons[platform] || '📲';
+
+    let captionHTML = data.captions.map((cap, i) => {
+      const isBlurred = !isPremium && i >= 3;
+      const hookW = Math.round((cap.hook_score / 10) * 100);
+      return `
+      <div class="caption-item ${isBlurred ? 'blurred-row' : ''}">
+        <div class="caption-top">
+          <div class="cap-num">${i+1}</div>
+          <div class="cap-text">${escHtml(cap.text)}</div>
+        </div>
+        <div class="cap-actions">
+          <div class="cap-hook">
+            <span>Hook</span>
+            <div class="hook-bar"><div class="hook-fill" style="width:${hookW}%"></div></div>
+            <span>${cap.hook_score}/10</span>
+          </div>
+          <button class="tts-btn" onclick="speak(this,'${escAttr(cap.text)}')" title="Read aloud">🔊</button>
+          <button class="cap-btn" onclick="copyCaption(this,'${escAttr(cap.text)}')">Copy</button>
+        </div>
+      </div>`;
+    }).join('');
+
+    if (!isPremium) {
+      captionHTML += `
+      <div class="upgrade-banner">
+        <span>🔒 2 more captions hidden</span>
+        <a href="pricing.html">Unlock All — $7/mo</a>
+      </div>`;
+    }
+
+    const hashHTML = data.hashtags.map(h => `
+      <div class="hash-chip ${h.tier}" onclick="copyHashtag(this)">
+        #${h.tag}<span class="str">(${h.tier === 'sweet' ? '🟢' : h.tier === 'comp' ? '🟡' : '🔴'})</span>
+      </div>`).join('');
+
+    // Before/After enhancement section (uses uploaded photo for "before")
+    const beforeSrc = document.getElementById('photoPreview').src;
+
+    panel.innerHTML = `
+      <!-- Captions -->
+      <div class="captions-block">
+        <div class="captions-header">
+          <span style="font-size:.88rem;font-weight:700;">5 Captions</span>
+          <span class="plat-badge">${icon} ${platform}</span>
+        </div>
+        ${captionHTML}
+      </div>
+
+      <!-- Hashtags -->
+      <div class="hashtag-block">
+        <div class="hash-header">
+          <span style="font-size:.88rem;font-weight:700;">#️⃣ 20 Hashtags</span>
+          <span style="font-size:.7rem;color:var(--muted);margin-left:auto;">Click to copy</span>
+        </div>
+        <div class="hash-body">
+          <div class="hash-chips">${hashHTML}</div>
+          <div class="hash-legend">
+            <span><div class="dot" style="background:var(--green)"></div> Sweet spot</span>
+            <span><div class="dot" style="background:var(--yellow)"></div> Competitive</span>
+            <span><div class="dot" style="background:var(--red)"></div> Oversaturated</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Extras row -->
+      <div class="extras-row">
+        <div class="extra-card">
+          <div class="ec-icon">⏰</div>
+          <div class="ec-label">Best Time to Post</div>
+          <div class="ec-val"><strong>${data.best_time}</strong><br>${data.best_time_note}</div>
+        </div>
+        <div class="extra-card">
+          <div class="ec-icon">♿</div>
+          <div class="ec-label">Alt Text</div>
+          <div class="ec-val" style="font-size:.75rem;">${escHtml(data.alt_text)}</div>
+        </div>
+      </div>
+
+      <!-- Before/After Enhancement -->
+      <div class="enhance-block">
+        <div class="enh-header">
+          <span style="font-size:.88rem;font-weight:700;">✨ AI Photo Enhancement</span>
+          <span style="font-size:.68rem;color:var(--grad2);font-weight:600;margin-left:auto;">Premium</span>
+        </div>
+        <div class="enh-body">
+          <div class="ba-row">
+            <div class="ba-side">
+              <div class="ba-label" style="color:#e2e8f0;">BEFORE</div>
+              <img src="${beforeSrc}" alt="Before enhancement">
+            </div>
+            <div class="ba-side">
+              <div class="ba-label" style="color:var(--grad2);">AFTER ✨</div>
+              <img src="${beforeSrc}" alt="After enhancement" class="ba-after-blur"
+                style="filter:blur(6px) brightness(1.15) saturate(1.4) contrast(1.1);">
+              <div class="ba-lock">
+                <span style="font-size:1.3rem;">🔒</span>
+                <span>Premium Only</span>
+              </div>
+            </div>
+          </div>
+          <button class="enh-btn" onclick="location.href='pricing.html'">
+            Unlock AI Enhancement — $7/mo
+          </button>
+          <p class="enh-note">30 enhanced photos/month included with Premium</p>
+        </div>
+      </div>
+    `;
+  }
+
+  // ── TTS ────────────────────────────────────────────────
+  let currentUtterance = null;
+  function speak(btn, text) {
+    if (!window.speechSynthesis) return;
+    if (currentUtterance) {
+      window.speechSynthesis.cancel();
+      currentUtterance = null;
+      btn.classList.remove('playing');
+      return;
+    }
+    const u = new SpeechSynthesisUtterance(text);
+    u.onstart = () => btn.classList.add('playing');
+    u.onend = () => { btn.classList.remove('playing'); currentUtterance = null; };
+    currentUtterance = u;
+    window.speechSynthesis.speak(u);
+  }
+
+  // ── Copy helpers ───────────────────────────────────────
+  function copyCaption(btn, text) {
+    navigator.clipboard.writeText(text).then(() => {
+      btn.textContent = 'Copied!';
+      btn.classList.add('copied');
+      setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 1600);
+    });
+  }
+  function copyHashtag(el) {
+    const text = '#' + el.textContent.replace(/[🟢🟡🔴]/g,'').trim();
+    navigator.clipboard.writeText(text).then(() => {
+      const orig = el.innerHTML;
+      el.textContent = 'Copied!';
+      setTimeout(() => { el.innerHTML = orig; }, 1200);
+    });
+  }
+
+  // ── Usage UI ───────────────────────────────────────────
+  function updateUsageUI() {
+    const left = Math.max(0, FREE_LIMIT - usageCount);
+    document.getElementById('usageText').textContent = `${left} left today`;
+    ['d1','d2','d3'].forEach((id,i) => {
+      const dot = document.getElementById(id);
+      dot.classList.toggle('used', i < usageCount);
+    });
+  }
+
+  // ── Utilities ──────────────────────────────────────────
+  function escHtml(s) {
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+  function escAttr(s) {
+    return String(s).replace(/'/g,'&#39;').replace(/"/g,'&quot;').replace(/\n/g,' ');
+  }
+
+  // ── Demo data (shown when PHP API not yet connected) ───
+  function getDemoData(platform, language, tone) {
+    const platBestTime = {
+      Instagram:'6:00 PM – 9:00 PM',
+      TikTok:'7:00 PM – 11:00 PM',
+      LinkedIn:'8:00 AM – 10:00 AM',
+      X:'12:00 PM – 3:00 PM',
+      Facebook:'1:00 PM – 4:00 PM',
+      Pinterest:'8:00 PM – 11:00 PM'
+    };
+    const platNote = {
+      Instagram:'Tue–Fri perform best',
+      TikTok:'Thu–Sun peak engagement',
+      LinkedIn:'Tue–Thu, skip weekends',
+      X:'Tue–Thu, lunchtime peak',
+      Facebook:'Wed–Fri highest reach',
+      Pinterest:'Evenings + weekends'
+    };
+    return {
+      captions: [
+        { text: "Some moments are made to last forever ✨ This one's going in the archives. #livinginthemoment", hook_score: 9 },
+        { text: "Not all who wander are lost — some are just chasing light 🌅 When did you last just stop and look?", hook_score: 8 },
+        { text: "The best stories don't start with 'I stayed home.' 🌍 What's yours?", hook_score: 8 },
+        { text: "Golden hour hits different when you're exactly where you're meant to be ☀️", hook_score: 7 },
+        { text: "Capturing life one frame at a time 📸 This is the kind of day worth remembering.", hook_score: 7 }
+      ],
+      hashtags: [
+        {tag:'goldenhour',tier:'sweet'},{tag:'photography',tier:'sweet'},{tag:'explore',tier:'sweet'},
+        {tag:'naturephotography',tier:'sweet'},{tag:'lightroom',tier:'sweet'},{tag:'minimal',tier:'sweet'},
+        {tag:'aesthetics',tier:'sweet'},{tag:'mood',tier:'sweet'},
+        {tag:'sunset',tier:'comp'},{tag:'travel',tier:'comp'},{tag:'wanderlust',tier:'comp'},
+        {tag:'photooftheday',tier:'comp'},{tag:'inspiration',tier:'comp'},{tag:'outdoors',tier:'comp'},
+        {tag:'landscape',tier:'comp'},
+        {tag:'nature',tier:'sat'},{tag:'beautiful',tier:'sat'},{tag:'love',tier:'sat'},
+        {tag:'happy',tier:'sat'},{tag:'life',tier:'sat'}
+      ],
+      best_time: platBestTime[platform] || '6:00 PM – 9:00 PM',
+      best_time_note: platNote[platform] || 'Peak engagement window',
+      alt_text: 'A scenic outdoor photograph showing warm golden light. The composition features natural landscape elements with soft, diffused lighting creating a peaceful, contemplative atmosphere.',
+      engagement_tip: 'Ask a question at the end to boost comments by 2–3×'
+    };
+  }
+</script>
+</body>
+</html>

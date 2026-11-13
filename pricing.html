@@ -1,0 +1,1085 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pricing — SnapCaption AI</title>
+<meta name="description" content="Start free, upgrade when you're ready. SnapCaption AI plans for creators, professionals, and teams worldwide.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #09090f;
+    --bg2: #0f0f1a;
+    --bg3: #141424;
+    --card: #13131f;
+    --border: #1e1e32;
+    --border2: #2a2a44;
+    --grad1: #7c3aed;
+    --grad2: #a855f7;
+    --grad3: #ec4899;
+    --text: #e8e8f0;
+    --muted: #6b7280;
+    --muted2: #9ca3af;
+    --green: #10b981;
+    --yellow: #f59e0b;
+    --red: #ef4444;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* ── GRADIENT UTILITIES ── */
+  .grad-text {
+    background: linear-gradient(135deg, var(--grad2), var(--grad3));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .grad-btn {
+    background: linear-gradient(135deg, var(--grad1), var(--grad3));
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+    transition: opacity .2s, transform .15s;
+  }
+  .grad-btn:hover { opacity: .9; transform: translateY(-1px); }
+  .grad-border {
+    border: 1px solid transparent;
+    background: linear-gradient(var(--card), var(--card)) padding-box,
+                linear-gradient(135deg, var(--grad1), var(--grad3)) border-box;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: rgba(9,9,15,.85);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 24px;
+    height: 64px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .nav-logo {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 1.1rem; font-weight: 800; color: var(--text);
+    text-decoration: none;
+  }
+  .nav-logo .logo-icon {
+    width: 34px; height: 34px; border-radius: 9px;
+    background: linear-gradient(135deg, var(--grad1), var(--grad3));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+  }
+  .nav-links { display: flex; align-items: center; gap: 32px; }
+  .nav-links a {
+    color: var(--muted2); text-decoration: none;
+    font-size: .9rem; font-weight: 500;
+    transition: color .2s;
+  }
+  .nav-links a:hover, .nav-links a.active { color: var(--text); }
+  .nav-cta {
+    padding: 9px 20px; border-radius: 8px;
+    font-size: .88rem; letter-spacing: .01em;
+  }
+  .nav-mobile-hide { display: flex; }
+  @media(max-width:640px){
+    .nav-mobile-hide { display: none; }
+    .nav-cta { padding: 8px 14px; font-size: .82rem; }
+  }
+
+  /* ── PAGE HEADER ── */
+  .page-header {
+    padding: 120px 24px 60px;
+    text-align: center;
+    max-width: 720px;
+    margin: 0 auto;
+  }
+  .page-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(124,58,237,.12);
+    border: 1px solid rgba(124,58,237,.3);
+    padding: 6px 14px; border-radius: 100px;
+    font-size: .78rem; font-weight: 600;
+    color: var(--grad2); margin-bottom: 24px;
+  }
+  .page-header h1 {
+    font-size: clamp(2rem, 5vw, 3rem);
+    font-weight: 900;
+    line-height: 1.1;
+    letter-spacing: -.02em;
+    margin-bottom: 16px;
+  }
+  .page-header p {
+    font-size: 1.1rem; color: var(--muted2);
+    max-width: 520px; margin: 0 auto;
+    line-height: 1.7;
+  }
+
+  /* ── BILLING TOGGLE ── */
+  .billing-toggle {
+    display: flex; align-items: center; justify-content: center;
+    gap: 14px; margin: 32px auto 0;
+  }
+  .toggle-label {
+    font-size: .9rem; font-weight: 500; color: var(--muted2);
+    cursor: pointer; user-select: none;
+    transition: color .2s;
+  }
+  .toggle-label.active { color: var(--text); }
+  .toggle-switch {
+    width: 48px; height: 26px; border-radius: 100px;
+    background: var(--border2); position: relative;
+    cursor: pointer; transition: background .25s;
+    border: none; padding: 0;
+    flex-shrink: 0;
+  }
+  .toggle-switch.yearly { background: linear-gradient(135deg, var(--grad1), var(--grad2)); }
+  .toggle-knob {
+    position: absolute; top: 3px; left: 3px;
+    width: 20px; height: 20px; border-radius: 50%;
+    background: #fff;
+    transition: transform .25s cubic-bezier(.4,0,.2,1);
+  }
+  .toggle-switch.yearly .toggle-knob { transform: translateX(22px); }
+  .savings-badge {
+    padding: 3px 10px; border-radius: 100px;
+    background: rgba(16,185,129,.12);
+    border: 1px solid rgba(16,185,129,.25);
+    font-size: .72rem; font-weight: 700;
+    color: var(--green);
+  }
+
+  /* ── PRICING SECTION ── */
+  .pricing-section {
+    padding: 20px 24px 80px;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  /* ── PLAN CARDS ── */
+  .plans-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    align-items: start;
+  }
+  @media(max-width: 900px) {
+    .plans-grid { grid-template-columns: 1fr; max-width: 480px; margin: 0 auto; }
+  }
+
+  .plan-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 32px 28px;
+    position: relative;
+    transition: border-color .25s, transform .2s;
+  }
+  .plan-card:hover { transform: translateY(-3px); }
+  .plan-card.featured {
+    border: 1px solid transparent;
+    background: linear-gradient(var(--card), var(--card)) padding-box,
+                linear-gradient(135deg, var(--grad1), var(--grad3)) border-box;
+    transform: scale(1.03);
+  }
+  .plan-card.featured:hover { transform: scale(1.03) translateY(-3px); }
+
+  .popular-badge {
+    position: absolute; top: -13px; left: 50%; transform: translateX(-50%);
+    background: linear-gradient(135deg, var(--grad1), var(--grad3));
+    color: #fff;
+    padding: 4px 16px; border-radius: 100px;
+    font-size: .72rem; font-weight: 700;
+    white-space: nowrap;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+  }
+
+  .plan-name {
+    font-size: .78rem; font-weight: 700;
+    letter-spacing: .08em; text-transform: uppercase;
+    color: var(--muted); margin-bottom: 10px;
+  }
+  .plan-name.premium { color: var(--grad2); }
+  .plan-name.teams { color: var(--yellow); }
+
+  .plan-price {
+    display: flex; align-items: flex-end; gap: 4px;
+    margin-bottom: 6px;
+  }
+  .price-num {
+    font-size: 3rem; font-weight: 900;
+    line-height: 1;
+    letter-spacing: -.03em;
+  }
+  .price-num.grad-text {}
+  .price-currency {
+    font-size: 1.2rem; font-weight: 600;
+    color: var(--muted2); margin-bottom: 8px;
+  }
+  .price-period {
+    font-size: .82rem; color: var(--muted); margin-bottom: 20px;
+  }
+  .price-annual { font-size: .78rem; color: var(--muted); margin-top: -14px; margin-bottom: 20px; }
+  .price-annual .strike { text-decoration: line-through; opacity: .5; }
+  .price-annual .save { color: var(--green); font-weight: 600; }
+
+  .plan-desc {
+    font-size: .88rem; color: var(--muted2);
+    margin-bottom: 24px; line-height: 1.6;
+    min-height: 50px;
+  }
+
+  .plan-btn {
+    width: 100%; padding: 13px;
+    border-radius: 10px; font-size: .95rem;
+    font-weight: 600; text-align: center;
+    text-decoration: none; display: block;
+    transition: all .2s; cursor: pointer;
+  }
+  .plan-btn-free {
+    background: transparent;
+    border: 1px solid var(--border2);
+    color: var(--text);
+  }
+  .plan-btn-free:hover { border-color: var(--grad2); color: var(--grad2); }
+  .plan-btn-premium {
+    background: linear-gradient(135deg, var(--grad1), var(--grad3));
+    border: none; color: #fff;
+  }
+  .plan-btn-premium:hover { opacity: .9; }
+  .plan-btn-teams {
+    background: rgba(245,158,11,.12);
+    border: 1px solid rgba(245,158,11,.3);
+    color: var(--yellow);
+  }
+  .plan-btn-teams:hover { background: rgba(245,158,11,.2); }
+
+  .plan-divider {
+    border: none; border-top: 1px solid var(--border);
+    margin: 24px 0;
+  }
+
+  .plan-features-label {
+    font-size: .72rem; font-weight: 700;
+    letter-spacing: .06em; text-transform: uppercase;
+    color: var(--muted); margin-bottom: 14px;
+  }
+
+  .feature-row {
+    display: flex; align-items: flex-start; gap: 10px;
+    margin-bottom: 10px; font-size: .88rem; color: var(--muted2);
+    line-height: 1.4;
+  }
+  .feature-row .icon {
+    flex-shrink: 0; width: 18px; height: 18px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: .7rem; margin-top: 1px;
+  }
+  .icon-check { background: rgba(16,185,129,.15); color: var(--green); }
+  .icon-x { background: rgba(107,114,128,.12); color: var(--muted); }
+  .icon-star { background: rgba(168,85,247,.15); color: var(--grad2); }
+  .feature-row.muted { opacity: .45; }
+  .feature-row strong { color: var(--text); }
+
+  /* ── REGIONAL PRICING ── */
+  .regional-section {
+    padding: 0 24px 80px;
+    max-width: 1100px; margin: 0 auto;
+  }
+  .section-label {
+    font-size: .78rem; font-weight: 700;
+    letter-spacing: .08em; text-transform: uppercase;
+    color: var(--grad2); margin-bottom: 12px;
+  }
+  .section-title {
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    font-weight: 800; letter-spacing: -.02em;
+    margin-bottom: 10px;
+  }
+  .section-sub {
+    color: var(--muted2); font-size: .95rem; max-width: 580px; margin-bottom: 40px;
+  }
+
+  .regions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 16px;
+  }
+  .region-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 20px 22px;
+    display: flex; align-items: center; gap: 16px;
+    transition: border-color .2s;
+  }
+  .region-card:hover { border-color: var(--border2); }
+  .region-flag { font-size: 2rem; flex-shrink: 0; }
+  .region-info {}
+  .region-name { font-size: .9rem; font-weight: 600; margin-bottom: 2px; }
+  .region-countries { font-size: .75rem; color: var(--muted); margin-bottom: 6px; }
+  .region-price {
+    display: flex; align-items: center; gap: 8px;
+  }
+  .region-price .amount {
+    font-size: 1.1rem; font-weight: 800;
+    background: linear-gradient(135deg, var(--grad2), var(--grad3));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  }
+  .region-price .original {
+    font-size: .78rem; color: var(--muted);
+    text-decoration: line-through;
+  }
+  .region-price .discount {
+    font-size: .72rem; font-weight: 700; color: var(--green);
+    background: rgba(16,185,129,.1); padding: 2px 7px; border-radius: 100px;
+  }
+
+  /* ── COMPARE TABLE ── */
+  .compare-section {
+    padding: 0 24px 80px;
+    max-width: 1100px; margin: 0 auto;
+  }
+  .compare-table {
+    width: 100%; border-collapse: separate; border-spacing: 0;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+  }
+  .compare-table th {
+    padding: 16px 20px;
+    text-align: left;
+    font-size: .82rem; font-weight: 700;
+    letter-spacing: .04em; text-transform: uppercase;
+    color: var(--muted);
+    background: var(--bg2);
+    border-bottom: 1px solid var(--border);
+  }
+  .compare-table th:not(:last-child) {
+    border-right: 1px solid var(--border);
+  }
+  .compare-table th.featured-col { color: var(--grad2); }
+  .compare-table td {
+    padding: 14px 20px;
+    font-size: .88rem; color: var(--muted2);
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+  }
+  .compare-table td:not(:last-child) {
+    border-right: 1px solid var(--border);
+  }
+  .compare-table tr:last-child td { border-bottom: none; }
+  .compare-table td.feature-name { color: var(--text); font-weight: 500; }
+  .compare-table td.featured-col { background: rgba(124,58,237,.04); }
+  .check { color: var(--green); font-size: 1rem; }
+  .cross { color: var(--muted); opacity: .4; font-size: 1rem; }
+  .partial { color: var(--yellow); font-size: .82rem; font-weight: 600; }
+  .compare-table tr:hover td { background: rgba(255,255,255,.015); }
+  .compare-table tr:hover td.featured-col { background: rgba(124,58,237,.07); }
+  .cat-row td {
+    font-size: .72rem; font-weight: 700;
+    letter-spacing: .06em; text-transform: uppercase;
+    color: var(--muted); background: var(--bg3) !important;
+    padding: 10px 20px;
+  }
+  @media(max-width:720px){
+    .compare-table { display: block; overflow-x: auto; }
+  }
+
+  /* ── FAQ ── */
+  .faq-section {
+    padding: 0 24px 80px;
+    max-width: 760px; margin: 0 auto;
+  }
+  .faq-item {
+    border-bottom: 1px solid var(--border);
+    padding: 20px 0;
+  }
+  .faq-q {
+    font-size: .95rem; font-weight: 600;
+    cursor: pointer;
+    display: flex; justify-content: space-between; align-items: center;
+    gap: 16px;
+  }
+  .faq-icon {
+    flex-shrink: 0; width: 24px; height: 24px;
+    border-radius: 50%; background: var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: .9rem; color: var(--muted2);
+    transition: background .2s, transform .3s;
+  }
+  .faq-item.open .faq-icon {
+    background: rgba(124,58,237,.2);
+    color: var(--grad2);
+    transform: rotate(45deg);
+  }
+  .faq-a {
+    max-height: 0; overflow: hidden;
+    transition: max-height .35s ease, padding .3s;
+    font-size: .9rem; color: var(--muted2); line-height: 1.7;
+  }
+  .faq-item.open .faq-a { max-height: 200px; padding-top: 12px; }
+
+  /* ── BOTTOM CTA ── */
+  .bottom-cta {
+    padding: 80px 24px 100px;
+    text-align: center;
+    max-width: 640px; margin: 0 auto;
+  }
+  .bottom-cta h2 {
+    font-size: clamp(1.6rem, 4vw, 2.4rem);
+    font-weight: 900; letter-spacing: -.02em; margin-bottom: 16px;
+  }
+  .bottom-cta p {
+    color: var(--muted2); font-size: 1rem; margin-bottom: 36px; line-height: 1.7;
+  }
+  .cta-btns { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+  .cta-primary { padding: 15px 32px; border-radius: 10px; font-size: 1rem; }
+  .cta-secondary {
+    padding: 15px 28px; border-radius: 10px;
+    background: transparent; border: 1px solid var(--border2);
+    color: var(--text); font-size: 1rem; font-weight: 500;
+    cursor: pointer; text-decoration: none;
+    transition: border-color .2s;
+  }
+  .cta-secondary:hover { border-color: var(--grad2); }
+
+  /* ── FOOTER ── */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 32px 24px;
+    text-align: center;
+    color: var(--muted);
+    font-size: .82rem;
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 12px;
+    max-width: 1100px; margin: 0 auto;
+  }
+  footer a { color: var(--muted2); text-decoration: none; }
+  footer a:hover { color: var(--text); }
+  .footer-links { display: flex; gap: 24px; flex-wrap: wrap; }
+
+  /* ── TRUST BAR ── */
+  .trust-bar {
+    display: flex; align-items: center; justify-content: center;
+    gap: 32px; padding: 20px 24px 0; flex-wrap: wrap;
+  }
+  .trust-item {
+    display: flex; align-items: center; gap: 8px;
+    font-size: .82rem; color: var(--muted2);
+  }
+  .trust-item .ti { font-size: 1rem; }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="index.html" class="nav-logo">
+    <div class="logo-icon">📸</div>
+    SnapCaption AI
+  </a>
+  <div class="nav-links nav-mobile-hide">
+    <a href="index.html">Home</a>
+    <a href="index.html#features">Features</a>
+    <a href="pricing.html" class="active">Pricing</a>
+    <a href="app.html" class="grad-btn nav-cta" style="border-radius:8px;padding:9px 20px;text-decoration:none;">Try Free</a>
+  </div>
+  <a href="app.html" class="grad-btn nav-cta" style="border-radius:8px;text-decoration:none;" id="nav-mobile-cta">Try Free</a>
+</nav>
+
+<!-- PAGE HEADER -->
+<div class="page-header">
+  <div class="page-badge">💜 Simple, transparent pricing</div>
+  <h1>Start free.<br><span class="grad-text">Upgrade when ready.</span></h1>
+  <p>No hidden fees. No credit card required to start. Cancel anytime. Plans for every creator — from hobbyist to agency.</p>
+
+  <div class="billing-toggle">
+    <span class="toggle-label active" id="label-monthly">Monthly</span>
+    <button class="toggle-switch" id="billing-toggle" onclick="toggleBilling()" aria-label="Toggle annual billing">
+      <div class="toggle-knob"></div>
+    </button>
+    <span class="toggle-label" id="label-annual">Annual</span>
+    <span class="savings-badge">Save 20%</span>
+  </div>
+</div>
+
+<!-- PLAN CARDS -->
+<div class="pricing-section">
+  <div class="plans-grid">
+
+    <!-- FREE -->
+    <div class="plan-card">
+      <div class="plan-name">Free</div>
+      <div class="plan-price">
+        <span class="price-currency">$</span>
+        <span class="price-num">0</span>
+      </div>
+      <div class="price-period">Forever free — no card needed</div>
+      <div class="plan-desc">Perfect for trying it out. Upload a photo and get AI captions instantly.</div>
+      <a href="app.html" class="plan-btn plan-btn-free">Start for Free →</a>
+      <hr class="plan-divider">
+      <div class="plan-features-label">What's included</div>
+      <div class="feature-row">
+        <div class="icon icon-check">✓</div>
+        <span><strong>3 caption sets per day</strong> — resets at midnight</span>
+      </div>
+      <div class="feature-row">
+        <div class="icon icon-check">✓</div>
+        <span><strong>5 captions per photo</strong> — full AI quality</span>
+      </div>
+      <div class="feature-row">
+        <div class="icon icon-check">✓</div>
+        <span><strong>20 hashtags</strong> with strength tiers</span>
+      </div>
+      <div class="feature-row">
+        <div class="icon icon-check">✓</div>
+        <span><strong>Hook Scorer</strong> on every caption</span>
+      </div>
+      <div class="feature-row">
+        <div class="icon icon-check">✓</div>
+        <span><strong>Alt text generator</strong> for accessibility</span>
+      </div>
+      <div class="feature-row">
+        <div class="icon icon-check">✓</div>
+        <span><strong>Best time to post</strong> by platform</span>
+      </div>
+      <div class="feature-row">
+        <div class="icon icon-check">✓</div>
+        <span><strong>90 languages</strong> supported</span>
+      </div>
+      <div class="feature-row">
+        <div class="icon icon-check">✓</div>
+        <span><strong>Voice input</strong> (mic caption prompts)</span>
+      </div>
+      <div class="feature-row muted">
+        <div class="icon icon-x">✕</div>
+        <span>AI photo enhancement</span>
+      </div>
+      <div class="feature-row muted">
+        <div class="icon icon-x">✕</div>
+        <span>Caption history &amp; favorites</span>
+      </div>
+      <div class="feature-row muted">
+        <div class="icon icon-x">✕</div>
+        <span>Brand voice saver</span>
+      </div>
+    </div>
+
+    <!-- PREMIUM -->
+    <div class="plan-card featured">
+      <div class="popular-badge">⭐ Most Popular</div>
+      <div class="plan-name premium">Premium</div>
+      <div class="plan-price">
+        <span class="price-currency" style="color:var(--grad2)">$</span>
+        <span class="price-num grad-text" id="premium-price">7</span>
+      </div>
+      <div class="price-period" id="premium-period">per month</div>
+      <div class="price-annual" id="premium-annual" style="display:none">
+        <span class="strike">$84/yr</span> → <span class="save">$67/yr — save $17</span>
+      </div>
+      <div class="plan-desc">For creators who post regularly. Unlimited captions + every power feature.</div>
+      <a href="app.html?plan=premium" class="plan-btn plan-btn-premium">Get Premium →</a>
+      <hr class="plan-divider">
+      <div class="plan-features-label">Everything in Free, plus</div>
+      <div class="feature-row">
+        <div class="icon icon-star">★</div>
+        <span><strong>Unlimited caption sets</strong> — no daily cap</span>
+      </div>
+      <div class="feature-row">
+        <div class="icon icon-star">★</div>
+        <span><strong>AI photo enhancement</strong> — 30 boosts/month</span>
+      </div>
+      <div class="feature-row">
+        <div class="icon icon-star">★</div>
+        <span><strong>Caption history</strong> — save &amp; favorite captions</span>
+      </div>
+      <div class="feature-row">
+        <div class="icon icon-star">★</div>
+        <span><strong>Brand Voice Saver</strong> — your tone, every time</span>
+      </div>
+      <div class="feature-row">
+        <div class="icon icon-star">★</div>
+        <span><strong>Engagement Predictor</strong> — AI score per caption</span>
+      </div>
+      <div class="feature-row">
+        <div class="icon icon-star">★</div>
+        <span><strong>Hashtag Strength Meter</strong> — niche vs. saturated</span>
+      </div>
+      <div class="feature-row">
+        <div class="icon icon-star">★</div>
+        <span><strong>TTS read-back</strong> — hear captions aloud</span>
+      </div>
+      <div class="feature-row">
+        <div class="icon icon-star">★</div>
+        <span><strong>Priority generation</strong> — faster queue</span>
+      </div>
+      <div class="feature-row">
+        <div class="icon icon-star">★</div>
+        <span><strong>Email support</strong></span>
+      </div>
+    </div>
+
+    <!-- TEAMS -->
+    <div class="plan-card">
+      <div class="plan-name teams">Teams</div>
+      <div class="plan-price">
+        <span class="price-currency" style="color:var(--yellow)">$</span>
+        <span class="price-num" style="color:var(--yellow)" id="teams-price">29</span>
+      </div>
+      <div class="price-period" id="teams-period">per month · 5 seats</div>
+      <div class="price-annual" id="teams-annual" style="display:none">
+        <span class="strike">$348/yr</span> → <span class="save">$278/yr — save $70</span>
+      </div>
+      <div class="plan-desc">For marketing teams, agencies, and social media managers. Shared workspace included.</div>
+      <a href="app.html?plan=teams" class="plan-btn plan-btn-teams">Start Team Plan →</a>
+      <hr class="plan-divider">
+      <div class="plan-features-label">Everything in Premium, plus</div>
+      <div class="feature-row">
+        <div class="icon icon-check">✓</div>
+        <span><strong>5 team seats</strong> — invite your whole team</span>
+      </div>
+      <div class="feature-row">
+        <div class="icon icon-check">✓</div>
+        <span><strong>Shared Brand Voice</strong> — consistent across team</span>
+      </div>
+      <div class="feature-row">
+        <div class="icon icon-check">✓</div>
+        <span><strong>Shared caption library</strong> — team favorites</span>
+      </div>
+      <div class="feature-row">
+        <div class="icon icon-check">✓</div>
+        <span><strong>Unlimited AI enhancements</strong></span>
+      </div>
+      <div class="feature-row">
+        <div class="icon icon-check">✓</div>
+        <span><strong>Admin dashboard</strong> — usage &amp; seat management</span>
+      </div>
+      <div class="feature-row">
+        <div class="icon icon-check">✓</div>
+        <span><strong>Priority chat &amp; email support</strong></span>
+      </div>
+      <div class="feature-row">
+        <div class="icon icon-check">✓</div>
+        <span><strong>Custom onboarding</strong></span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- TRUST BAR -->
+  <div class="trust-bar" style="margin-top:48px">
+    <div class="trust-item"><span class="ti">🔒</span> SSL encrypted</div>
+    <div class="trust-item"><span class="ti">💳</span> Stripe payments</div>
+    <div class="trust-item"><span class="ti">↩️</span> Cancel anytime</div>
+    <div class="trust-item"><span class="ti">🌍</span> Regional pricing</div>
+    <div class="trust-item"><span class="ti">📧</span> No spam, ever</div>
+  </div>
+</div>
+
+<!-- REGIONAL PRICING -->
+<div class="regional-section">
+  <div class="section-label">🌍 Purchasing Power Parity</div>
+  <h2 class="section-title">Fair pricing for <span class="grad-text">every country</span></h2>
+  <p class="section-sub">We adjust Premium pricing based on local purchasing power — so creators everywhere can access professional tools. Discount applied automatically at checkout.</p>
+
+  <div class="regions-grid">
+    <div class="region-card">
+      <div class="region-flag">🇮🇳</div>
+      <div class="region-info">
+        <div class="region-name">India</div>
+        <div class="region-countries">All states · ₹ or $</div>
+        <div class="region-price">
+          <span class="amount">$2.10/mo</span>
+          <span class="original">$7</span>
+          <span class="discount">70% off</span>
+        </div>
+      </div>
+    </div>
+    <div class="region-card">
+      <div class="region-flag">🌏</div>
+      <div class="region-info">
+        <div class="region-name">Southeast Asia</div>
+        <div class="region-countries">PH, ID, VN, TH, MY, KH</div>
+        <div class="region-price">
+          <span class="amount">$2.80/mo</span>
+          <span class="original">$7</span>
+          <span class="discount">60% off</span>
+        </div>
+      </div>
+    </div>
+    <div class="region-card">
+      <div class="region-flag">🌍</div>
+      <div class="region-info">
+        <div class="region-name">Africa</div>
+        <div class="region-countries">NG, KE, GH, ZA, ET + more</div>
+        <div class="region-price">
+          <span class="amount">$2.10/mo</span>
+          <span class="original">$7</span>
+          <span class="discount">70% off</span>
+        </div>
+      </div>
+    </div>
+    <div class="region-card">
+      <div class="region-flag">🌎</div>
+      <div class="region-info">
+        <div class="region-name">Latin America</div>
+        <div class="region-countries">BR, MX, CO, AR, CL + more</div>
+        <div class="region-price">
+          <span class="amount">$3.50/mo</span>
+          <span class="original">$7</span>
+          <span class="discount">50% off</span>
+        </div>
+      </div>
+    </div>
+    <div class="region-card">
+      <div class="region-flag">🌏</div>
+      <div class="region-info">
+        <div class="region-name">South Asia</div>
+        <div class="region-countries">BD, PK, LK, NP</div>
+        <div class="region-price">
+          <span class="amount">$2.10/mo</span>
+          <span class="original">$7</span>
+          <span class="discount">70% off</span>
+        </div>
+      </div>
+    </div>
+    <div class="region-card">
+      <div class="region-flag">🌍</div>
+      <div class="region-info">
+        <div class="region-name">Middle East</div>
+        <div class="region-countries">EG, MA, TN, JO, IQ</div>
+        <div class="region-price">
+          <span class="amount">$4.20/mo</span>
+          <span class="original">$7</span>
+          <span class="discount">40% off</span>
+        </div>
+      </div>
+    </div>
+    <div class="region-card">
+      <div class="region-flag">🌍</div>
+      <div class="region-info">
+        <div class="region-name">Eastern Europe</div>
+        <div class="region-countries">PL, RO, UA, BG, RS + more</div>
+        <div class="region-price">
+          <span class="amount">$4.20/mo</span>
+          <span class="original">$7</span>
+          <span class="discount">40% off</span>
+        </div>
+      </div>
+    </div>
+    <div class="region-card">
+      <div class="region-flag">🌍</div>
+      <div class="region-info">
+        <div class="region-name">Central Asia</div>
+        <div class="region-countries">KZ, UZ, AZ, GE, AM</div>
+        <div class="region-price">
+          <span class="amount">$2.80/mo</span>
+          <span class="original">$7</span>
+          <span class="discount">60% off</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FEATURE COMPARE TABLE -->
+<div class="compare-section">
+  <div class="section-label">📊 Full Comparison</div>
+  <h2 class="section-title" style="margin-bottom:32px">Every feature, side by side</h2>
+
+  <table class="compare-table">
+    <thead>
+      <tr>
+        <th style="width:40%">Feature</th>
+        <th style="width:20%;text-align:center">Free</th>
+        <th style="width:20%;text-align:center" class="featured-col">Premium</th>
+        <th style="width:20%;text-align:center">Teams</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr class="cat-row"><td colspan="4">Core Generation</td></tr>
+      <tr>
+        <td class="feature-name">Caption sets per day</td>
+        <td style="text-align:center">3</td>
+        <td style="text-align:center" class="featured-col"><strong style="color:var(--grad2)">Unlimited</strong></td>
+        <td style="text-align:center"><strong style="color:var(--yellow)">Unlimited</strong></td>
+      </tr>
+      <tr>
+        <td class="feature-name">Captions per photo</td>
+        <td style="text-align:center">5</td>
+        <td style="text-align:center" class="featured-col">5</td>
+        <td style="text-align:center">5</td>
+      </tr>
+      <tr>
+        <td class="feature-name">Hashtags per generation</td>
+        <td style="text-align:center">20</td>
+        <td style="text-align:center" class="featured-col">20</td>
+        <td style="text-align:center">20</td>
+      </tr>
+      <tr>
+        <td class="feature-name">Languages supported</td>
+        <td style="text-align:center">90</td>
+        <td style="text-align:center" class="featured-col">90</td>
+        <td style="text-align:center">90</td>
+      </tr>
+      <tr>
+        <td class="feature-name">Platform targeting</td>
+        <td style="text-align:center">6 platforms</td>
+        <td style="text-align:center" class="featured-col">6 platforms</td>
+        <td style="text-align:center">6 platforms</td>
+      </tr>
+
+      <tr class="cat-row"><td colspan="4">AI Analysis</td></tr>
+      <tr>
+        <td class="feature-name">Hook Scorer (1–10)</td>
+        <td style="text-align:center"><span class="check">✓</span></td>
+        <td style="text-align:center" class="featured-col"><span class="check">✓</span></td>
+        <td style="text-align:center"><span class="check">✓</span></td>
+      </tr>
+      <tr>
+        <td class="feature-name">Hashtag Strength Meter</td>
+        <td style="text-align:center"><span class="check">✓</span></td>
+        <td style="text-align:center" class="featured-col"><span class="check">✓</span></td>
+        <td style="text-align:center"><span class="check">✓</span></td>
+      </tr>
+      <tr>
+        <td class="feature-name">Alt text generator</td>
+        <td style="text-align:center"><span class="check">✓</span></td>
+        <td style="text-align:center" class="featured-col"><span class="check">✓</span></td>
+        <td style="text-align:center"><span class="check">✓</span></td>
+      </tr>
+      <tr>
+        <td class="feature-name">Best time to post</td>
+        <td style="text-align:center"><span class="check">✓</span></td>
+        <td style="text-align:center" class="featured-col"><span class="check">✓</span></td>
+        <td style="text-align:center"><span class="check">✓</span></td>
+      </tr>
+      <tr>
+        <td class="feature-name">Engagement Predictor</td>
+        <td style="text-align:center"><span class="cross">✕</span></td>
+        <td style="text-align:center" class="featured-col"><span class="check">✓</span></td>
+        <td style="text-align:center"><span class="check">✓</span></td>
+      </tr>
+
+      <tr class="cat-row"><td colspan="4">Photo Enhancement</td></tr>
+      <tr>
+        <td class="feature-name">AI photo boost preview</td>
+        <td style="text-align:center"><span class="partial">Teaser only</span></td>
+        <td style="text-align:center" class="featured-col"><span class="check">✓</span></td>
+        <td style="text-align:center"><span class="check">✓</span></td>
+      </tr>
+      <tr>
+        <td class="feature-name">AI enhancement uses/month</td>
+        <td style="text-align:center"><span class="cross">—</span></td>
+        <td style="text-align:center" class="featured-col">30</td>
+        <td style="text-align:center"><strong style="color:var(--yellow)">Unlimited</strong></td>
+      </tr>
+
+      <tr class="cat-row"><td colspan="4">Voice &amp; Accessibility</td></tr>
+      <tr>
+        <td class="feature-name">Mic voice input</td>
+        <td style="text-align:center"><span class="check">✓</span></td>
+        <td style="text-align:center" class="featured-col"><span class="check">✓</span></td>
+        <td style="text-align:center"><span class="check">✓</span></td>
+      </tr>
+      <tr>
+        <td class="feature-name">TTS caption read-back</td>
+        <td style="text-align:center"><span class="cross">✕</span></td>
+        <td style="text-align:center" class="featured-col"><span class="check">✓</span></td>
+        <td style="text-align:center"><span class="check">✓</span></td>
+      </tr>
+
+      <tr class="cat-row"><td colspan="4">Storage &amp; Branding</td></tr>
+      <tr>
+        <td class="feature-name">Caption history</td>
+        <td style="text-align:center"><span class="cross">✕</span></td>
+        <td style="text-align:center" class="featured-col"><span class="check">✓</span></td>
+        <td style="text-align:center"><span class="check">✓</span></td>
+      </tr>
+      <tr>
+        <td class="feature-name">Favorites &amp; saved captions</td>
+        <td style="text-align:center"><span class="cross">✕</span></td>
+        <td style="text-align:center" class="featured-col"><span class="check">✓</span></td>
+        <td style="text-align:center"><span class="check">✓</span></td>
+      </tr>
+      <tr>
+        <td class="feature-name">Brand Voice Saver</td>
+        <td style="text-align:center"><span class="cross">✕</span></td>
+        <td style="text-align:center" class="featured-col"><span class="check">✓</span></td>
+        <td style="text-align:center"><span class="check">✓</span></td>
+      </tr>
+      <tr>
+        <td class="feature-name">Shared brand voice (team)</td>
+        <td style="text-align:center"><span class="cross">✕</span></td>
+        <td style="text-align:center" class="featured-col"><span class="cross">✕</span></td>
+        <td style="text-align:center"><span class="check">✓</span></td>
+      </tr>
+
+      <tr class="cat-row"><td colspan="4">Team &amp; Support</td></tr>
+      <tr>
+        <td class="feature-name">Seats</td>
+        <td style="text-align:center">1</td>
+        <td style="text-align:center" class="featured-col">1</td>
+        <td style="text-align:center"><strong style="color:var(--yellow)">5</strong></td>
+      </tr>
+      <tr>
+        <td class="feature-name">Shared caption library</td>
+        <td style="text-align:center"><span class="cross">✕</span></td>
+        <td style="text-align:center" class="featured-col"><span class="cross">✕</span></td>
+        <td style="text-align:center"><span class="check">✓</span></td>
+      </tr>
+      <tr>
+        <td class="feature-name">Admin dashboard</td>
+        <td style="text-align:center"><span class="cross">✕</span></td>
+        <td style="text-align:center" class="featured-col"><span class="cross">✕</span></td>
+        <td style="text-align:center"><span class="check">✓</span></td>
+      </tr>
+      <tr>
+        <td class="feature-name">Support</td>
+        <td style="text-align:center">Community</td>
+        <td style="text-align:center" class="featured-col">Email</td>
+        <td style="text-align:center">Priority</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- FAQ -->
+<div class="faq-section">
+  <div class="section-label" style="text-align:center">❓ FAQ</div>
+  <h2 class="section-title" style="text-align:center;margin-bottom:40px">Common questions</h2>
+
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">
+      Do I need a credit card to start?
+      <div class="faq-icon">+</div>
+    </div>
+    <div class="faq-a">Nope. The Free plan is free forever — just open the app and start uploading photos. No account required, no card, no trial countdown.</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">
+      What's a "caption set"?
+      <div class="faq-icon">+</div>
+    </div>
+    <div class="faq-a">One caption set = uploading one photo and generating captions for it. Each set gives you 5 unique captions, 20 hashtags, a hook score, alt text, and best time to post. Free users get 3 sets per day. Premium is unlimited.</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">
+      Can I cancel anytime?
+      <div class="faq-icon">+</div>
+    </div>
+    <div class="faq-a">Yes, completely. Cancel from your account dashboard anytime — your Premium access continues through the end of your billing period, then you drop back to Free automatically. No cancellation fees.</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">
+      How does regional pricing work?
+      <div class="faq-icon">+</div>
+    </div>
+    <div class="faq-a">When you open the checkout, we detect your country and automatically apply the local discount. No code needed. If you're in India, Southeast Asia, Africa, Latin America, or other PPP regions, you'll see a lower price automatically on the payment screen.</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">
+      What's the AI photo enhancement?
+      <div class="faq-icon">+</div>
+    </div>
+    <div class="faq-a">Premium users can click "Enhance Photo" to run your image through GPT Image 1 — it boosts colors, lighting, and sharpness automatically. Free users see a blurred before/after preview so you know what you're missing. Premium includes 30 enhancements per month; Teams gets unlimited.</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">
+      Can I upgrade or downgrade mid-month?
+      <div class="faq-icon">+</div>
+    </div>
+    <div class="faq-a">Yes. Upgrading takes effect immediately. Downgrading takes effect at the end of your current billing period. All your saved captions and brand voice settings are preserved even if you downgrade.</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">
+      Does the Teams plan support more than 5 people?
+      <div class="faq-icon">+</div>
+    </div>
+    <div class="faq-a">The standard Teams plan includes 5 seats. Need more? Contact us at hello@snapcaption.ai and we'll set up a custom plan for larger teams and agencies.</div>
+  </div>
+</div>
+
+<!-- BOTTOM CTA -->
+<div class="bottom-cta">
+  <h2>Ready to caption smarter?<br><span class="grad-text">Start free today.</span></h2>
+  <p>Join creators in 90+ countries turning photos into scroll-stopping captions — no text required, just upload and go.</p>
+  <div class="cta-btns">
+    <a href="app.html" class="grad-btn cta-primary" style="border-radius:10px;text-decoration:none;">Try Free — No Card Needed</a>
+    <a href="index.html#features" class="cta-secondary">See All Features</a>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div>© 2026 SnapCaption AI · <a href="#">snapcaption.ai</a></div>
+  <div class="footer-links">
+    <a href="#">Privacy Policy</a>
+    <a href="#">Terms</a>
+    <a href="pricing.html">Pricing</a>
+    <a href="app.html">Try Free</a>
+    <a href="mailto:hello@snapcaption.ai">Contact</a>
+  </div>
+</footer>
+
+<script>
+  let isAnnual = false;
+
+  function toggleBilling() {
+    isAnnual = !isAnnual;
+    const toggle = document.getElementById('billing-toggle');
+    const labelM = document.getElementById('label-monthly');
+    const labelA = document.getElementById('label-annual');
+    const premiumAnnual = document.getElementById('premium-annual');
+    const teamsAnnual = document.getElementById('teams-annual');
+    const premiumPrice = document.getElementById('premium-price');
+    const teamsPrice = document.getElementById('teams-price');
+    const premiumPeriod = document.getElementById('premium-period');
+    const teamsPeriod = document.getElementById('teams-period');
+
+    if (isAnnual) {
+      toggle.classList.add('yearly');
+      labelM.classList.remove('active');
+      labelA.classList.add('active');
+      premiumPrice.textContent = '5.58';
+      premiumPeriod.textContent = 'per month, billed annually';
+      premiumAnnual.style.display = 'block';
+      teamsPrice.textContent = '23.17';
+      teamsPeriod.textContent = 'per month · 5 seats, billed annually';
+      teamsAnnual.style.display = 'block';
+    } else {
+      toggle.classList.remove('yearly');
+      labelM.classList.add('active');
+      labelA.classList.remove('active');
+      premiumPrice.textContent = '7';
+      premiumPeriod.textContent = 'per month';
+      premiumAnnual.style.display = 'none';
+      teamsPrice.textContent = '29';
+      teamsPeriod.textContent = 'per month · 5 seats';
+      teamsAnnual.style.display = 'none';
+    }
+  }
+
+  function toggleFaq(el) {
+    const item = el.closest('.faq-item');
+    const isOpen = item.classList.contains('open');
+    // Close all
+    document.querySelectorAll('.faq-item.open').forEach(i => i.classList.remove('open'));
+    // Open clicked if was closed
+    if (!isOpen) item.classList.add('open');
+  }
+</script>
+</body>
+</html>
