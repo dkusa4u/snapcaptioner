@@ -131,30 +131,59 @@
   .selectors { padding: 0 16px 16px; display: flex; flex-direction: column; gap: 12px; }
   .sel-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
   label.sel-label {
-    font-size: .82rem; font-weight: 600; color: #c8cfe0;
-    letter-spacing: .05em; display: block; margin-bottom: 5px;
+    font-size: .88rem; font-weight: 700; color: #ffffff;
+    letter-spacing: .03em; display: block; margin-bottom: 6px;
+  }
+  .sel-hint {
+    font-size: .72rem; color: #9ca3c8; margin-left: 4px;
+    font-weight: 400; letter-spacing: 0;
+  }
+  /* Dropdown wrapper — adds visible ▼ arrow */
+  .sel-wrap { position: relative; }
+  .sel-wrap::after {
+    content: '▼';
+    position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+    font-size: .6rem; color: #9ca3c8; pointer-events: none;
   }
   select, .context-input {
     width: 100%;
-    background: var(--bg2); border: 1px solid var(--border);
-    color: var(--text); border-radius: 8px; padding: 10px 13px;
+    background: var(--bg2); border: 1px solid rgba(255,255,255,.18);
+    color: var(--text); border-radius: 8px; padding: 10px 32px 10px 13px;
     font-family: inherit; font-size: .92rem;
     appearance: none; cursor: pointer;
-    transition: border-color .2s;
+    transition: border-color .2s, box-shadow .2s;
   }
+  select:hover { border-color: rgba(168,85,247,.6); }
   select:focus, .context-input:focus {
     outline: none; border-color: var(--grad2);
+    box-shadow: 0 0 0 2px rgba(168,85,247,.2);
   }
   .context-row { position: relative; }
+  /* Voice button — bright & prominent */
   .mic-btn {
     position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
-    background: none; border: none; cursor: pointer; color: var(--muted);
-    font-size: 1rem; padding: 4px; border-radius: 6px;
-    transition: color .2s, background .2s;
+    background: rgba(168,85,247,.18); border: 1px solid rgba(168,85,247,.4);
+    cursor: pointer; color: #c084fc;
+    font-size: 1.1rem; padding: 5px 7px; border-radius: 7px;
+    transition: color .2s, background .2s, border-color .2s;
+    line-height: 1;
   }
-  .mic-btn:hover { color: var(--grad2); background: rgba(168,85,247,.1); }
-  .mic-btn.listening { color: var(--red); animation: micPulse 1s infinite; }
-  @keyframes micPulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+  .mic-btn:hover { color: #fff; background: rgba(168,85,247,.4); border-color: #c084fc; }
+  .mic-btn.listening {
+    color: #fff; background: rgba(239,68,68,.3); border-color: #f87171;
+    animation: micPulse 1s infinite;
+  }
+  @keyframes micPulse { 0%,100%{opacity:1} 50%{opacity:.5} }
+  /* Voice label row */
+  .voice-label-row {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 6px;
+  }
+  .voice-status {
+    font-size: .72rem; color: #c084fc; font-weight: 600;
+    display: none;
+  }
+  .voice-status.active { display: inline; }
 
   /* GENERATE BTN */
   .gen-btn {
@@ -434,7 +463,8 @@
         <!-- Platform + Language -->
         <div class="sel-row">
           <div>
-            <label class="sel-label">Platform</label>
+            <label class="sel-label">Select Platform <span class="sel-hint">tap to change</span></label>
+            <div class="sel-wrap">
             <select id="platformSel">
               <option value="Instagram">📸 Instagram</option>
               <option value="TikTok">🎵 TikTok</option>
@@ -443,9 +473,11 @@
               <option value="Facebook">📘 Facebook</option>
               <option value="Pinterest">📌 Pinterest</option>
             </select>
+            </div>
           </div>
           <div>
-            <label class="sel-label">Language</label>
+            <label class="sel-label">Select Language <span class="sel-hint">tap to change</span></label>
+            <div class="sel-wrap">
             <select id="langSel">
               <optgroup label="Most Spoken">
                 <option value="English">🇺🇸 English</option>
@@ -553,12 +585,14 @@
                 <option value="Haitian Creole">🇭🇹 Haitian Creole</option>
               </optgroup>
             </select>
+            </div>
           </div>
         </div>
 
         <!-- Tone -->
         <div>
-          <label class="sel-label">Caption Tone</label>
+          <label class="sel-label">Select Caption Tone <span class="sel-hint">tap to change</span></label>
+          <div class="sel-wrap">
           <select id="toneSel">
             <option value="engaging">Engaging & Conversational</option>
             <option value="funny">Funny & Witty</option>
@@ -567,15 +601,19 @@
             <option value="storytelling">Storytelling & Personal</option>
             <option value="minimal">Minimal & Clean</option>
           </select>
+          </div>
         </div>
 
         <!-- Optional voice context -->
         <div>
-          <label class="sel-label">Add Context (optional)</label>
+          <div class="voice-label-row">
+            <label class="sel-label">🎙️ Use Voice or Type Context</label>
+            <span class="voice-status" id="voiceStatus">● Listening…</span>
+          </div>
           <div class="context-row">
             <input type="text" class="context-input" id="contextInput"
-              placeholder="e.g. 'Sunday hike with friends at Mount Tamalpais…'">
-            <button class="mic-btn" id="micBtn" onclick="toggleMic()" title="Speak your context">🎙️</button>
+              placeholder="Tap 🎙️ to speak, or type context here…">
+            <button class="mic-btn" id="micBtn" onclick="toggleMic()" title="Tap to speak your context">🎙️</button>
           </div>
         </div>
       </div>
@@ -651,25 +689,58 @@
   // ── Mic Input ──────────────────────────────────────────
   let recognition = null;
   function toggleMic() {
-    if (!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
-      alert('Voice input not supported in this browser. Try Chrome.');
+    const btn = document.getElementById('micBtn');
+    const statusEl = document.getElementById('voiceStatus');
+
+    if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+      btn.textContent = '🚫';
+      setTimeout(() => { btn.textContent = '🎙️'; }, 2000);
+      document.getElementById('contextInput').placeholder = 'Voice not supported — please type here instead (Chrome recommended)';
       return;
     }
-    const btn = document.getElementById('micBtn');
+
     if (recognition) {
       recognition.stop(); recognition = null;
-      btn.classList.remove('listening'); btn.textContent = '🎙️'; return;
+      btn.classList.remove('listening'); btn.textContent = '🎙️';
+      statusEl.classList.remove('active');
+      return;
     }
+
     recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-    recognition.lang = 'en-US'; recognition.continuous = false;
+    recognition.lang = document.getElementById('langSel').value === 'English' ? 'en-US' : 'en-US';
+    recognition.continuous = false;
     recognition.interimResults = false;
-    recognition.onstart = () => { btn.classList.add('listening'); btn.textContent = '🔴'; };
+
+    recognition.onstart = () => {
+      btn.classList.add('listening'); btn.textContent = '🔴';
+      statusEl.classList.add('active');
+    };
+
     recognition.onresult = e => {
-      document.getElementById('contextInput').value = e.results[0][0].transcript;
+      const transcript = e.results[0][0].transcript;
+      document.getElementById('contextInput').value = transcript;
     };
+
+    recognition.onerror = e => {
+      btn.classList.remove('listening'); btn.textContent = '🎙️';
+      statusEl.classList.remove('active');
+      recognition = null;
+      if (e.error === 'not-allowed') {
+        document.getElementById('contextInput').placeholder = 'Microphone blocked — allow mic access in your browser settings';
+      } else if (e.error === 'no-speech') {
+        document.getElementById('contextInput').placeholder = 'No speech detected — tap 🎙️ and speak clearly';
+        setTimeout(() => {
+          document.getElementById('contextInput').placeholder = 'Tap 🎙️ to speak, or type context here…';
+        }, 3000);
+      }
+    };
+
     recognition.onend = () => {
-      btn.classList.remove('listening'); btn.textContent = '🎙️'; recognition = null;
+      btn.classList.remove('listening'); btn.textContent = '🎙️';
+      statusEl.classList.remove('active');
+      recognition = null;
     };
+
     recognition.start();
   }
 
