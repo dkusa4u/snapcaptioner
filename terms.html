@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Terms of Service — SnapCaption AI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #09090f; --bg2: #0f0f1a; --bg3: #141424;
+    --card: #13131f; --border: #1e1e32; --border2: #2a2a44;
+    --grad1: #7c3aed; --grad2: #a855f7; --grad3: #ec4899;
+    --text: #e8e8f0; --muted: #6b7280; --muted2: #9ca3af;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; line-height: 1.7; }
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: rgba(9,9,15,.85); backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border); padding: 0 24px;
+    height: 64px; display: flex; align-items: center; justify-content: space-between;
+  }
+  .nav-logo {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 1.1rem; font-weight: 800; color: var(--text); text-decoration: none;
+  }
+  .nav-logo .logo-icon {
+    width: 34px; height: 34px; border-radius: 9px;
+    background: linear-gradient(135deg, var(--grad1), var(--grad3));
+    display: flex; align-items: center; justify-content: center; font-size: 18px;
+  }
+  .nav-links { display: flex; align-items: center; gap: 24px; }
+  .nav-links a { color: var(--muted2); text-decoration: none; font-size: .9rem; font-weight: 500; transition: color .2s; }
+  .nav-links a:hover { color: var(--text); }
+  .grad-btn {
+    background: linear-gradient(135deg, var(--grad1), var(--grad3));
+    color: #fff; border: none; cursor: pointer; font-weight: 600;
+    padding: 9px 20px; border-radius: 8px; font-size: .88rem; text-decoration: none;
+    transition: opacity .2s;
+  }
+  .grad-btn:hover { opacity: .9; }
+
+  .page-wrap { max-width: 760px; margin: 0 auto; padding: 100px 24px 80px; }
+  .page-header { margin-bottom: 48px; }
+  .page-header h1 { font-size: 2.2rem; font-weight: 800; margin-bottom: 10px; }
+  .grad-text {
+    background: linear-gradient(135deg, var(--grad2), var(--grad3));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  }
+  .meta { color: var(--muted); font-size: .9rem; }
+
+  .section { margin-bottom: 40px; }
+  .section h2 { font-size: 1.15rem; font-weight: 700; margin-bottom: 12px; color: var(--text); }
+  .section p, .section li { color: var(--muted2); font-size: .95rem; margin-bottom: 10px; }
+  .section ul { padding-left: 20px; }
+  .section li { margin-bottom: 6px; }
+
+  footer {
+    border-top: 1px solid var(--border); padding: 32px 24px;
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 16px; color: var(--muted); font-size: .88rem;
+    max-width: 1200px; margin: 0 auto;
+  }
+  footer a { color: var(--muted); text-decoration: none; }
+  footer a:hover { color: var(--text); }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo">
+    <div class="logo-icon">📸</div>
+    SnapCaption AI
+  </a>
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="pricing.html">Pricing</a>
+    <a href="app.html" class="grad-btn">Try Free</a>
+  </div>
+</nav>
+
+<div class="page-wrap">
+  <div class="page-header">
+    <h1><span class="grad-text">Terms of Service</span></h1>
+    <p class="meta">Last updated: November 2026</p>
+  </div>
+
+  <div class="section">
+    <p>Welcome to SnapCaption AI. By using our website or service you agree to these terms. Please read them carefully. If you do not agree, please do not use the service.</p>
+  </div>
+
+  <div class="section">
+    <h2>1. The Service</h2>
+    <p>SnapCaption AI provides an AI-powered social media caption generator. You upload a photo and we return caption suggestions, hashtags, and posting tips. The service is provided "as is" and AI outputs may not always be accurate, appropriate, or error-free.</p>
+  </div>
+
+  <div class="section">
+    <h2>2. Acceptable Use</h2>
+    <p>You agree not to use SnapCaption AI to:</p>
+    <ul>
+      <li>Upload photos you do not own or have the right to use</li>
+      <li>Generate captions for illegal, hateful, violent, or sexually explicit content</li>
+      <li>Attempt to reverse-engineer, scrape, or abuse our API</li>
+      <li>Share your account or sell access to our service</li>
+      <li>Upload photos of minors for caption generation without appropriate parental consent</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h2>3. Free Tier &amp; Premium</h2>
+    <ul>
+      <li><strong>Free tier:</strong> 3 caption generations per day. No credit card required. Rate limits apply.</li>
+      <li><strong>Premium:</strong> Unlimited daily generations, caption history, brand voice, and priority processing for $7/month.</li>
+      <li>Prices may change. We will notify you by email at least 30 days before any price increase affecting your existing subscription.</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h2>4. Payments &amp; Cancellation</h2>
+    <ul>
+      <li>Premium subscriptions are billed monthly via Stripe.</li>
+      <li>You may cancel at any time. Your access continues until the end of the billing period.</li>
+      <li>We do not offer refunds for partial months, but we will consider reasonable requests on a case-by-case basis.</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h2>5. Your Content</h2>
+    <p>You retain full ownership of the photos you upload and the captions you generate. By using the service you grant us a temporary, limited licence to process your photos solely for the purpose of generating captions. We do not claim ownership of your content and do not use it for advertising.</p>
+  </div>
+
+  <div class="section">
+    <h2>6. AI-Generated Content</h2>
+    <p>Captions are generated by AI and may sometimes be inaccurate, off-tone, or unsuitable for your specific needs. Always review AI suggestions before posting. SnapCaption AI is not responsible for any reputational or other harm arising from your use of AI-generated captions.</p>
+  </div>
+
+  <div class="section">
+    <h2>7. Limitation of Liability</h2>
+    <p>To the maximum extent permitted by law, SnapCaption AI shall not be liable for indirect, incidental, special, or consequential damages. Our total liability for any claim shall not exceed the amount you paid us in the 12 months prior to the claim.</p>
+  </div>
+
+  <div class="section">
+    <h2>8. Service Availability</h2>
+    <p>We aim for high availability but do not guarantee uninterrupted service. We may perform maintenance, updates, or temporarily suspend the service. We will not be liable for downtime or interruptions.</p>
+  </div>
+
+  <div class="section">
+    <h2>9. Account Termination</h2>
+    <p>We reserve the right to suspend or terminate accounts that violate these terms without prior notice. If your account is terminated for a violation you will not receive a refund.</p>
+  </div>
+
+  <div class="section">
+    <h2>10. Changes to These Terms</h2>
+    <p>We may update these terms. Continued use of the service after changes are posted constitutes your acceptance. We will notify registered users by email for material changes.</p>
+  </div>
+
+  <div class="section">
+    <h2>11. Governing Law</h2>
+    <p>These terms are governed by the laws of the jurisdiction in which SnapCaption AI operates. Any disputes shall be resolved by binding arbitration or in the courts of that jurisdiction.</p>
+  </div>
+
+  <div class="section">
+    <h2>12. Contact</h2>
+    <p>Questions about these terms? Email <strong>legal@snapcaptioner.com</strong> or visit our <a href="contact.html" style="color:var(--grad2)">Contact page</a>.</p>
+  </div>
+</div>
+
+<footer>
+  <div style="display:flex;align-items:center;gap:10px;">
+    <div style="width:28px;height:28px;border-radius:7px;background:linear-gradient(135deg,var(--grad1),var(--grad3));display:flex;align-items:center;justify-content:center;font-size:14px;">📸</div>
+    <span style="font-weight:700;color:var(--text);">SnapCaption AI</span>
+  </div>
+  <div style="display:flex;gap:24px;flex-wrap:wrap;">
+    <a href="privacy.html">Privacy</a>
+    <a href="terms.html">Terms</a>
+    <a href="contact.html">Contact</a>
+    <a href="pricing.html">Pricing</a>
+  </div>
+  <div>© 2026 SnapCaption AI. All rights reserved.</div>
+</footer>
+
+</body>
+</html>
