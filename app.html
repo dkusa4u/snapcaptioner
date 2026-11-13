@@ -4,6 +4,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>SnapCaption AI — Generate Captions</title>
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#7c3aed">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="SnapCaption">
+<link rel="apple-touch-icon" href="/icons/icon-192.png">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -408,9 +415,60 @@
   ::-webkit-scrollbar { width: 5px; }
   ::-webkit-scrollbar-track { background: var(--bg); }
   ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+
+  /* ── PWA Install Banner ── */
+  #pwaBanner {
+    display: none;
+    position: fixed;
+    bottom: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: calc(100% - 32px);
+    max-width: 480px;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    border: 1px solid var(--grad1);
+    border-radius: 14px;
+    padding: 14px 16px;
+    display: none;
+    align-items: center;
+    gap: 12px;
+    z-index: 9999;
+    box-shadow: 0 8px 32px rgba(124,58,237,.35);
+    animation: slideUp .3s ease;
+  }
+  @keyframes slideUp { from { transform: translateX(-50%) translateY(20px); opacity:0; } to { transform: translateX(-50%) translateY(0); opacity:1; } }
+  #pwaBanner .pwa-icon { font-size: 28px; flex-shrink: 0; }
+  #pwaBanner .pwa-text { flex: 1; }
+  #pwaBanner .pwa-text strong { display:block; font-size:14px; color:#e8e8f0; }
+  #pwaBanner .pwa-text span { font-size:12px; color:var(--muted2); }
+  #pwaBanner .pwa-install-btn {
+    background: linear-gradient(135deg, var(--grad1), var(--grad2));
+    color: #fff; border: none; border-radius: 8px;
+    padding: 8px 16px; font-size: 13px; font-weight: 600;
+    cursor: pointer; white-space: nowrap; flex-shrink: 0;
+  }
+  #pwaBanner .pwa-install-btn:hover { opacity: .9; }
+  #pwaBanner .pwa-close {
+    background: none; border: none; color: var(--muted); font-size: 18px;
+    cursor: pointer; padding: 2px 4px; flex-shrink: 0; line-height: 1;
+  }
+  /* iOS-specific instruction text */
+  #pwaIOSHint { display:none; font-size:11px; color:var(--muted2); margin-top:4px; }
 </style>
 </head>
 <body>
+
+<!-- PWA Install Banner -->
+<div id="pwaBanner" role="banner" aria-label="Install app">
+  <div class="pwa-icon">📸</div>
+  <div class="pwa-text">
+    <strong>Add SnapCaption to your screen</strong>
+    <span id="pwaSubText">Install the app for instant access</span>
+    <span id="pwaIOSHint">Tap <strong>Share ⬆</strong> → <strong>Add to Home Screen</strong></span>
+  </div>
+  <button class="pwa-install-btn" id="pwaInstallBtn">Install</button>
+  <button class="pwa-close" id="pwaDismissBtn" aria-label="Dismiss">×</button>
+</div>
 
 <!-- NAV -->
 <nav>
@@ -806,7 +864,22 @@
     }
 
     recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-    recognition.lang = document.getElementById('langSel').value === 'English' ? 'en-US' : 'en-US';
+    const langBCP47 = {
+      'English':'en-US','Mandarin Chinese':'zh-CN','Hindi':'hi-IN','Spanish':'es-ES',
+      'French':'fr-FR','Arabic':'ar-SA','Bengali':'bn-BD','Portuguese':'pt-BR',
+      'Russian':'ru-RU','Urdu':'ur-PK','Indonesian':'id-ID','German':'de-DE',
+      'Japanese':'ja-JP','Swahili':'sw-KE','Marathi':'mr-IN','Telugu':'te-IN',
+      'Turkish':'tr-TR','Korean':'ko-KR','Tamil':'ta-IN','Vietnamese':'vi-VN',
+      'Italian':'it-IT','Polish':'pl-PL','Gujarati':'gu-IN','Ukrainian':'uk-UA',
+      'Thai':'th-TH','Persian':'fa-IR','Tagalog':'fil-PH','Romanian':'ro-RO',
+      'Hausa':'ha','Dutch':'nl-NL','Yoruba':'yo','Amharic':'am-ET',
+      'Burmese':'my-MM','Uzbek':'uz-UZ','Malay':'ms-MY','Sindhi':'sd',
+      'Oromifa':'om','Igbo':'ig','Zulu':'zu-ZA','Xhosa':'xh-ZA',
+      'Afrikaans':'af-ZA','Catalan':'ca-ES','Czech':'cs-CZ','Danish':'da-DK',
+      'Finnish':'fi-FI','Greek':'el-GR','Hebrew':'he-IL','Norwegian':'nb-NO',
+      'Slovak':'sk-SK','Swedish':'sv-SE','Hungarian':'hu-HU','Croatian':'hr-HR',
+    };
+    recognition.lang = langBCP47[document.getElementById('langSel').value] || 'en-US';
     recognition.continuous = false;
     recognition.interimResults = false;
 
@@ -915,9 +988,11 @@
       }
       if (!apiError) {
         if (!res.ok) {
-          apiError = resJson?.message || resJson?.error || ('HTTP ' + res.status);
+          const detail = resJson?.detail ? ' — ' + resJson.detail : '';
+          apiError = (resJson?.message || resJson?.error || ('HTTP ' + res.status)) + detail;
         } else if (resJson?.error) {
-          apiError = resJson.message || resJson.error;
+          const detail = resJson?.detail ? ' — ' + resJson.detail : '';
+          apiError = (resJson.message || resJson.error) + detail;
         } else {
           data = resJson;
         }
@@ -1250,6 +1325,73 @@
       engagement_tip: 'Ask a question at the end to boost comments by 2–3×'
     };
   }
+</script>
+
+<!-- ── PWA Service Worker + Install Prompt ── -->
+<script>
+(function() {
+  // ── 1. Register service worker ──────────────────────────────────────────
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/sw.js').catch(() => {});
+    });
+  }
+
+  // ── 2. Dismiss logic ────────────────────────────────────────────────────
+  const DISMISS_KEY = 'sc_pwa_dismissed';
+  const DISMISS_DAYS = 7;
+  function wasDismissed() {
+    const ts = parseInt(localStorage.getItem(DISMISS_KEY) || '0');
+    return ts && (Date.now() - ts < DISMISS_DAYS * 86400000);
+  }
+  function dismiss() {
+    localStorage.setItem(DISMISS_KEY, Date.now());
+    const b = document.getElementById('pwaBanner');
+    if (b) { b.style.animation = 'none'; b.style.display = 'none'; }
+  }
+  document.getElementById('pwaDismissBtn').addEventListener('click', dismiss);
+
+  // ── 3. Android Chrome — beforeinstallprompt ──────────────────────────────
+  let deferredPrompt = null;
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    if (wasDismissed()) return;
+    const banner = document.getElementById('pwaBanner');
+    document.getElementById('pwaSubText').textContent = 'Get instant access from your home screen';
+    document.getElementById('pwaInstallBtn').textContent = 'Install';
+    banner.style.display = 'flex';
+  });
+
+  document.getElementById('pwaInstallBtn').addEventListener('click', async () => {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      deferredPrompt = null;
+      dismiss();
+    } else {
+      // iOS fallback: scroll hint into view
+      document.getElementById('pwaIOSHint').style.display = 'block';
+      document.getElementById('pwaInstallBtn').style.display = 'none';
+    }
+  });
+
+  window.addEventListener('appinstalled', () => { dismiss(); });
+
+  // ── 4. iOS Safari — custom nudge ─────────────────────────────────────────
+  const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+  const isStandalone = window.navigator.standalone === true ||
+                       window.matchMedia('(display-mode: standalone)').matches;
+  if (isIOS && !isStandalone && !wasDismissed()) {
+    setTimeout(() => {
+      const banner = document.getElementById('pwaBanner');
+      document.getElementById('pwaSubText').style.display = 'none';
+      document.getElementById('pwaIOSHint').style.display = 'block';
+      document.getElementById('pwaInstallBtn').style.display = 'none';
+      banner.style.display = 'flex';
+    }, 3000); // slight delay so it doesn't pop immediately on page load
+  }
+})();
 </script>
 </body>
 </html>
