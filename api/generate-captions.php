@@ -42,44 +42,46 @@ $today = date('Y-m-d');
 $user      = tokenAuth();                               // null = unauthenticated guest
 $isPremium = $user && $user['plan'] !== 'free';
 
-if (!$isPremium) {
-    if ($user) {
-        // DB-based daily limit for free logged-in users
-        $db   = getDB();
-        $stmt = $db->prepare(
-            "SELECT COUNT(*) FROM usage_log
-              WHERE user_id = ? AND action = 'generate' AND DATE(created_at) = CURDATE()"
-        );
-        $stmt->execute([$user['id']]);
-        $usedToday = (int) $stmt->fetchColumn();
+// AI captions are premium-only — block guests and free users
+if (!$user) {
+    http_response_code(403);
+    echo json_encode([
+        'error'       => 'login_required',
+        'message'     => 'Sign in to use AI captions.',
+        'login_url'   => '/login.html',
+    ]);
+    exit;
+}
 
-        if ($usedToday >= FREE_DAILY_LIMIT) {
-            http_response_code(429);
-            echo json_encode([
-                'error'       => 'free_limit_reached',
-                'message'     => 'Free limit of ' . FREE_DAILY_LIMIT . ' captions/day reached. Upgrade to Premium.',
-                'upgrade_url' => '/pricing.html',
-                'used'        => $usedToday,
-                'limit'       => FREE_DAILY_LIMIT,
-            ]);
-            exit;
-        }
-    } else {
-        // Session-based limit for unauthenticated guests
-        if (!isset($_SESSION['usage_date']) || $_SESSION['usage_date'] !== $today) {
-            $_SESSION['usage_date']  = $today;
-            $_SESSION['usage_count'] = 0;
-        }
-        if ($_SESSION['usage_count'] >= FREE_DAILY_LIMIT) {
-            http_response_code(429);
-            echo json_encode([
-                'error'       => 'free_limit_reached',
-                'message'     => 'Free limit of ' . FREE_DAILY_LIMIT . ' captions/day reached. Sign up free to continue.',
-                'upgrade_url' => '/pricing.html',
-            ]);
-            exit;
-        }
-    }
+if (!$isPremium) {
+    http_response_code(403);
+    echo json_encode([
+        'error'       => 'premium_required',
+        'message'     => 'AI captions are a Premium feature. Upgrade to unlock 5 AI captions per day.',
+        'upgrade_url' => '/pricing.html',
+    ]);
+    exit;
+}
+
+// Premium users: enforce daily AI caption limit
+$db        = getDB();
+$stmt      = $db->prepare(
+    "SELECT COUNT(*) FROM usage_log
+      WHERE user_id = ? AND action = 'generate' AND DATE(created_at) = CURDATE()"
+);
+$stmt->execute([$user['id']]);
+$usedToday = (int) $stmt->fetchColumn();
+
+if ($usedToday >= PREMIUM_AI_DAILY) {
+    http_response_code(429);
+    echo json_encode([
+        'error'       => 'premium_limit_reached',
+        'message'     => 'You\'ve used all ' . PREMIUM_AI_DAILY . ' AI captions for today. Resets at midnight.',
+        'used'        => $usedToday,
+        'limit'       => PREMIUM_AI_DAILY,
+        'resets_at'   => date('Y-m-d', strtotime('+1 day')) . ' 00:00:00',
+    ]);
+    exit;
 }
 
 // ── Parse request body ─────────────────────────────────────────────────────
@@ -346,18 +348,9 @@ if ($user) {
 
     $result['usage'] = [
         'used'       => $usedNow,
-        'limit'      => $isPremium ? 999 : FREE_DAILY_LIMIT,
-        'remaining'  => $isPremium ? 999 : max(0, FREE_DAILY_LIMIT - $usedNow),
-        'is_premium' => $isPremium,
-    ];
-} else {
-    // Guest: session counter only (no DB)
-    $_SESSION['usage_count']++;
-    $result['usage'] = [
-        'used'       => $_SESSION['usage_count'],
-        'limit'      => FREE_DAILY_LIMIT,
-        'remaining'  => max(0, FREE_DAILY_LIMIT - $_SESSION['usage_count']),
-        'is_premium' => false,
+        'limit'      => PREMIUM_AI_DAILY,
+        'remaining'  => max(0, PREMIUM_AI_DAILY - $usedNow),
+        'is_premium' => true,
     ];
 }
 

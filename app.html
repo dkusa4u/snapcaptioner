@@ -454,6 +454,65 @@
   }
   /* iOS-specific instruction text */
   #pwaIOSHint { display:none; font-size:11px; color:var(--muted2); margin-top:4px; }
+
+  /* ── Enhance Toolbar ───────────────────────────────────── */
+  .enhance-bar {
+    display: none; /* shown via JS after photo loaded */
+    flex-direction: column; gap: 8px;
+    background: rgba(255,255,255,.04); border-radius: 12px;
+    padding: 12px 14px; margin-top: 10px;
+    border: 1px solid rgba(255,255,255,.07);
+  }
+  .enhance-bar.active { display: flex; }
+  .enhance-bar-head {
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .enhance-title {
+    font-size: .78rem; font-weight: 700; color: var(--text);
+    display: flex; align-items: center; gap: 5px;
+  }
+  .enhance-ctr {
+    font-size: .72rem; color: var(--muted2); font-weight: 500;
+  }
+  .filter-btns {
+    display: flex; gap: 6px; flex-wrap: wrap;
+  }
+  .filter-btn {
+    flex: 1; min-width: 60px; padding: 7px 4px;
+    background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.1);
+    border-radius: 8px; color: var(--text); font-size: .73rem; font-weight: 600;
+    cursor: pointer; text-align: center; transition: all .18s;
+  }
+  .filter-btn:hover { background: rgba(255,255,255,.12); border-color: var(--grad2); }
+  .filter-btn.active {
+    background: linear-gradient(135deg, var(--grad1), var(--grad2));
+    border-color: transparent; color: #fff;
+  }
+  .filter-btn.f-reset {
+    background: none; border-color: rgba(255,255,255,.08); color: var(--muted);
+  }
+  .filter-btn.f-reset:hover { border-color: var(--red); color: var(--red); }
+
+  /* ── Gen Locked (free/guest) ───────────────────────────── */
+  .gen-locked {
+    display: none;
+    background: rgba(255,255,255,.04); border-radius: 14px;
+    border: 1px dashed rgba(255,255,255,.12);
+    padding: 18px 16px; text-align: center; margin-top: 2px;
+  }
+  .gen-locked .lock-info { font-size: 1.5rem; margin-bottom: 6px; }
+  .gen-locked .lock-label {
+    font-size: .88rem; font-weight: 700; color: var(--text); margin-bottom: 4px;
+  }
+  .gen-locked .lock-sub { font-size: .75rem; color: var(--muted2); margin-bottom: 12px; }
+  .gen-locked a {
+    display: inline-block;
+    background: linear-gradient(135deg, var(--grad1), var(--grad2));
+    color: #fff; text-decoration: none; border-radius: 10px;
+    padding: 9px 22px; font-size: .82rem; font-weight: 700;
+    transition: opacity .18s;
+  }
+  .gen-locked a:hover { opacity: .88; }
 </style>
 </head>
 <body>
@@ -550,6 +609,21 @@
         <img id="photoPreview" alt="Preview">
         <div class="preview-overlay"><span>🔄 Change photo</span></div>
         <input type="file" id="fileInput" accept="image/*">
+      </div>
+
+      <!-- Photo Enhance Toolbar (shown after photo loaded) -->
+      <div class="enhance-bar" id="enhanceBar">
+        <div class="enhance-bar-head">
+          <span class="enhance-title">🎨 Edit Photo</span>
+          <span class="enhance-ctr" id="enhanceCtr"></span>
+        </div>
+        <div class="filter-btns">
+          <button class="filter-btn" id="fb-auto"  onclick="doEnhance('auto')">✨ Auto</button>
+          <button class="filter-btn" id="fb-vivid" onclick="doEnhance('vivid')">🌈 Vivid</button>
+          <button class="filter-btn" id="fb-warm"  onclick="doEnhance('warm')">🌅 Warm</button>
+          <button class="filter-btn" id="fb-cool"  onclick="doEnhance('cool')">❄️ Cool</button>
+          <button class="filter-btn f-reset" id="fb-reset" onclick="resetPhoto()" style="display:none;">↺ Reset</button>
+        </div>
       </div>
 
       <!-- Selectors -->
@@ -713,16 +787,24 @@
         </div>
       </div>
 
-      <!-- Generate Button -->
+      <!-- Generate Button (premium users) -->
       <button class="gen-btn" id="genBtn" onclick="generateCaptions()">
         <div class="spinner" id="btnSpinner"></div>
         <span id="btnText">✨ Generate 5 Captions</span>
       </button>
+
+      <!-- Gen Locked (free/guest users) -->
+      <div class="gen-locked" id="genLocked">
+        <div class="lock-info">🔒</div>
+        <div class="lock-label">AI Captions — Premium Only</div>
+        <div class="lock-sub">Upgrade to get 5 AI-generated captions per day</div>
+        <a href="pricing.html">Upgrade to Premium — $7/mo</a>
+      </div>
     </div>
 
     <!-- Free limit info -->
-    <div style="padding:10px 4px;font-size:.72rem;color:var(--muted);text-align:center;line-height:1.6;">
-      Free plan: 3 captions/day · 90 languages · <a href="pricing.html" style="color:var(--grad2);font-weight:600;">Upgrade for unlimited</a>
+    <div id="planInfoText" style="padding:10px 4px;font-size:.72rem;color:var(--muted);text-align:center;line-height:1.6;">
+      Free plan: 3 photo edits/day · <a href="pricing.html" style="color:var(--grad2);font-weight:600;">Upgrade for AI captions</a>
     </div>
   </div>
 
@@ -739,21 +821,28 @@
 
 <script>
   // ── State ──────────────────────────────────────────────
-  let currentImageBase64 = null;
-  let usageCount = parseInt(localStorage.getItem('sc_usage') || '0');
-  let usageDate = localStorage.getItem('sc_date') || '';
-  const today = new Date().toDateString();
-  if (usageDate !== today) { usageCount = 0; localStorage.setItem('sc_date', today); }
-  let FREE_LIMIT = 3;
-  let currentUser = null;
-  let authToken = localStorage.getItem('sc_token') || null;
-  updateUsageUI();
+  let currentImageBase64  = null;
+  let originalImageBase64 = null;    // kept to enable Reset button
+  let activeFilter        = null;    // 'auto' | 'vivid' | 'warm' | 'cool' | null
+  let enhanceUsed  = 0;
+  let enhanceLimit = 3;              // FREE_ENHANCE_DAILY default
+  let aiUsed       = 0;
+  let aiLimit      = 5;             // PREMIUM_AI_DAILY default
+  let currentUser  = null;
+  let authToken    = localStorage.getItem('sc_token') || null;
 
   // ── Auth init ───────────────────────────────────────────
   (async function initAuth() {
-    if (!authToken) return;
     const stored = JSON.parse(localStorage.getItem('sc_user') || 'null');
     if (stored) applyUserUI(stored);
+
+    if (!authToken) {
+      // Guest — show genLocked, hide genBtn
+      showGenLocked(true);
+      updateUsageUI();
+      return;
+    }
+
     // Verify token + get real usage from server
     try {
       const r = await fetch('api/check-usage.php', {
@@ -762,16 +851,34 @@
       if (!r.ok) { clearAuth(); return; }
       const d = await r.json();
       currentUser = stored;
+
+      enhanceUsed  = d.enhance_used  ?? 0;
+      enhanceLimit = d.enhance_limit ?? 3;
+      aiUsed       = d.ai_used       ?? 0;
+      aiLimit      = d.ai_limit      ?? 5;
+
       if (d.plan === 'premium' || d.plan === 'teams') {
-        FREE_LIMIT = 999;
         document.getElementById('usagePill').style.display = 'none';
+        document.getElementById('planInfoText').style.display = 'none';
+        showGenLocked(false);
       } else {
-        usageCount = d.used;
-        FREE_LIMIT = d.limit || 3;
+        // Free user — lock AI captions
+        showGenLocked(true);
         updateUsageUI();
       }
-    } catch(e) { /* network error — stay with cached state */ }
+    } catch(e) {
+      // Network error — stay with cached state; default to locked
+      if (!stored || stored.plan === 'free' || !stored.plan) {
+        showGenLocked(true);
+      }
+      updateUsageUI();
+    }
   })();
+
+  function showGenLocked(locked) {
+    document.getElementById('genBtn').style.display    = locked ? 'none' : '';
+    document.getElementById('genLocked').style.display = locked ? 'flex' : 'none';
+  }
 
   function applyUserUI(user) {
     document.getElementById('navGuest').style.display = 'none';
@@ -785,6 +892,10 @@
     badge.className = 'user-plan-badge ' + (user.plan || 'free');
     if (user.plan === 'premium' || user.plan === 'teams') {
       document.getElementById('usagePill').style.display = 'none';
+      document.getElementById('planInfoText').style.display = 'none';
+      showGenLocked(false);
+    } else {
+      showGenLocked(true);
     }
   }
 
@@ -833,12 +944,23 @@
     reader.onload = e => {
       const dataUrl = e.target.result;
       currentImageBase64 = dataUrl.split(',')[1];
+      originalImageBase64 = currentImageBase64;  // keep original for reset
+      activeFilter = null;
+      // Reset filter button states
+      ['fb-auto','fb-vivid','fb-warm','fb-cool'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.classList.remove('active');
+      });
+      document.getElementById('fb-reset').style.display = 'none';
       preview.src = dataUrl;
       preview.style.display = 'block';
       uploadZone.classList.add('has-photo');
       uploadZone.querySelector('.upload-icon-big').style.display = 'none';
       uploadZone.querySelector('.upload-label').style.display = 'none';
       uploadZone.querySelector('.upload-sub').style.display = 'none';
+      // Show enhance toolbar
+      document.getElementById('enhanceBar').classList.add('active');
+      updateEnhanceCtr();
     };
     reader.readAsDataURL(file);
   }
@@ -953,11 +1075,6 @@
       alert('Please upload a photo first.');
       return;
     }
-    if (usageCount >= FREE_LIMIT) {
-      alert('You\'ve used all 3 free captions for today.\nUpgrade to Premium for unlimited!');
-      location.href = 'pricing.html';
-      return;
-    }
     const btn = document.getElementById('genBtn');
     const spinner = document.getElementById('btnSpinner');
     const btnText = document.getElementById('btnText');
@@ -1010,9 +1127,11 @@
       return;
     }
 
-    // Update usage
-    usageCount++;
-    localStorage.setItem('sc_usage', usageCount);
+    // Update usage from server response
+    if (data.usage) {
+      aiUsed  = data.usage.used      ?? aiUsed + 1;
+      aiLimit = data.usage.limit     ?? aiLimit;
+    }
     updateUsageUI();
 
     hideLoading();
@@ -1030,7 +1149,7 @@
   // ── Render Results ─────────────────────────────────────
   function renderResults(data, platform) {
     const panel = document.getElementById('resultsPanel');
-    const isPremium = false; // switch to true once auth is added
+    const isPremium = currentUser?.plan === 'premium' || currentUser?.plan === 'teams';
 
     const platIcons = {
       Instagram:'📸', TikTok:'🎵', LinkedIn:'💼', X:'🐦', Facebook:'📘', Pinterest:'📌'
@@ -1114,34 +1233,32 @@
         </div>
       </div>
 
-      <!-- Before/After Enhancement -->
+      <!-- Photo Edit Reminder (shown if no filter applied; hidden if enhanced) -->
+      ${!activeFilter ? `
+      <div class="enhance-block" style="text-align:center;padding:16px;">
+        <div style="font-size:.82rem;color:var(--muted2);">
+          🎨 Use the <strong style="color:var(--text);">Edit Photo</strong> toolbar above to apply a filter before generating.
+          ${!isPremium ? `<br><a href="pricing.html" style="color:var(--grad2);font-weight:600;">Upgrade</a> for unlimited edits.` : ''}
+        </div>
+      </div>` : `
       <div class="enhance-block">
         <div class="enh-header">
-          <span style="font-size:.88rem;font-weight:700;">✨ AI Photo Enhancement</span>
-          <span style="font-size:.68rem;color:var(--grad2);font-weight:600;margin-left:auto;">Premium</span>
+          <span style="font-size:.88rem;font-weight:700;">✨ Edited Photo</span>
+          <span style="font-size:.68rem;color:var(--grad2);font-weight:600;margin-left:auto;">${activeFilter.charAt(0).toUpperCase()+activeFilter.slice(1)} filter</span>
         </div>
         <div class="enh-body">
           <div class="ba-row">
             <div class="ba-side">
-              <div class="ba-label" style="color:#e2e8f0;">BEFORE</div>
-              <img src="${beforeSrc}" alt="Before enhancement">
+              <div class="ba-label" style="color:#e2e8f0;">ORIGINAL</div>
+              <img src="data:image/jpeg;base64,${originalImageBase64 || beforeSrc.split(',')[1] || ''}" alt="Original photo" onerror="this.src='${beforeSrc}'">
             </div>
             <div class="ba-side">
-              <div class="ba-label" style="color:var(--grad2);">AFTER ✨</div>
-              <img src="${beforeSrc}" alt="After enhancement" class="ba-after-blur"
-                style="filter:blur(6px) brightness(1.15) saturate(1.4) contrast(1.1);">
-              <div class="ba-lock">
-                <span style="font-size:1.3rem;">🔒</span>
-                <span>Premium Only</span>
-              </div>
+              <div class="ba-label" style="color:var(--grad2);">EDITED ✨</div>
+              <img src="${beforeSrc}" alt="Edited photo">
             </div>
           </div>
-          <button class="enh-btn" onclick="location.href='pricing.html'">
-            Unlock AI Enhancement — $7/mo
-          </button>
-          <p class="enh-note">30 enhanced photos/month included with Premium</p>
         </div>
-      </div>
+      </div>`}
     `;
   }
 
@@ -1179,14 +1296,166 @@
     });
   }
 
+  // ── Canvas Photo Enhance ───────────────────────────────
+  async function doEnhance(filterName) {
+    if (!currentImageBase64) return;
+
+    // Track server-side
+    try {
+      const headers = { 'Content-Type': 'application/json' };
+      if (authToken) headers['Authorization'] = 'Bearer ' + authToken;
+      const r = await fetch('api/track-enhance.php', { method: 'POST', headers });
+      const d = await r.json();
+      if (!d.allowed) {
+        alert(d.message || 'Daily photo edit limit reached. Upgrade to Premium for unlimited edits.');
+        location.href = 'pricing.html';
+        return;
+      }
+      if (d.enhance_used  !== undefined) enhanceUsed  = d.used  ?? enhanceUsed;
+      if (d.enhance_limit !== undefined) enhanceLimit = d.limit ?? enhanceLimit;
+      if (d.used          !== undefined) enhanceUsed  = d.used;
+      if (d.limit         !== undefined && d.limit !== null) enhanceLimit = d.limit;
+    } catch(e) {
+      // offline / network — apply filter anyway (session-based fallback)
+    }
+
+    // Apply canvas filter
+    if (!originalImageBase64) originalImageBase64 = currentImageBase64;
+    activeFilter = filterName;
+    applyCanvasFilter(filterName);
+
+    // Update button states
+    ['auto','vivid','warm','cool'].forEach(f => {
+      document.getElementById('fb-' + f)?.classList.toggle('active', f === filterName);
+    });
+    document.getElementById('fb-reset').style.display = '';
+
+    updateEnhanceCtr();
+    updateUsageUI();
+  }
+
+  function resetPhoto() {
+    if (!originalImageBase64) return;
+    currentImageBase64 = originalImageBase64;
+    activeFilter = null;
+    document.getElementById('photoPreview').src = 'data:image/jpeg;base64,' + originalImageBase64;
+    ['auto','vivid','warm','cool'].forEach(f => {
+      document.getElementById('fb-' + f)?.classList.remove('active');
+    });
+    document.getElementById('fb-reset').style.display = 'none';
+    updateEnhanceCtr();
+  }
+
+  function clamp(v) { return Math.max(0, Math.min(255, Math.round(v))); }
+
+  function applyCanvasFilter(name) {
+    const preview = document.getElementById('photoPreview');
+    const img = new Image();
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      canvas.width = img.naturalWidth; canvas.height = img.naturalHeight;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0);
+      const id = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      const px = id.data;
+
+      for (let i = 0; i < px.length; i += 4) {
+        let r = px[i], g = px[i+1], b = px[i+2];
+
+        if (name === 'auto') {
+          // Contrast + brightness + saturation boost
+          r = clamp((r - 128) * 1.1 + 138);
+          g = clamp((g - 128) * 1.1 + 138);
+          b = clamp((b - 128) * 1.1 + 138);
+          const [h, s, l] = rgbToHsl(r, g, b);
+          [r, g, b] = hslToRgb(h, Math.min(1, s * 1.2), l);
+        } else if (name === 'vivid') {
+          const [h, s, l] = rgbToHsl(r, g, b);
+          [r, g, b] = hslToRgb(h, Math.min(1, s * 1.5), l);
+          r = clamp((r - 128) * 1.08 + 128);
+          g = clamp((g - 128) * 1.08 + 128);
+          b = clamp((b - 128) * 1.08 + 128);
+        } else if (name === 'warm') {
+          r = clamp(r + 25); g = clamp(g + 8); b = clamp(b - 20);
+        } else if (name === 'cool') {
+          r = clamp(r - 20); g = clamp(g + 5); b = clamp(b + 25);
+        }
+
+        px[i] = r; px[i+1] = g; px[i+2] = b;
+      }
+      ctx.putImageData(id, 0, 0);
+      const dataUrl = canvas.toDataURL('image/jpeg', 0.92);
+      currentImageBase64 = dataUrl.split(',')[1];
+      preview.src = dataUrl;
+    };
+    img.src = 'data:image/jpeg;base64,' + originalImageBase64;
+  }
+
+  function rgbToHsl(r, g, b) {
+    r /= 255; g /= 255; b /= 255;
+    const max = Math.max(r,g,b), min = Math.min(r,g,b);
+    let h, s, l = (max + min) / 2;
+    if (max === min) { h = s = 0; }
+    else {
+      const d = max - min;
+      s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+      switch(max) {
+        case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+        case g: h = (b - r) / d + 2; break;
+        case b: h = (r - g) / d + 4; break;
+      }
+      h /= 6;
+    }
+    return [h, s, l];
+  }
+
+  function hslToRgb(h, s, l) {
+    let r, g, b;
+    if (s === 0) { r = g = b = l; }
+    else {
+      const hue2rgb = (p, q, t) => {
+        if (t < 0) t += 1; if (t > 1) t -= 1;
+        if (t < 1/6) return p + (q-p)*6*t;
+        if (t < 1/2) return q;
+        if (t < 2/3) return p + (q-p)*(2/3-t)*6;
+        return p;
+      };
+      const q = l < 0.5 ? l*(1+s) : l+s-l*s;
+      const p = 2*l - q;
+      r = hue2rgb(p, q, h + 1/3);
+      g = hue2rgb(p, q, h);
+      b = hue2rgb(p, q, h - 1/3);
+    }
+    return [clamp(r*255), clamp(g*255), clamp(b*255)];
+  }
+
+  function updateEnhanceCtr() {
+    const el = document.getElementById('enhanceCtr');
+    if (!el) return;
+    const isPremium = currentUser?.plan === 'premium' || currentUser?.plan === 'teams';
+    if (isPremium) {
+      el.textContent = 'Unlimited edits';
+    } else {
+      const left = Math.max(0, enhanceLimit - enhanceUsed);
+      el.textContent = `${left} of ${enhanceLimit} left today`;
+    }
+  }
+
   // ── Usage UI ───────────────────────────────────────────
   function updateUsageUI() {
-    const left = Math.max(0, FREE_LIMIT - usageCount);
-    document.getElementById('usageText').textContent = `${left} left today`;
+    const isPremium = currentUser?.plan === 'premium' || currentUser?.plan === 'teams';
+    if (isPremium) {
+      document.getElementById('usagePill').style.display = 'none';
+      return;
+    }
+    // Free / guest: show enhance counter in pill
+    const left = Math.max(0, enhanceLimit - enhanceUsed);
+    document.getElementById('usageText').textContent = `${left} edits left`;
     ['d1','d2','d3'].forEach((id,i) => {
       const dot = document.getElementById(id);
-      dot.classList.toggle('used', i < usageCount);
+      if (dot) dot.classList.toggle('used', i < enhanceUsed);
     });
+    updateEnhanceCtr();
   }
 
   // ── Utilities ──────────────────────────────────────────
