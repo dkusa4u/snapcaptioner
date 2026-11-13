@@ -95,6 +95,11 @@
     position: relative; overflow: hidden;
     background: var(--bg2);
   }
+  .upload-zone.has-photo {
+    min-height: unset;
+    display: block;
+    padding: 0;
+  }
   .upload-zone:hover, .upload-zone.drag-over {
     border-color: var(--grad2); background: rgba(124,58,237,.04);
   }
@@ -103,10 +108,14 @@
   .upload-sub { font-size: .82rem; color: #b0b8d0; }
   #fileInput { display: none; }
   #photoPreview {
-    display: none; width: 100%; height: 100%;
-    position: absolute; inset: 0;
+    display: none;
+    width: 100%;
+    height: auto;
+    max-height: 70vh;
     object-fit: contain;
     background: #000;
+    border-radius: 10px;
+    vertical-align: top;
   }
   .preview-overlay {
     display: none;
@@ -631,6 +640,7 @@
       currentImageBase64 = dataUrl.split(',')[1];
       preview.src = dataUrl;
       preview.style.display = 'block';
+      uploadZone.classList.add('has-photo');
       uploadZone.querySelector('.upload-icon-big').style.display = 'none';
       uploadZone.querySelector('.upload-label').style.display = 'none';
       uploadZone.querySelector('.upload-sub').style.display = 'none';
