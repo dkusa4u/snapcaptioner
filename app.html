@@ -800,17 +800,38 @@
     const context  = document.getElementById('contextInput').value;
 
     let data = null;
+    let apiError = null;
     try {
       const res = await fetch('api/generate-captions.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ image: currentImageBase64, platform, language, tone, context })
       });
-      if (!res.ok) throw new Error('API error');
-      data = await res.json();
+      const resText = await res.text();
+      let resJson;
+      try { resJson = JSON.parse(resText); } catch(e) {
+        apiError = 'PHP error: ' + resText.substring(0, 300);
+      }
+      if (!apiError) {
+        if (!res.ok) {
+          apiError = resJson?.message || resJson?.error || ('HTTP ' + res.status);
+        } else if (resJson?.error) {
+          apiError = resJson.message || resJson.error;
+        } else {
+          data = resJson;
+        }
+      }
     } catch (err) {
-      // Demo fallback when API isn't connected yet
-      data = getDemoData(platform, language, tone);
+      apiError = 'Network error: ' + err.message;
+    }
+
+    if (apiError) {
+      hideLoading();
+      btn.disabled = false;
+      spinner.style.display = 'none';
+      btnText.textContent = '✨ Generate 5 Captions';
+      showApiError(apiError);
+      return;
     }
 
     // Update usage
@@ -1000,6 +1021,23 @@
     return String(s).replace(/'/g,'&#39;').replace(/"/g,'&quot;').replace(/\n/g,' ');
   }
 
+  // ── API error display ──────────────────────────────────
+  function showApiError(msg) {
+    // Remove any existing error banner
+    const old = document.getElementById('apiErrorBanner');
+    if (old) old.remove();
+    const banner = document.createElement('div');
+    banner.id = 'apiErrorBanner';
+    banner.style.cssText = 'background:#ff4757;color:#fff;padding:14px 18px;border-radius:10px;margin:12px 0;font-size:14px;line-height:1.5;';
+    banner.innerHTML = '<strong>⚠️ Could not generate captions</strong><br>' +
+      '<span style="opacity:.9">' + msg.replace(/</g,'&lt;').replace(/>/g,'&gt;') + '</span><br>' +
+      '<small style="opacity:.7">Check that the server is configured correctly, then try again.</small>' +
+      '<button onclick="this.parentElement.remove()" style="float:right;background:none;border:none;color:#fff;font-size:18px;cursor:pointer;margin-top:-4px">×</button>';
+    const resultsArea = document.getElementById('resultsArea') || document.getElementById('genBtn').parentElement;
+    resultsArea.insertAdjacentElement('beforebegin', banner);
+    banner.scrollIntoView({behavior:'smooth', block:'nearest'});
+  }
+
   // ── Demo data (shown when PHP API not yet connected) ───
   function getDemoData(platform, language, tone) {
     const platBestTime = {
@@ -1018,14 +1056,83 @@
       Facebook:'Wed–Fri highest reach',
       Pinterest:'Evenings + weekends'
     };
-    return {
-      captions: [
-        { text: "Some moments are made to last forever ✨ This one's going in the archives. #livinginthemoment", hook_score: 9 },
-        { text: "Not all who wander are lost — some are just chasing light 🌅 When did you last just stop and look?", hook_score: 8 },
-        { text: "The best stories don't start with 'I stayed home.' 🌍 What's yours?", hook_score: 8 },
-        { text: "Golden hour hits different when you're exactly where you're meant to be ☀️", hook_score: 7 },
-        { text: "Capturing life one frame at a time 📸 This is the kind of day worth remembering.", hook_score: 7 }
+    // Platform-specific demo captions
+    const platCaptions = {
+      Instagram: [
+        "Some moments are made to last forever ✨ This one's going in the archives. #livinginthemoment",
+        "Not all who wander are lost — some are just chasing light 🌅 When did you last just stop and look?",
+        "The best stories don't start with 'I stayed home.' 🌍 What's yours?",
+        "Golden hour hits different when you're exactly where you're meant to be ☀️",
+        "Capturing life one frame at a time 📸 This is the kind of day worth remembering."
       ],
+      TikTok: [
+        "POV: you found the perfect spot 📍 Save this for your next adventure 🔖",
+        "Tell me you have good taste without telling me 👇 This view does all the talking.",
+        "That 'you had to be there' moment? Yeah, I was there 🌅 #fyp",
+        "Main character energy ACTIVATED ✨ Drop a 🙌 if you'd come here",
+        "No filter needed when reality looks like this 😤 #viral #explore"
+      ],
+      LinkedIn: [
+        "Sometimes the best inspiration comes from stepping away from the desk. 🌍 Where do you find your creative breakthroughs?",
+        "Perspective matters — in business and in life. This view reminded me why we do what we do.",
+        "Great work starts with great energy. Here's what recharged mine this week. 💡",
+        "The world is full of opportunity when you look up from your screen. Where did you find yours?",
+        "Leading with intention. Living with purpose. 🎯 This is the mindset I bring to every project."
+      ],
+      X: [
+        "dropped everything and went here. 10/10 would recommend.",
+        "your sign to get outside today 🌅",
+        "this >>> everything in my inbox right now",
+        "the algorithm can wait. this cannot.",
+        "unpopular opinion: you need a day like this more than you need that meeting."
+      ],
+      Facebook: [
+        "Had the most amazing time at this spot! Who else has been here? Tag a friend who needs to see this 👇",
+        "Life is short — go to the places that make your heart happy 🌍 Sharing this with all of you!",
+        "Sometimes you just need to get out there and appreciate the beauty around us 🙏 Feeling so grateful today.",
+        "Made some incredible memories here! Drop a ❤️ if you'd love to visit this place.",
+        "This is why weekends were invented 😊 Hoping this puts a smile on your face today!"
+      ],
+      Pinterest: [
+        "Save this for your next dream destination ✨ The kind of view that belongs on your vision board.",
+        "Aesthetic goals 🌅 Pin this for your next adventure inspo board.",
+        "This is what your 'places to visit' board was made for 📌 Add it now!",
+        "Dream destinations don't have to stay dreams 🌍 Saving this for my next trip.",
+        "Mood board material ✨ The kind of beauty that inspires everything."
+      ]
+    };
+
+    // Hindi captions (shown when Hindi is selected — demonstrates language switching)
+    const hindiCaptions = [
+      "कुछ पल ऐसे होते हैं जो हमेशा के लिए यादों में बस जाते हैं ✨ यह उन्हीं में से एक है। #जिंदगी",
+      "रोशनी का पीछा करने वाले कभी खोते नहीं 🌅 आपने आखिरी बार कब रुककर नज़ारा देखा?",
+      "सबसे अच्छी कहानियाँ घर पर रहने से नहीं शुरू होतीं 🌍 आपकी कहानी क्या है?",
+      "सुनहरी शाम कुछ अलग ही लगती है जब आप बिल्कुल सही जगह पर हों ☀️",
+      "एक-एक पल को कैमरे में कैद करते हुए 📸 ऐसे दिन हमेशा याद रहते हैं।"
+    ];
+
+    // Tone adjustments (humorous overrides)
+    const humorousCaptions = {
+      Instagram: [
+        "My therapist said 'go outside' — this is what happened 🌅 Worth every penny honestly.",
+        "I told myself 'just one photo' 📸 Two hours and 400 shots later… here we are.",
+        "Plot twist: I actually got off the couch today ✨ Nature said 'you're welcome'.",
+        "My bank account is crying but my soul is THRIVING 🌍 Worth it. No notes.",
+        "Was going to do laundry but the sky looked like this. Laundry can wait. 😌"
+      ]
+    };
+
+    let captions;
+    if (language === 'Hindi') {
+      captions = hindiCaptions;
+    } else if (tone === 'Humorous' && platCaptions[platform]) {
+      captions = (humorousCaptions[platform] || platCaptions[platform]);
+    } else {
+      captions = platCaptions[platform] || platCaptions.Instagram;
+    }
+
+    return {
+      captions: captions.map((text, i) => ({ text, hook_score: 9 - i })),
       hashtags: [
         {tag:'goldenhour',tier:'sweet'},{tag:'photography',tier:'sweet'},{tag:'explore',tier:'sweet'},
         {tag:'naturephotography',tier:'sweet'},{tag:'lightroom',tier:'sweet'},{tag:'minimal',tier:'sweet'},
