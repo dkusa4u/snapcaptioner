@@ -580,17 +580,43 @@
     document.getElementById('error-msg').classList.add('show');
   }
 
-  function showSuccess(plan, email, redirect) {
+  async function showSuccess(plan, email, redirect) {
     document.getElementById('form-content').style.display = 'none';
     const success = document.getElementById('success-state');
     success.style.display = 'block';
 
     if (plan === 'premium' || plan === 'teams') {
       document.getElementById('success-msg').textContent =
-        `Account created for ${email}. You'll be taken to checkout to complete your ${plan} subscription.`;
+        `Account created for ${email}. Taking you to checkout to complete your ${plan} subscription…`;
       const goBtn = document.getElementById('go-btn');
+      goBtn.textContent = `Loading checkout…`;
+      goBtn.style.opacity = '0.6';
+      goBtn.style.pointerEvents = 'none';
+
+      // Auto-redirect to Stripe using the fresh token
+      const token = localStorage.getItem('sc_token');
+      if (token) {
+        try {
+          const r = await fetch('api/stripe-checkout.php', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer ' + token
+            },
+            body: JSON.stringify({ plan })
+          });
+          const d = await r.json();
+          if (d.url) {
+            window.location.href = d.url;
+            return;
+          }
+        } catch(e) {}
+      }
+      // Fallback if Stripe call fails
       goBtn.textContent = `Continue to Checkout →`;
-      goBtn.href = redirect || `checkout.html?plan=${plan}`;
+      goBtn.style.opacity = '1';
+      goBtn.style.pointerEvents = 'auto';
+      goBtn.href = redirect || `app.html`;
     } else {
       document.getElementById('success-msg').textContent =
         `Account created for ${email}. You can start generating captions right away — no verification needed.`;

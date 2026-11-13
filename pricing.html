@@ -590,7 +590,7 @@
         <span class="strike">$84/yr</span> → <span class="save">$67/yr — save $17</span>
       </div>
       <div class="plan-desc">For creators who post regularly. Unlimited captions + every power feature.</div>
-      <a href="app.html?plan=premium" class="plan-btn plan-btn-premium">Get Premium →</a>
+      <button class="plan-btn plan-btn-premium" id="btn-premium" onclick="handleUpgrade('premium')">Get Premium →</button>
       <hr class="plan-divider">
       <div class="plan-features-label">Everything in Free, plus</div>
       <div class="feature-row">
@@ -643,7 +643,7 @@
         <span class="strike">$348/yr</span> → <span class="save">$278/yr — save $70</span>
       </div>
       <div class="plan-desc">For marketing teams, agencies, and social media managers. Shared workspace included.</div>
-      <a href="app.html?plan=teams" class="plan-btn plan-btn-teams">Start Team Plan →</a>
+      <button class="plan-btn plan-btn-teams" id="btn-teams" onclick="handleUpgrade('teams')">Start Team Plan →</button>
       <hr class="plan-divider">
       <div class="plan-features-label">Everything in Premium, plus</div>
       <div class="feature-row">
@@ -1080,6 +1080,66 @@
     // Open clicked if was closed
     if (!isOpen) item.classList.add('open');
   }
+
+  async function handleUpgrade(plan) {
+    const token = localStorage.getItem('sc_token');
+
+    // Not logged in → go to signup with plan pre-selected
+    if (!token) {
+      window.location.href = 'signup.html?plan=' + plan;
+      return;
+    }
+
+    // Logged in → go straight to Stripe Checkout
+    const btn = document.getElementById('btn-' + plan);
+    const origText = btn.textContent;
+    btn.disabled = true;
+    btn.textContent = 'Loading…';
+
+    try {
+      const r = await fetch('api/stripe-checkout.php', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + token
+        },
+        body: JSON.stringify({ plan })
+      });
+      const d = await r.json();
+      if (d.url) {
+        window.location.href = d.url;
+      } else if (d.error === 'Already on this plan' || d.error === 'Already subscribed') {
+        btn.textContent = origText;
+        btn.disabled = false;
+        alert('You\'re already on the ' + plan + ' plan!');
+      } else {
+        // Token expired or invalid — redirect to login
+        localStorage.removeItem('sc_token');
+        localStorage.removeItem('sc_user');
+        window.location.href = 'signup.html?plan=' + plan;
+      }
+    } catch(e) {
+      btn.textContent = origText;
+      btn.disabled = false;
+      alert('Network error. Please try again.');
+    }
+  }
+
+  // Show logged-in state in nav if user is authenticated
+  (function() {
+    const user = JSON.parse(localStorage.getItem('sc_user') || 'null');
+    const token = localStorage.getItem('sc_token');
+    if (user && token) {
+      // If already premium/teams, update button text
+      if (user.plan === 'premium') {
+        const btn = document.getElementById('btn-premium');
+        if (btn) btn.textContent = 'Your Current Plan ✓';
+      } else if (user.plan === 'teams') {
+        const btn = document.getElementById('btn-teams');
+        if (btn) btn.textContent = 'Your Current Plan ✓';
+      }
+    }
+  })();
 </script>
 </body>
 </html>

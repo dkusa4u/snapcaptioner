@@ -64,6 +64,29 @@
     border: 1px solid rgba(168,85,247,.3);
     background: rgba(168,85,247,.08);
   }
+  .user-badge {
+    display: flex; align-items: center; gap: 8px;
+    font-size: .82rem; color: var(--muted2);
+  }
+  .user-avatar {
+    width: 28px; height: 28px; border-radius: 50%;
+    background: linear-gradient(135deg,var(--grad1),var(--grad3));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 700; color: #fff; flex-shrink: 0;
+  }
+  .user-plan-badge {
+    font-size: .7rem; font-weight: 700; padding: 2px 7px; border-radius: 20px;
+    text-transform: uppercase; letter-spacing: .04em;
+  }
+  .user-plan-badge.free { background: var(--border2); color: var(--muted2); }
+  .user-plan-badge.premium { background: rgba(168,85,247,.2); color: var(--grad2); }
+  .user-plan-badge.teams { background: rgba(245,158,11,.15); color: var(--yellow); }
+  .logout-btn {
+    font-size: .78rem; color: var(--muted); background: none; border: none;
+    cursor: pointer; padding: 4px 8px; border-radius: 5px;
+    transition: color .2s;
+  }
+  .logout-btn:hover { color: var(--red); }
 
   /* LAYOUT */
   .app-wrap {
@@ -395,7 +418,8 @@
     <div class="logo-icon">📸</div>
     SnapCaption AI
   </a>
-  <div style="display:flex;align-items:center;gap:10px;">
+  <div style="display:flex;align-items:center;gap:10px;" id="navRight">
+    <!-- Usage pill (always visible for free/guest) -->
     <div class="usage-pill" id="usagePill">
       <div class="usage-dots">
         <div class="usage-dot" id="d1"></div>
@@ -404,7 +428,20 @@
       </div>
       <span id="usageText" style="font-size:.86rem;color:var(--muted2);">3 left today</span>
     </div>
-    <a href="pricing.html" class="upgrade-link">Upgrade $7</a>
+    <!-- Guest: show login + upgrade -->
+    <div id="navGuest" style="display:flex;align-items:center;gap:8px;">
+      <a href="login.html" style="font-size:.82rem;color:var(--muted2);text-decoration:none;">Sign in</a>
+      <a href="pricing.html" class="upgrade-link">Upgrade $7</a>
+    </div>
+    <!-- Logged-in: show user badge + logout -->
+    <div id="navUser" style="display:none;align-items:center;gap:8px;">
+      <div class="user-badge">
+        <div class="user-avatar" id="userAvatar">?</div>
+        <span id="userName" style="font-weight:600;color:var(--text);"></span>
+        <span class="user-plan-badge free" id="userPlanBadge">Free</span>
+      </div>
+      <button class="logout-btn" onclick="doLogout()">Sign out</button>
+    </div>
   </div>
 </nav>
 
@@ -649,8 +686,70 @@
   let usageDate = localStorage.getItem('sc_date') || '';
   const today = new Date().toDateString();
   if (usageDate !== today) { usageCount = 0; localStorage.setItem('sc_date', today); }
-  const FREE_LIMIT = 3;
+  let FREE_LIMIT = 3;
+  let currentUser = null;
+  let authToken = localStorage.getItem('sc_token') || null;
   updateUsageUI();
+
+  // ── Auth init ───────────────────────────────────────────
+  (async function initAuth() {
+    if (!authToken) return;
+    const stored = JSON.parse(localStorage.getItem('sc_user') || 'null');
+    if (stored) applyUserUI(stored);
+    // Verify token + get real usage from server
+    try {
+      const r = await fetch('api/check-usage.php', {
+        headers: { 'Authorization': 'Bearer ' + authToken }
+      });
+      if (!r.ok) { clearAuth(); return; }
+      const d = await r.json();
+      currentUser = stored;
+      if (d.plan === 'premium' || d.plan === 'teams') {
+        FREE_LIMIT = 999;
+        document.getElementById('usagePill').style.display = 'none';
+      } else {
+        usageCount = d.used;
+        FREE_LIMIT = d.limit || 3;
+        updateUsageUI();
+      }
+    } catch(e) { /* network error — stay with cached state */ }
+  })();
+
+  function applyUserUI(user) {
+    document.getElementById('navGuest').style.display = 'none';
+    const navUser = document.getElementById('navUser');
+    navUser.style.display = 'flex';
+    const name = user.name || user.email.split('@')[0];
+    document.getElementById('userName').textContent = name;
+    document.getElementById('userAvatar').textContent = name[0].toUpperCase();
+    const badge = document.getElementById('userPlanBadge');
+    badge.textContent = user.plan || 'Free';
+    badge.className = 'user-plan-badge ' + (user.plan || 'free');
+    if (user.plan === 'premium' || user.plan === 'teams') {
+      document.getElementById('usagePill').style.display = 'none';
+    }
+  }
+
+  function clearAuth() {
+    localStorage.removeItem('sc_token');
+    localStorage.removeItem('sc_user');
+    authToken = null; currentUser = null;
+    document.getElementById('navGuest').style.display = 'flex';
+    document.getElementById('navUser').style.display = 'none';
+    document.getElementById('usagePill').style.display = 'flex';
+  }
+
+  async function doLogout() {
+    if (authToken) {
+      try {
+        await fetch('api/auth-logout.php', {
+          method: 'POST',
+          headers: { 'Authorization': 'Bearer ' + authToken }
+        });
+      } catch(e) {}
+    }
+    clearAuth();
+  }
 
   // ── Upload ─────────────────────────────────────────────
   const uploadZone = document.getElementById('uploadZone');
@@ -802,9 +901,11 @@
     let data = null;
     let apiError = null;
     try {
+      const genHeaders = { 'Content-Type': 'application/json' };
+      if (authToken) genHeaders['Authorization'] = 'Bearer ' + authToken;
       const res = await fetch('api/generate-captions.php', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: genHeaders,
         body: JSON.stringify({ image: currentImageBase64, platform, language, tone, context })
       });
       const resText = await res.text();

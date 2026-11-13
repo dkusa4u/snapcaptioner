@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Checkout Cancelled — SnapCaption AI</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #09090f; --bg2: #0f0f1a; --card: #13131f;
+    --border: #1e1e32; --grad1: #7c3aed; --grad2: #a855f7; --grad3: #ec4899;
+    --text: #e8e8f0; --muted: #6b7280; --muted2: #9ca3af; --yellow: #f59e0b;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    background: var(--bg); color: var(--text);
+    font-family: 'Inter', sans-serif; min-height: 100vh;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding: 24px;
+  }
+  .bg-glow { position: fixed; inset: 0; pointer-events: none; overflow: hidden; }
+  .glow-blob { position: absolute; border-radius: 50%; filter: blur(120px); opacity: .1; }
+  .glow-blob-1 { width: 500px; height: 500px; background: var(--grad1); top: -150px; left: -100px; }
+  .glow-blob-2 { width: 400px; height: 400px; background: var(--yellow); bottom: -100px; right: -100px; }
+
+  .card {
+    position: relative; z-index: 1;
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 24px; padding: 48px 40px;
+    max-width: 480px; width: 100%; text-align: center;
+    box-shadow: 0 40px 80px rgba(0,0,0,.5);
+  }
+  .cancel-icon {
+    width: 72px; height: 72px; border-radius: 50%;
+    background: rgba(107,114,128,.12);
+    border: 2px solid rgba(107,114,128,.2);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 36px; margin: 0 auto 24px;
+  }
+  h1 { font-size: 1.75rem; font-weight: 800; letter-spacing: -.03em; margin-bottom: 12px; }
+  .sub { font-size: .95rem; color: var(--muted2); line-height: 1.6; margin-bottom: 32px; }
+
+  .value-list {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 14px; padding: 20px 24px; margin-bottom: 28px; text-align: left;
+  }
+  .value-label {
+    font-size: .72rem; font-weight: 700; letter-spacing: .07em; text-transform: uppercase;
+    color: var(--muted); margin-bottom: 14px;
+  }
+  .value-row { display: flex; justify-content: space-between; align-items: center; padding: 7px 0; border-bottom: 1px solid var(--border); font-size: .88rem; }
+  .value-row:last-child { border-bottom: none; }
+  .value-name { color: var(--muted2); }
+  .value-val { font-weight: 600; color: var(--text); }
+  .value-val.highlight {
+    background: linear-gradient(135deg, var(--grad1), var(--grad3));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+
+  .btn-row { display: flex; gap: 10px; flex-direction: column; }
+  .btn-primary {
+    display: block; width: 100%;
+    background: linear-gradient(135deg, var(--grad1), var(--grad3));
+    color: #fff; font-size: .95rem; font-weight: 700;
+    padding: 14px 24px; border-radius: 12px; text-decoration: none;
+    border: none; cursor: pointer; transition: opacity .2s, transform .2s;
+  }
+  .btn-primary:hover { opacity: .9; transform: translateY(-1px); }
+  .btn-secondary {
+    display: block; width: 100%;
+    background: none; border: 1px solid var(--border);
+    color: var(--muted2); font-size: .88rem; font-weight: 600;
+    padding: 12px 24px; border-radius: 12px; text-decoration: none;
+    cursor: pointer; transition: border-color .2s, color .2s;
+  }
+  .btn-secondary:hover { border-color: var(--grad2); color: var(--text); }
+  .faq { margin-top: 24px; font-size: .78rem; color: var(--muted); }
+  .faq a { color: var(--grad2); text-decoration: none; }
+</style>
+</head>
+<body>
+<div class="bg-glow">
+  <div class="glow-blob glow-blob-1"></div>
+  <div class="glow-blob glow-blob-2"></div>
+</div>
+
+<div class="card">
+  <div class="cancel-icon">↩</div>
+  <h1>No worries — you're still free</h1>
+  <p class="sub">Your checkout was cancelled. Nothing was charged. You can upgrade whenever you're ready.</p>
+
+  <div class="value-list">
+    <div class="value-label">What you get with Premium</div>
+    <div class="value-row">
+      <span class="value-name">Captions per day</span>
+      <span class="value-val highlight">Unlimited</span>
+    </div>
+    <div class="value-row">
+      <span class="value-name">Languages</span>
+      <span class="value-val">50 languages</span>
+    </div>
+    <div class="value-row">
+      <span class="value-name">Platforms</span>
+      <span class="value-val">All 6 platforms</span>
+    </div>
+    <div class="value-row">
+      <span class="value-name">Price</span>
+      <span class="value-val highlight">$7 / month</span>
+    </div>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn-primary" id="retryBtn">Try Premium — $7/mo →</button>
+    <a href="app.html" class="btn-secondary">Keep using free plan</a>
+  </div>
+
+  <p class="faq">Questions? <a href="mailto:support@snapcaptioner.com">Contact support</a> · Cancel anytime</p>
+</div>
+
+<script>
+  document.getElementById('retryBtn').addEventListener('click', async () => {
+    const token = localStorage.getItem('sc_token');
+    if (!token) {
+      window.location.href = 'pricing.html';
+      return;
+    }
+    const btn = document.getElementById('retryBtn');
+    btn.textContent = 'Loading…';
+    btn.disabled = true;
+    try {
+      const r = await fetch('api/stripe-checkout.php', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + token
+        },
+        body: JSON.stringify({ plan: 'premium' })
+      });
+      const d = await r.json();
+      if (d.url) {
+        window.location.href = d.url;
+      } else {
+        btn.textContent = 'Try Premium — $7/mo →';
+        btn.disabled = false;
+        alert(d.error || 'Something went wrong. Please try again.');
+      }
+    } catch(e) {
+      btn.textContent = 'Try Premium — $7/mo →';
+      btn.disabled = false;
+      alert('Network error. Please try again.');
+    }
+  });
+</script>
+</body>
+</html>

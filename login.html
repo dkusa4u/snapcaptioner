@@ -402,7 +402,7 @@
         // Store session token
         if (data.token) {
           localStorage.setItem('sc_token', data.token);
-          localStorage.setItem('sc_user', JSON.stringify({ email: data.email, plan: data.plan, name: data.name }));
+          localStorage.setItem('sc_user', JSON.stringify({ email: data.user.email, plan: data.user.plan, name: data.user.name }));
         }
         // Redirect
         const redirect = urlParams.get('redirect') || (plan ? `app.html?plan=${plan}` : 'app.html');

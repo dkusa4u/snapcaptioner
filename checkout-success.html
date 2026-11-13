@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Welcome to Premium — SnapCaption AI</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #09090f; --bg2: #0f0f1a; --card: #13131f;
+    --border: #1e1e32; --grad1: #7c3aed; --grad2: #a855f7; --grad3: #ec4899;
+    --text: #e8e8f0; --muted: #6b7280; --muted2: #9ca3af; --green: #10b981;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    background: var(--bg); color: var(--text);
+    font-family: 'Inter', sans-serif; min-height: 100vh;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding: 24px;
+  }
+  .bg-glow { position: fixed; inset: 0; pointer-events: none; overflow: hidden; }
+  .glow-blob { position: absolute; border-radius: 50%; filter: blur(120px); opacity: .12; }
+  .glow-blob-1 { width: 500px; height: 500px; background: var(--grad1); top: -150px; right: -100px; }
+  .glow-blob-2 { width: 400px; height: 400px; background: var(--green); bottom: -100px; left: -100px; }
+
+  .card {
+    position: relative; z-index: 1;
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 24px; padding: 48px 40px;
+    max-width: 480px; width: 100%; text-align: center;
+    box-shadow: 0 40px 80px rgba(0,0,0,.5);
+  }
+  .success-icon {
+    width: 72px; height: 72px; border-radius: 50%;
+    background: rgba(16,185,129,.15);
+    border: 2px solid rgba(16,185,129,.3);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 36px; margin: 0 auto 24px;
+    animation: popIn .5s ease;
+  }
+  @keyframes popIn {
+    0% { transform: scale(0); opacity: 0; }
+    70% { transform: scale(1.1); }
+    100% { transform: scale(1); opacity: 1; }
+  }
+  .plan-chip {
+    display: inline-block;
+    background: linear-gradient(135deg, var(--grad1), var(--grad3));
+    color: #fff; font-size: .72rem; font-weight: 700;
+    letter-spacing: .08em; text-transform: uppercase;
+    padding: 4px 12px; border-radius: 20px; margin-bottom: 20px;
+  }
+  h1 { font-size: 1.9rem; font-weight: 900; letter-spacing: -.03em; margin-bottom: 12px; }
+  .sub { font-size: .95rem; color: var(--muted2); line-height: 1.6; margin-bottom: 32px; }
+  .perks {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 14px; padding: 20px; margin-bottom: 32px; text-align: left;
+  }
+  .perk { display: flex; align-items: center; gap: 10px; font-size: .88rem; padding: 6px 0; }
+  .perk-dot { color: var(--green); font-size: 1rem; flex-shrink: 0; }
+  .cta-btn {
+    display: block; width: 100%;
+    background: linear-gradient(135deg, var(--grad1), var(--grad3));
+    color: #fff; font-size: 1rem; font-weight: 700;
+    padding: 15px 24px; border-radius: 12px; text-decoration: none;
+    transition: opacity .2s, transform .2s;
+  }
+  .cta-btn:hover { opacity: .9; transform: translateY(-1px); }
+  .redirect-note {
+    margin-top: 16px; font-size: .78rem; color: var(--muted);
+  }
+  #countdown { font-weight: 700; color: var(--muted2); }
+</style>
+</head>
+<body>
+<div class="bg-glow">
+  <div class="glow-blob glow-blob-1"></div>
+  <div class="glow-blob glow-blob-2"></div>
+</div>
+
+<div class="card">
+  <div class="success-icon">✅</div>
+  <div class="plan-chip" id="planChip">Premium</div>
+  <h1>You're all set! 🎉</h1>
+  <p class="sub">Your subscription is active. Welcome to SnapCaption AI Premium — unlimited captions, all languages, all platforms.</p>
+
+  <div class="perks">
+    <div class="perk"><span class="perk-dot">✓</span> Unlimited caption generation</div>
+    <div class="perk"><span class="perk-dot">✓</span> All 50 languages unlocked</div>
+    <div class="perk"><span class="perk-dot">✓</span> All 6 platforms + tones</div>
+    <div class="perk"><span class="perk-dot">✓</span> Caption history & favorites</div>
+    <div class="perk"><span class="perk-dot">✓</span> Brand voice memory</div>
+  </div>
+
+  <a href="app.html" class="cta-btn">Start Generating Captions →</a>
+  <p class="redirect-note">Redirecting in <span id="countdown">5</span>s…</p>
+</div>
+
+<script>
+  // Update plan in localStorage so app.html shows correct badge immediately
+  const plan = new URLSearchParams(window.location.search).get('plan') || 'premium';
+  const stored = JSON.parse(localStorage.getItem('sc_user') || 'null');
+  if (stored) {
+    stored.plan = plan;
+    localStorage.setItem('sc_user', JSON.stringify(stored));
+  }
+
+  // Show correct plan chip
+  if (plan === 'teams') {
+    const chip = document.getElementById('planChip');
+    chip.textContent = 'Teams';
+    chip.style.background = 'linear-gradient(135deg, #f59e0b, #d97706)';
+    document.querySelector('.sub').textContent =
+      'Your team subscription is active. All team members get unlimited access.';
+  }
+
+  // Countdown redirect
+  let n = 5;
+  const countEl = document.getElementById('countdown');
+  const timer = setInterval(() => {
+    n--;
+    countEl.textContent = n;
+    if (n <= 0) { clearInterval(timer); window.location.href = 'app.html'; }
+  }, 1000);
+</script>
+</body>
+</html>
