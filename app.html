@@ -513,6 +513,96 @@
   }
   .gen-locked.pulse, .gen-btn.pulse { animation: editPulse .7s ease 2; }
 
+  /* ── AI Transform Bar (Premium) ──────────────────────── */
+  .ai-transform-bar {
+    display: none;
+    flex-direction: column; gap: 10px;
+    background: rgba(124,58,237,.07); border-radius: 12px;
+    padding: 12px 14px; margin-top: 8px;
+    border: 1px solid rgba(124,58,237,.22);
+  }
+  .ai-transform-bar.active { display: flex; }
+  .ai-transform-head {
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .ai-transform-title {
+    font-size: .78rem; font-weight: 700; color: var(--text);
+    display: flex; align-items: center; gap: 6px;
+  }
+  .ai-prem-tag {
+    font-size: .64rem; font-weight: 800; letter-spacing: .04em;
+    padding: 2px 6px; border-radius: 4px;
+    background: linear-gradient(135deg, var(--grad1), var(--grad2));
+    color: #fff;
+  }
+  .ai-transform-ctr {
+    font-size: .72rem; color: var(--muted2); font-weight: 500;
+  }
+  .transform-group { display: flex; flex-direction: column; gap: 5px; }
+  .tg-label {
+    font-size: .7rem; font-weight: 700; color: var(--muted2);
+    text-transform: uppercase; letter-spacing: .05em;
+  }
+  .tg-btns { display: flex; gap: 5px; flex-wrap: wrap; }
+  .tg-btn {
+    flex: 0 0 auto; padding: 6px 10px;
+    background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.1);
+    border-radius: 8px; color: var(--text); font-size: .72rem; font-weight: 600;
+    cursor: pointer; transition: all .18s; white-space: nowrap;
+  }
+  .tg-btn:hover { background: rgba(124,58,237,.18); border-color: var(--grad1); color: #fff; }
+  .tg-btn.active {
+    background: linear-gradient(135deg, var(--grad1), var(--grad2));
+    border-color: transparent; color: #fff;
+  }
+  .tg-btn:disabled { opacity: .4; cursor: not-allowed; }
+  .undo-transform-btn {
+    display: none; width: 100%; padding: 7px;
+    background: rgba(239,68,68,.1); border: 1px solid rgba(239,68,68,.2);
+    border-radius: 8px; color: var(--red); font-size: .75rem; font-weight: 700;
+    cursor: pointer; transition: all .18s;
+  }
+  .undo-transform-btn:hover { background: rgba(239,68,68,.18); }
+
+  /* ── AI Transform Locked (Free users) ────────────────── */
+  .ai-transform-locked {
+    display: none;
+    align-items: center; gap: 10px;
+    background: rgba(255,255,255,.03); border-radius: 12px;
+    padding: 12px 14px; margin-top: 8px;
+    border: 1px dashed rgba(124,58,237,.25);
+  }
+  .ai-transform-locked.active { display: flex; }
+  .atl-icon { font-size: 1.4rem; flex-shrink: 0; }
+  .atl-text { flex: 1; min-width: 0; }
+  .atl-text strong { display: block; font-size: .8rem; font-weight: 700; color: var(--text); }
+  .atl-text span { font-size: .72rem; color: var(--muted2); }
+  .atl-btn {
+    flex-shrink: 0; font-size: .75rem; font-weight: 700; color: #fff;
+    text-decoration: none; padding: 7px 13px; border-radius: 8px;
+    background: linear-gradient(135deg, var(--grad1), var(--grad2));
+    white-space: nowrap; transition: opacity .18s;
+  }
+  .atl-btn:hover { opacity: .88; }
+
+  /* ── AI Transform Loading Overlay (on photo) ─────────── */
+  .ai-tx-overlay {
+    display: none; position: absolute; inset: 0; z-index: 10;
+    background: rgba(9,9,15,.82); backdrop-filter: blur(4px);
+    border-radius: 12px; align-items: center; justify-content: center;
+    flex-direction: column; gap: 10px;
+  }
+  .ai-tx-overlay.active { display: flex; }
+  .ai-tx-spinner {
+    width: 36px; height: 36px; border-radius: 50%;
+    border: 3px solid rgba(124,58,237,.2);
+    border-top-color: var(--grad2);
+    animation: txSpin 0.9s linear infinite;
+  }
+  @keyframes txSpin { to { transform: rotate(360deg); } }
+  .ai-tx-label { font-size: .85rem; font-weight: 700; color: var(--text); }
+  .ai-tx-sub   { font-size: .72rem; color: var(--muted2); }
+
   /* ── Gen Locked (free/guest) ───────────────────────────── */
   .gen-locked {
     display: none;
@@ -629,6 +719,12 @@
         <img id="photoPreview" alt="Preview">
         <div class="preview-overlay"><span>🔄 Change photo</span></div>
         <input type="file" id="fileInput" accept="image/*">
+        <!-- AI Transform Loading Overlay -->
+        <div class="ai-tx-overlay" id="aiTxOverlay">
+          <div class="ai-tx-spinner"></div>
+          <div class="ai-tx-label">🤖 AI is transforming…</div>
+          <div class="ai-tx-sub" id="aiTxSub">This takes 15–30 seconds</div>
+        </div>
       </div>
 
       <!-- Photo Enhance Toolbar (shown after photo loaded) -->
@@ -648,6 +744,70 @@
         <div class="caption-nudge" id="captionNudge" onclick="scrollToCaption()">
           ✨ Photo edited! Tap here to generate your caption →
         </div>
+      </div>
+
+      <!-- AI Photo Transforms (Premium) -->
+      <div class="ai-transform-bar" id="aiTransformBar">
+        <div class="ai-transform-head">
+          <span class="ai-transform-title">🤖 AI Transforms <span class="ai-prem-tag">PREMIUM</span></span>
+          <span class="ai-transform-ctr" id="transformCtr"></span>
+        </div>
+
+        <div class="transform-group">
+          <div class="tg-label">🌍 Landmark Backgrounds</div>
+          <div class="tg-btns">
+            <button class="tg-btn" onclick="doAiTransform('eiffel')">🗼 Paris</button>
+            <button class="tg-btn" onclick="doAiTransform('nyc_night')">🗽 NYC Night</button>
+            <button class="tg-btn" onclick="doAiTransform('maldives')">🏖️ Maldives</button>
+            <button class="tg-btn" onclick="doAiTransform('tokyo_sakura')">🌸 Tokyo</button>
+            <button class="tg-btn" onclick="doAiTransform('swiss_alps')">🏔️ Alps</button>
+            <button class="tg-btn" onclick="doAiTransform('dubai')">🏙️ Dubai</button>
+            <button class="tg-btn" onclick="doAiTransform('bali')">🌴 Bali</button>
+            <button class="tg-btn" onclick="doAiTransform('paris_cafe')">☕ Paris Café</button>
+          </div>
+        </div>
+
+        <div class="transform-group">
+          <div class="tg-label">☀️ Weather & Light</div>
+          <div class="tg-btns">
+            <button class="tg-btn" onclick="doAiTransform('golden_hour')">🌅 Golden Hour</button>
+            <button class="tg-btn" onclick="doAiTransform('sunny')">☀️ Sunny Day</button>
+            <button class="tg-btn" onclick="doAiTransform('winter')">❄️ Winter</button>
+            <button class="tg-btn" onclick="doAiTransform('moody_rain')">🌧️ Moody Rain</button>
+          </div>
+        </div>
+
+        <div class="transform-group">
+          <div class="tg-label">🎨 Style & Aesthetic</div>
+          <div class="tg-btns">
+            <button class="tg-btn" onclick="doAiTransform('cinematic')">🎬 Cinematic</button>
+            <button class="tg-btn" onclick="doAiTransform('dreamy')">✨ Dreamy</button>
+            <button class="tg-btn" onclick="doAiTransform('dark_moody')">🖤 Dark Moody</button>
+            <button class="tg-btn" onclick="doAiTransform('film_grain')">📽️ Film Grain</button>
+            <button class="tg-btn" onclick="doAiTransform('studio_white')">⬜ Studio White</button>
+          </div>
+        </div>
+
+        <div class="transform-group">
+          <div class="tg-label">🧹 AI Cleanup</div>
+          <div class="tg-btns">
+            <button class="tg-btn" onclick="doAiTransform('remove_clutter')">🗑️ Remove Clutter</button>
+            <button class="tg-btn" onclick="doAiTransform('erase_people')">👤 Erase People</button>
+            <button class="tg-btn" onclick="doAiTransform('skin_retouch')">✨ Skin Retouch</button>
+          </div>
+        </div>
+
+        <button class="undo-transform-btn" id="undoTransformBtn" onclick="undoAiTransform()">↺ Undo AI Transform</button>
+      </div>
+
+      <!-- AI Transforms Locked (free/guest — teaser) -->
+      <div class="ai-transform-locked" id="aiTransformLocked">
+        <div class="atl-icon">🤖</div>
+        <div class="atl-text">
+          <strong>AI Photo Transforms</strong>
+          <span>Teleport to Paris, Tokyo, Maldives & 17 more scenes</span>
+        </div>
+        <a href="pricing.html" class="atl-btn">Unlock</a>
       </div>
 
       <!-- Selectors -->
@@ -852,6 +1012,10 @@
   let enhanceLimit = 3;              // FREE_ENHANCE_DAILY default
   let aiUsed       = 0;
   let aiLimit      = 5;             // PREMIUM_AI_DAILY default
+  let transformUsed  = 0;
+  let transformLimit = 5;           // AI_TRANSFORM_DAILY default
+  let preTransformB64 = null;        // saved before AI transform for undo
+  let activeTransform = null;        // key of currently active transform
   let currentUser  = null;
   let authToken    = localStorage.getItem('sc_token') || null;
 
@@ -876,10 +1040,12 @@
       const d = await r.json();
       currentUser = stored;
 
-      enhanceUsed  = d.enhance_used  ?? 0;
-      enhanceLimit = d.enhance_limit ?? 3;
-      aiUsed       = d.ai_used       ?? 0;
-      aiLimit      = d.ai_limit      ?? 5;
+      enhanceUsed    = d.enhance_used    ?? 0;
+      enhanceLimit   = d.enhance_limit   ?? 3;
+      aiUsed         = d.ai_used         ?? 0;
+      aiLimit        = d.ai_limit        ?? 5;
+      transformUsed  = d.transform_used  ?? 0;
+      transformLimit = d.transform_limit ?? 5;
 
       if (d.plan === 'premium' || d.plan === 'teams') {
         document.getElementById('usagePill').style.display = 'none';
@@ -985,6 +1151,16 @@
       // Show enhance toolbar
       document.getElementById('enhanceBar').classList.add('active');
       updateEnhanceCtr();
+      // Show AI transforms (premium) or locked teaser (free/guest)
+      const isPrem = currentUser?.plan === 'premium' || currentUser?.plan === 'teams';
+      document.getElementById('aiTransformBar').classList.toggle('active', isPrem);
+      document.getElementById('aiTransformLocked').classList.toggle('active', !isPrem);
+      if (isPrem) updateTransformCtr();
+      // Reset any prior transform state
+      activeTransform = null;
+      preTransformB64 = null;
+      document.getElementById('undoTransformBtn').style.display = 'none';
+      document.querySelectorAll('.tg-btn').forEach(b => b.classList.remove('active'));
     };
     reader.readAsDataURL(file);
   }
@@ -1386,6 +1562,118 @@
     });
     document.getElementById('fb-reset').style.display = 'none';
     updateEnhanceCtr();
+  }
+
+  // ── AI Photo Transforms ────────────────────────────────
+  async function doAiTransform(transformKey) {
+    if (!currentImageBase64) {
+      alert('Please upload a photo first.');
+      return;
+    }
+    if (!authToken) {
+      window.location.href = 'login.html';
+      return;
+    }
+
+    const isPrem = currentUser?.plan === 'premium' || currentUser?.plan === 'teams';
+    if (!isPrem) {
+      window.location.href = 'pricing.html';
+      return;
+    }
+
+    if (transformUsed >= transformLimit) {
+      alert(`You've used all ${transformLimit} AI transforms today. Resets at midnight!`);
+      return;
+    }
+
+    // Save current image for undo
+    preTransformB64 = currentImageBase64;
+    activeTransform = transformKey;
+
+    // Lock all transform buttons and show loading overlay
+    document.querySelectorAll('.tg-btn').forEach(b => { b.disabled = true; b.classList.remove('active'); });
+    // Mark active button
+    event?.target?.classList.add('active');
+    document.getElementById('aiTxOverlay').classList.add('active');
+    document.getElementById('aiTxSub').textContent = 'AI magic in progress… 15–30 sec';
+
+    try {
+      const res = await fetch('api/ai-transform.php', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + authToken,
+        },
+        body: JSON.stringify({
+          image: currentImageBase64,
+          transform: transformKey,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok || !data.success) {
+        const msg = data.message || 'AI transform failed. Please try again.';
+        if (data.error === 'limit_reached') {
+          transformUsed = transformLimit;
+          updateTransformCtr();
+        }
+        throw new Error(msg);
+      }
+
+      // Apply the transformed image
+      currentImageBase64 = data.image;
+      document.getElementById('photoPreview').src = 'data:image/png;base64,' + data.image;
+
+      // Update usage
+      if (data.usage) {
+        transformUsed  = data.usage.used;
+        transformLimit = data.usage.limit;
+      } else {
+        transformUsed++;
+      }
+      updateTransformCtr();
+
+      // Show undo button
+      document.getElementById('undoTransformBtn').style.display = '';
+
+      // Nudge to generate caption
+      document.getElementById('captionNudge').classList.add('visible');
+      setTimeout(() => scrollToCaption(false), 400);
+
+    } catch (err) {
+      activeTransform = null;
+      preTransformB64 = null;
+      alert(err.message || 'Something went wrong. Please try again.');
+    } finally {
+      // Re-enable buttons and hide overlay
+      document.querySelectorAll('.tg-btn').forEach(b => { b.disabled = false; });
+      // Keep active state on the button that was clicked
+      if (activeTransform) {
+        document.querySelectorAll('.tg-btn').forEach(b => {
+          const matches = b.getAttribute('onclick')?.includes("'" + activeTransform + "'");
+          b.classList.toggle('active', !!matches);
+        });
+      }
+      document.getElementById('aiTxOverlay').classList.remove('active');
+    }
+  }
+
+  function undoAiTransform() {
+    if (!preTransformB64) return;
+    currentImageBase64 = preTransformB64;
+    document.getElementById('photoPreview').src = 'data:image/jpeg;base64,' + preTransformB64;
+    preTransformB64 = null;
+    activeTransform = null;
+    document.getElementById('undoTransformBtn').style.display = 'none';
+    document.querySelectorAll('.tg-btn').forEach(b => b.classList.remove('active'));
+  }
+
+  function updateTransformCtr() {
+    const el = document.getElementById('transformCtr');
+    if (!el) return;
+    const rem = Math.max(0, transformLimit - transformUsed);
+    el.textContent = `${rem} of ${transformLimit} left today`;
   }
 
   function clamp(v) { return Math.max(0, Math.min(255, Math.round(v))); }
