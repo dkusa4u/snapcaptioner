@@ -493,6 +493,26 @@
   }
   .filter-btn.f-reset:hover { border-color: var(--red); color: var(--red); }
 
+  /* ── Next Step Nudge (after edit) ──────────────────────── */
+  .caption-nudge {
+    display: none; margin-top: 8px;
+    background: linear-gradient(135deg, rgba(102,126,234,.18), rgba(240,147,251,.18));
+    border: 1px solid rgba(102,126,234,.35); border-radius: 10px;
+    padding: 10px 14px; cursor: pointer;
+    font-size: .78rem; font-weight: 700; color: var(--text);
+    text-align: center; transition: all .18s; letter-spacing: .01em;
+  }
+  .caption-nudge:hover { opacity: .88; border-color: var(--grad2); }
+  .caption-nudge.visible { display: block; }
+
+  /* Pulse highlight on gen-locked after edit */
+  @keyframes editPulse {
+    0%   { box-shadow: 0 0 0 0 rgba(102,126,234,.55); }
+    60%  { box-shadow: 0 0 0 10px rgba(102,126,234,0); }
+    100% { box-shadow: 0 0 0 0 rgba(102,126,234,0); }
+  }
+  .gen-locked.pulse, .gen-btn.pulse { animation: editPulse .7s ease 2; }
+
   /* ── Gen Locked (free/guest) ───────────────────────────── */
   .gen-locked {
     display: none;
@@ -623,6 +643,10 @@
           <button class="filter-btn" id="fb-warm"  onclick="doEnhance('warm')">🌅 Warm</button>
           <button class="filter-btn" id="fb-cool"  onclick="doEnhance('cool')">❄️ Cool</button>
           <button class="filter-btn f-reset" id="fb-reset" onclick="resetPhoto()" style="display:none;">↺ Reset</button>
+        </div>
+        <!-- Nudge: shown after first edit, scrolls to caption section -->
+        <div class="caption-nudge" id="captionNudge" onclick="scrollToCaption()">
+          ✨ Photo edited! Tap here to generate your caption →
         </div>
       </div>
 
@@ -1332,6 +1356,24 @@
 
     updateEnhanceCtr();
     updateUsageUI();
+
+    // Show the "tap to generate caption" nudge and scroll to caption section
+    document.getElementById('captionNudge').classList.add('visible');
+    setTimeout(() => scrollToCaption(false), 600); // auto-scroll after filter applies
+  }
+
+  function scrollToCaption(scroll = true) {
+    // Scroll to genBtn (premium) or genLocked (free/guest)
+    const target = document.getElementById('genBtn')?.offsetParent !== null
+      ? document.getElementById('genBtn')
+      : document.getElementById('genLocked');
+    if (!target) return;
+    target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    // Briefly pulse to draw attention
+    target.classList.remove('pulse');
+    void target.offsetWidth; // force reflow
+    target.classList.add('pulse');
+    setTimeout(() => target.classList.remove('pulse'), 1500);
   }
 
   function resetPhoto() {
