@@ -677,8 +677,13 @@
     clip-path: inset(0 50% 0 0);
     background-size: cover; background-position: center;
   }
-  /* Person layer sits on top of background via multiply blend */
-  .ba-person-layer { mix-blend-mode: multiply; }
+  /* Subtle "AI" glow on the AFTER side */
+  .ba-after::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg, rgba(124,58,237,.08) 0%, transparent 60%);
+    pointer-events: none;
+  }
   .ba-label {
     position: absolute; bottom: 8px;
     padding: 2px 7px; background: rgba(0,0,0,.55);
@@ -1368,13 +1373,12 @@
         <!-- Before/After slider -->
         <div class="ba-container" id="baContainer">
           <div class="ba-before">
-            <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=600&q=80&fit=crop&crop=faces" class="ba-img" alt="Before">
-            <span class="ba-label ba-label-left">BEFORE</span>
+            <img src="https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=600&q=90&fit=crop&crop=faces" class="ba-img" alt="Before">
+            <span class="ba-label ba-label-left">YOUR PHOTO</span>
           </div>
-          <!-- After: same person photo with mix-blend-mode:multiply over new background -->
-          <div class="ba-after" id="baAfter" style="background-image:url('https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=600&q=80&fit=crop&crop=center')">
-            <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=600&q=80&fit=crop&crop=faces" class="ba-img ba-person-layer" id="baAfterImg" alt="After AI">
-            <span class="ba-label ba-label-right">AFTER AI ✦</span>
+          <!-- After: AI-transformed background scene (always clearly visible) -->
+          <div class="ba-after" id="baAfter" style="background-image:url('https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=600&q=90&fit=crop&crop=center')">
+            <span class="ba-label ba-label-right">AI TRANSFORM ✦</span>
           </div>
           <div class="ba-handle" id="baHandle">
             <div class="ba-handle-line"></div>
@@ -1389,12 +1393,12 @@
 
         <!-- Transform style tabs -->
         <div class="ba-tabs" id="baTabs">
-          <button class="ba-tab active" data-bg="https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=600&q=80&fit=crop&crop=center">🗼 Eiffel</button>
-          <button class="ba-tab" data-filter="sepia(0.18) saturate(1.6) brightness(1.08)" data-bg="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=600&q=80&fit=crop&crop=center">🌅 Golden Hour</button>
-          <button class="ba-tab" data-filter="contrast(1.5) saturate(0.4) brightness(0.82)" data-bg="https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=600&q=80&fit=crop&crop=center">🎬 Cinematic</button>
-          <button class="ba-tab" data-filter="brightness(1.5) saturate(0.1) contrast(0.9)" data-bg="https://images.unsplash.com/photo-1497366216548-37526070297c?w=600&q=80&fit=crop&crop=center">⬜ Studio</button>
-          <button class="ba-tab" data-filter="saturate(0.25) hue-rotate(185deg) brightness(1.1)" data-bg="https://images.unsplash.com/photo-1491156855053-9cdff72c7f85?w=600&q=80&fit=crop&crop=center">❄️ Winter</button>
-          <button class="ba-tab" data-filter="brightness(0.65) contrast(1.4) saturate(1.3) hue-rotate(220deg)" data-bg="https://images.unsplash.com/photo-1519501025264-65ba15a82390?w=600&q=80&fit=crop&crop=center">🌙 Moody</button>
+          <button class="ba-tab active" data-bg="https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=600&q=90&fit=crop&crop=center">🗼 Paris</button>
+          <button class="ba-tab" data-bg="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=600&q=90&fit=crop&crop=center">🌅 Beach</button>
+          <button class="ba-tab" data-bg="https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=600&q=90&fit=crop&crop=center">🏯 Tokyo</button>
+          <button class="ba-tab" data-bg="https://images.unsplash.com/photo-1534430480872-3498386e7856?w=600&q=90&fit=crop&crop=center">🌴 Maldives</button>
+          <button class="ba-tab" data-bg="https://images.unsplash.com/photo-1491156855053-9cdff72c7f85?w=600&q=90&fit=crop&crop=center">❄️ Winter</button>
+          <button class="ba-tab" data-bg="https://images.unsplash.com/photo-1519501025264-65ba15a82390?w=600&q=90&fit=crop&crop=center">🌙 Night</button>
         </div>
 
         <a href="pricing.html" class="ba-cta" id="baCta">🔓 Unlock All 20 AI Transforms · $7/mo →</a>
@@ -2451,7 +2455,6 @@
     const container = document.getElementById('baContainer');
     const afterDiv  = document.getElementById('baAfter');
     const handle    = document.getElementById('baHandle');
-    const afterImg  = document.getElementById('baAfterImg');
     const tabs      = document.querySelectorAll('.ba-tab');
     if (!container) return;
 
@@ -2476,15 +2479,11 @@
     window.addEventListener('mouseup',  () => isDragging = false);
     window.addEventListener('touchend', () => isDragging = false);
 
-    // Tab switching → swap background scene and/or CSS filter on person layer
-    // afterDiv background = new scene (Eiffel Tower, beach, etc.)
-    // afterImg (person layer) stays the same photo — mix-blend-mode:multiply
-    // makes the light background transparent so the scene shows through
-    const defaultBg = "url('https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=600&q=80&fit=crop&crop=center')";
+    // Tab switching → swap background scene on the AFTER side
+    const defaultBg = "url('https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=600&q=90&fit=crop&crop=center')";
     function applyTab(tab) {
       const bg = tab.dataset.bg;
       afterDiv.style.backgroundImage = bg ? `url('${bg}')` : defaultBg;
-      afterImg.style.filter = tab.dataset.filter || '';
     }
     tabs.forEach(tab => {
       tab.addEventListener('click', () => {
