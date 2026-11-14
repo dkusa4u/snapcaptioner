@@ -1117,11 +1117,18 @@
         btn.textContent = origText;
         btn.disabled = false;
         alert('You\'re already on the ' + plan + ' plan!');
-      } else {
-        // Token expired or invalid — redirect to login
+      } else if (r.status === 401 || r.status === 403) {
+        // Genuine auth failure — token expired or invalid
         localStorage.removeItem('sc_token');
         localStorage.removeItem('sc_user');
         window.location.href = 'signup.html?plan=' + plan;
+      } else {
+        // Stripe not configured yet or other server error — show helpful message,
+        // do NOT log the user out
+        btn.textContent = origText;
+        btn.disabled = false;
+        const msg = d.message || 'Checkout is not available right now. Please try again later.';
+        alert(msg);
       }
     } catch(e) {
       btn.textContent = origText;
