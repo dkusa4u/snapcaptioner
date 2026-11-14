@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Content Calendar — SnapCaption AI</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0f0f13;color:#e8e8f0;min-height:100vh}
+
+/* Nav */
+.nav{display:flex;align-items:center;gap:12px;padding:14px 20px;background:#16161e;border-bottom:1px solid rgba(255,255,255,.07)}
+.nav-logo{font-weight:800;font-size:1.1rem;background:linear-gradient(135deg,#a855f7,#38bdf8);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.nav-links{display:flex;gap:8px;margin-left:auto}
+.nav-link{color:#a0a0b8;font-size:.82rem;text-decoration:none;padding:6px 12px;border-radius:8px;transition:all .2s}
+.nav-link:hover,.nav-link.active{background:rgba(168,85,247,.15);color:#c084fc}
+
+/* Top bar */
+.top-bar{display:flex;align-items:center;gap:12px;padding:16px 20px;max-width:860px;margin:0 auto}
+.month-nav{display:flex;align-items:center;gap:10px}
+.month-btn{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);color:#e8e8f0;width:32px;height:32px;border-radius:8px;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.month-btn:hover{background:rgba(168,85,247,.2)}
+.month-label{font-size:1.1rem;font-weight:700;min-width:150px;text-align:center}
+.add-btn{margin-left:auto;padding:8px 18px;background:linear-gradient(135deg,#a855f7,#38bdf8);border:none;border-radius:10px;color:#fff;font-weight:700;font-size:.85rem;cursor:pointer;transition:opacity .2s}
+.add-btn:hover{opacity:.85}
+
+/* Platform legend */
+.legend{display:flex;gap:10px;padding:0 20px 12px;max-width:860px;margin:0 auto;flex-wrap:wrap}
+.leg-item{display:flex;align-items:center;gap:5px;font-size:.74rem;color:#a0a0b8}
+.leg-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+
+/* Calendar grid */
+.cal-wrap{padding:0 20px 40px;max-width:860px;margin:0 auto}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:1px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.06);border-radius:14px;overflow:hidden}
+.cal-header{background:#16161e;padding:8px 4px;text-align:center;font-size:.72rem;font-weight:700;color:#78788a;text-transform:uppercase;letter-spacing:.06em}
+.cal-day{background:#1a1a24;min-height:80px;padding:6px;cursor:pointer;transition:background .15s;position:relative}
+.cal-day:hover{background:#1e1e2c}
+.cal-day.today .day-num{background:linear-gradient(135deg,#a855f7,#38bdf8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-weight:800}
+.cal-day.other-month .day-num{color:#3a3a50}
+.cal-day.selected{background:#1e1e2e;outline:2px solid rgba(168,85,247,.4)}
+.day-num{font-size:.8rem;color:#a0a0b8;margin-bottom:4px}
+.day-dots{display:flex;flex-wrap:wrap;gap:3px}
+.day-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+
+/* Platform colors */
+.c-instagram{background:#a855f7}
+.c-tiktok   {background:#e2e2e2}
+.c-twitter  {background:#38bdf8}
+.c-linkedin {background:#0ea5e9}
+.c-facebook {background:#60a5fa}
+.c-other    {background:#fb923c}
+
+/* Side panel */
+.panel-wrap{padding:0 20px 40px;max-width:860px;margin:0 auto;display:none}
+.panel{background:#1a1a24;border:1px solid rgba(255,255,255,.08);border-radius:16px;overflow:hidden}
+.panel-head{display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid rgba(255,255,255,.06)}
+.panel-date{font-weight:700;font-size:.95rem}
+.panel-close{margin-left:auto;background:none;border:none;color:#78788a;cursor:pointer;font-size:1.1rem;line-height:1}
+.panel-posts{padding:12px 16px;display:flex;flex-direction:column;gap:8px}
+.post-item{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:10px;padding:10px 12px;display:flex;gap:10px;align-items:flex-start}
+.post-dot-col{padding-top:3px}
+.post-info{flex:1;min-width:0}
+.post-title{font-size:.85rem;font-weight:600;color:#e8e8f0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.post-meta{display:flex;gap:8px;margin-top:3px;flex-wrap:wrap}
+.post-time{font-size:.72rem;color:#78788a}
+.post-status{font-size:.7rem;padding:2px 7px;border-radius:6px;font-weight:600}
+.s-idea  {background:rgba(251,146,60,.15);color:#fb923c}
+.s-draft {background:rgba(56,189,248,.15);color:#38bdf8}
+.s-ready {background:rgba(168,85,247,.15);color:#c084fc}
+.s-posted{background:rgba(74,222,128,.15);color:#4ade80}
+.post-actions{display:flex;gap:6px;margin-top:6px}
+.post-action-btn{font-size:.72rem;padding:3px 8px;border-radius:6px;border:1px solid rgba(255,255,255,.1);background:transparent;color:#a0a0b8;cursor:pointer;transition:all .2s}
+.post-action-btn:hover{background:rgba(255,255,255,.08)}
+.post-action-btn.del{color:#f87171;border-color:rgba(248,113,113,.2)}
+.post-action-btn.del:hover{background:rgba(248,113,113,.1)}
+.empty-day{text-align:center;padding:20px;color:#50506a;font-size:.82rem}
+
+/* Modal */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);display:flex;align-items:center;justify-content:center;z-index:1000;padding:16px;display:none}
+.modal-overlay.open{display:flex}
+.modal{background:#1a1a24;border:1px solid rgba(255,255,255,.1);border-radius:20px;width:100%;max-width:440px;overflow:hidden}
+.modal-head{display:flex;align-items:center;padding:16px 18px;border-bottom:1px solid rgba(255,255,255,.07)}
+.modal-title{font-weight:700;font-size:1rem}
+.modal-close{margin-left:auto;background:none;border:none;color:#78788a;cursor:pointer;font-size:1.2rem}
+.modal-body{padding:18px;display:flex;flex-direction:column;gap:12px}
+.form-group{display:flex;flex-direction:column;gap:5px}
+.form-label{font-size:.78rem;color:#a0a0b8;font-weight:600}
+.form-input,.form-select,.form-textarea{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:9px 12px;color:#e8e8f0;font-size:.85rem;font-family:inherit;width:100%;transition:border-color .2s}
+.form-input:focus,.form-select:focus,.form-textarea:focus{outline:none;border-color:rgba(168,85,247,.5)}
+.form-select option{background:#1a1a24}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.form-textarea{resize:none}
+.modal-foot{padding:12px 18px;border-top:1px solid rgba(255,255,255,.07);display:flex;gap:8px;justify-content:flex-end}
+.btn-cancel{padding:8px 16px;background:transparent;border:1px solid rgba(255,255,255,.1);border-radius:10px;color:#a0a0b8;cursor:pointer;font-size:.85rem}
+.btn-save{padding:8px 20px;background:linear-gradient(135deg,#a855f7,#38bdf8);border:none;border-radius:10px;color:#fff;font-weight:700;cursor:pointer;font-size:.85rem;transition:opacity .2s}
+.btn-save:hover{opacity:.85}
+
+/* Upgrade */
+.upgrade-box{background:linear-gradient(135deg,rgba(168,85,247,.15),rgba(56,189,248,.1));border:1px solid rgba(168,85,247,.3);border-radius:20px;padding:30px 20px;text-align:center;max-width:420px;margin:40px auto}
+.upgrade-box h3{font-size:1.1rem;font-weight:700;margin-bottom:8px}
+.upgrade-box p{font-size:.85rem;color:#a0a0b8;margin-bottom:16px}
+.upgrade-btn{padding:10px 24px;background:linear-gradient(135deg,#a855f7,#38bdf8);border:none;border-radius:10px;color:#fff;font-weight:700;cursor:pointer;font-size:.9rem}
+
+/* Toast */
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(80px);background:#1e1e2e;border:1px solid rgba(74,222,128,.3);color:#4ade80;padding:10px 18px;border-radius:10px;font-size:.82rem;transition:transform .3s;z-index:9999}
+.toast.show{transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <span class="nav-logo">📅 SnapCaption</span>
+  <div class="nav-links">
+    <a href="app.html"      class="nav-link">✦ Studio</a>
+    <a href="tracker.html"  class="nav-link">📊 Tracker</a>
+    <a href="calendar.html" class="nav-link active">📅 Calendar</a>
+  </div>
+</nav>
+
+<div class="top-bar">
+  <div class="month-nav">
+    <button class="month-btn" onclick="changeMonth(-1)">‹</button>
+    <span class="month-label" id="monthLabel">November 2026</span>
+    <button class="month-btn" onclick="changeMonth(1)">›</button>
+  </div>
+  <button class="add-btn" onclick="openAddModal()">+ Add Post</button>
+</div>
+
+<div class="legend">
+  <div class="leg-item"><div class="leg-dot c-instagram"></div>Instagram</div>
+  <div class="leg-item"><div class="leg-dot c-tiktok"></div>TikTok</div>
+  <div class="leg-item"><div class="leg-dot c-twitter"></div>Twitter</div>
+  <div class="leg-item"><div class="leg-dot c-linkedin"></div>LinkedIn</div>
+  <div class="leg-item"><div class="leg-dot c-facebook"></div>Facebook</div>
+</div>
+
+<div id="premiumGate" style="display:none">
+  <div class="upgrade-box">
+    <h3>📅 Premium Feature</h3>
+    <p>Content Calendar is included with SnapCaption Premium — plan your posts weeks ahead, track ideas, drafts, and scheduled content across every platform.</p>
+    <button class="upgrade-btn" onclick="location.href='pricing.html'">Upgrade to Premium</button>
+  </div>
+</div>
+
+<div id="calContainer">
+  <div class="cal-wrap">
+    <div class="cal-grid" id="calGrid"></div>
+  </div>
+  <div class="panel-wrap" id="panelWrap">
+    <div class="panel">
+      <div class="panel-head">
+        <span class="panel-date" id="panelDate"></span>
+        <button class="panel-close" onclick="closePanel()">✕</button>
+      </div>
+      <div class="panel-posts" id="panelPosts"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Add/Edit Modal -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <div class="modal-head">
+      <span class="modal-title" id="modalTitle">Add Post</span>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="editId" value="">
+      <div class="form-group">
+        <label class="form-label">Title *</label>
+        <input class="form-input" id="fTitle" type="text" placeholder="e.g. Product launch post">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Platform</label>
+          <select class="form-select" id="fPlatform">
+            <option value="instagram">📸 Instagram</option>
+            <option value="tiktok">🎵 TikTok</option>
+            <option value="twitter">🐦 Twitter</option>
+            <option value="linkedin">💼 LinkedIn</option>
+            <option value="facebook">👍 Facebook</option>
+            <option value="other">📱 Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Status</label>
+          <select class="form-select" id="fStatus">
+            <option value="idea">💡 Idea</option>
+            <option value="draft">📝 Draft</option>
+            <option value="ready">✅ Ready</option>
+            <option value="posted">🚀 Posted</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Date</label>
+          <input class="form-input" id="fDate" type="date">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Time</label>
+          <input class="form-input" id="fTime" type="time" value="09:00">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Caption (optional)</label>
+        <textarea class="form-textarea" id="fCaption" rows="3" placeholder="Paste your planned caption here…"></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Notes (optional)</label>
+        <input class="form-input" id="fNotes" type="text" placeholder="e.g. Use product photo 3">
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+      <button class="btn-save"   onclick="savePost()">Save Post</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const TOKEN = localStorage.getItem('sc_token');
+if (!TOKEN) location.href='login.html';
+
+const BASE = 'api';
+let viewYear, viewMonth; // 0-indexed month
+let postsCache = {};     // key: "YYYY-MM-DD" => [post,...]
+let selectedDate = null;
+let isPremium = false;
+
+// Set initial month
+const now = new Date();
+viewYear  = now.getFullYear();
+viewMonth = now.getMonth();
+
+function platformColor(p) {
+  const m={instagram:'c-instagram',tiktok:'c-tiktok',twitter:'c-twitter',linkedin:'c-linkedin',facebook:'c-facebook'};
+  return m[p]||'c-other';
+}
+function platformIcon(p) {
+  const m={instagram:'📸',tiktok:'🎵',twitter:'🐦',linkedin:'💼',facebook:'👍',other:'📱'};
+  return m[p]||'📱';
+}
+function statusClass(s){return 's-'+s}
+function statusLabel(s){return{idea:'💡 Idea',draft:'📝 Draft',ready:'✅ Ready',posted:'🚀 Posted'}[s]||s}
+
+async function apiFetch(url,opts={}) {
+  const r=await fetch(url,{...opts,headers:{'Authorization':'Bearer '+TOKEN,'Content-Type':'application/json',...(opts.headers||{})}});
+  return r.json();
+}
+
+function toast(msg,ok=true) {
+  const t=document.getElementById('toast');
+  t.textContent=msg;
+  t.style.borderColor=ok?'rgba(74,222,128,.3)':'rgba(248,113,113,.3)';
+  t.style.color=ok?'#4ade80':'#f87171';
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2600);
+}
+
+async function checkPremium() {
+  const user = JSON.parse(localStorage.getItem('sc_user')||'{}');
+  isPremium = user.plan === 'premium';
+  if (!isPremium) {
+    document.getElementById('premiumGate').style.display='block';
+    document.getElementById('calContainer').style.display='none';
+    return false;
+  }
+  return true;
+}
+
+async function loadMonth() {
+  const monthStr = `${viewYear}-${String(viewMonth+1).padStart(2,'0')}`;
+  const label    = new Date(viewYear, viewMonth, 1).toLocaleDateString('en-US',{month:'long',year:'numeric'});
+  document.getElementById('monthLabel').textContent = label;
+
+  const d = await apiFetch(`${BASE}/calendar.php?action=list&month=${monthStr}`);
+  if (d.error==='premium_required') {
+    document.getElementById('premiumGate').style.display='block';
+    document.getElementById('calContainer').style.display='none';
+    return;
+  }
+  // Build postsCache by date
+  postsCache = {};
+  (d.posts||[]).forEach(p=>{
+    if(!postsCache[p.scheduled_date]) postsCache[p.scheduled_date]=[];
+    postsCache[p.scheduled_date].push(p);
+  });
+  renderCalendar();
+}
+
+function changeMonth(delta) {
+  viewMonth += delta;
+  if (viewMonth>11){viewMonth=0;viewYear++;}
+  if (viewMonth<0) {viewMonth=11;viewYear--;}
+  closePanel();
+  loadMonth();
+}
+
+function renderCalendar() {
+  const grid  = document.getElementById('calGrid');
+  const days  = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  const today = new Date();
+  const firstDay = new Date(viewYear, viewMonth, 1).getDay();
+  const totalDays = new Date(viewYear, viewMonth+1, 0).getDate();
+  const prevTotal = new Date(viewYear, viewMonth, 0).getDate();
+
+  let html = days.map(d=>`<div class="cal-header">${d}</div>`).join('');
+
+  // prev month fill
+  for(let i=0;i<firstDay;i++){
+    const d = prevTotal - firstDay + i + 1;
+    html += `<div class="cal-day other-month"><div class="day-num">${d}</div></div>`;
+  }
+  // current month
+  for(let d=1;d<=totalDays;d++){
+    const dateStr = `${viewYear}-${String(viewMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const isToday = today.getFullYear()===viewYear && today.getMonth()===viewMonth && today.getDate()===d;
+    const isSel   = selectedDate===dateStr;
+    const posts   = postsCache[dateStr]||[];
+    const dots    = posts.slice(0,6).map(p=>`<div class="day-dot ${platformColor(p.platform)}"></div>`).join('');
+    html += `<div class="cal-day ${isToday?'today':''} ${isSel?'selected':''}" onclick="selectDay('${dateStr}')">
+      <div class="day-num">${d}</div>
+      <div class="day-dots">${dots}</div>
+    </div>`;
+  }
+  // next month fill
+  const remaining = 42 - firstDay - totalDays;
+  for(let d=1;d<=remaining;d++){
+    html += `<div class="cal-day other-month"><div class="day-num">${d}</div></div>`;
+  }
+  grid.innerHTML = html;
+
+  // Re-open panel if a date was selected
+  if (selectedDate && postsCache[selectedDate]) renderPanel(selectedDate);
+}
+
+function selectDay(dateStr) {
+  selectedDate = dateStr;
+  renderCalendar();
+  renderPanel(dateStr);
+}
+
+function renderPanel(dateStr) {
+  const wrap  = document.getElementById('panelWrap');
+  const pDate = document.getElementById('panelDate');
+  const pPosts= document.getElementById('panelPosts');
+  const posts = postsCache[dateStr]||[];
+
+  const dObj  = new Date(dateStr+'T12:00:00');
+  pDate.textContent = dObj.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'});
+
+  if (!posts.length) {
+    pPosts.innerHTML = `<div class="empty-day">No posts planned.<br><span style="color:#a855f7;cursor:pointer" onclick="openAddModal('${dateStr}')">+ Add a post for this day</span></div>`;
+  } else {
+    pPosts.innerHTML = posts.map(p=>`
+      <div class="post-item" id="pi-${p.id}">
+        <div class="post-dot-col"><div class="day-dot ${platformColor(p.platform)}" style="width:10px;height:10px"></div></div>
+        <div class="post-info">
+          <div class="post-title">${escHtml(p.title)}</div>
+          <div class="post-meta">
+            <span class="post-time">${platformIcon(p.platform)} ${p.scheduled_time?p.scheduled_time.substring(0,5):''}</span>
+            <span class="post-status ${statusClass(p.status)}">${statusLabel(p.status)}</span>
+          </div>
+          ${p.caption?`<div style="font-size:.75rem;color:#78788a;margin-top:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:260px">${escHtml(p.caption.substring(0,80))}…</div>`:''}
+          <div class="post-actions">
+            <button class="post-action-btn" onclick="openEditModal(${JSON.stringify(p).replace(/"/g,'&quot;')})">✏️ Edit</button>
+            <select class="post-action-btn" onchange="quickStatus(${p.id},this.value,this)" style="width:auto">
+              <option value="">Status…</option>
+              <option value="idea">💡 Idea</option>
+              <option value="draft">📝 Draft</option>
+              <option value="ready">✅ Ready</option>
+              <option value="posted">🚀 Posted</option>
+            </select>
+            <button class="post-action-btn del" onclick="deletePost(${p.id},'${dateStr}')">🗑</button>
+          </div>
+        </div>
+      </div>`).join('') +
+      `<div style="padding:8px 0;text-align:center"><span style="font-size:.8rem;color:#a855f7;cursor:pointer" onclick="openAddModal('${dateStr}')">+ Add another post</span></div>`;
+  }
+  wrap.style.display='block';
+}
+
+function closePanel() {
+  selectedDate=null;
+  document.getElementById('panelWrap').style.display='none';
+  renderCalendar();
+}
+
+function openAddModal(dateStr) {
+  document.getElementById('editId').value = '';
+  document.getElementById('modalTitle').textContent = 'Add Post';
+  document.getElementById('fTitle').value   = '';
+  document.getElementById('fPlatform').value= 'instagram';
+  document.getElementById('fStatus').value  = 'idea';
+  document.getElementById('fDate').value    = dateStr||selectedDate||new Date().toISOString().slice(0,10);
+  document.getElementById('fTime').value    = '09:00';
+  document.getElementById('fCaption').value = '';
+  document.getElementById('fNotes').value   = '';
+  document.getElementById('modalOverlay').classList.add('open');
+}
+
+function openEditModal(p) {
+  document.getElementById('editId').value   = p.id;
+  document.getElementById('modalTitle').textContent = 'Edit Post';
+  document.getElementById('fTitle').value   = p.title;
+  document.getElementById('fPlatform').value= p.platform;
+  document.getElementById('fStatus').value  = p.status;
+  document.getElementById('fDate').value    = p.scheduled_date;
+  document.getElementById('fTime').value    = p.scheduled_time?p.scheduled_time.substring(0,5):'09:00';
+  document.getElementById('fCaption').value = p.caption||'';
+  document.getElementById('fNotes').value   = p.notes||'';
+  document.getElementById('modalOverlay').classList.add('open');
+}
+
+function closeModal() {
+  document.getElementById('modalOverlay').classList.remove('open');
+}
+
+async function savePost() {
+  const id      = document.getElementById('editId').value;
+  const title   = document.getElementById('fTitle').value.trim();
+  if (!title) { toast('Title is required',false); return; }
+  const payload = {
+    action:           id ? 'update' : 'create',
+    id:               id ? parseInt(id) : undefined,
+    title,
+    platform:         document.getElementById('fPlatform').value,
+    status:           document.getElementById('fStatus').value,
+    scheduled_date:   document.getElementById('fDate').value,
+    scheduled_time:   document.getElementById('fTime').value+':00',
+    caption:          document.getElementById('fCaption').value||null,
+    notes:            document.getElementById('fNotes').value||null,
+  };
+  const d = await apiFetch(`${BASE}/calendar.php`, {method:'POST', body:JSON.stringify(payload)});
+  if (d.ok) {
+    toast(id?'Post updated!':'Post added!');
+    closeModal();
+    await loadMonth();
+    if (selectedDate) renderPanel(selectedDate);
+  } else {
+    toast(d.error||'Save failed',false);
+  }
+}
+
+async function quickStatus(id, status, el) {
+  if (!status) return;
+  const d = await apiFetch(`${BASE}/calendar.php`,{method:'POST',body:JSON.stringify({action:'update',id,status})});
+  if (d.ok) { toast('Status updated!'); el.value=''; await loadMonth(); if(selectedDate) renderPanel(selectedDate); }
+  else       { toast('Update failed',false); el.value=''; }
+}
+
+async function deletePost(id, dateStr) {
+  if (!confirm('Delete this post?')) return;
+  const d = await apiFetch(`${BASE}/calendar.php`,{method:'POST',body:JSON.stringify({action:'delete',id})});
+  if (d.ok) { toast('Post deleted'); await loadMonth(); if(selectedDate) renderPanel(selectedDate); }
+  else      { toast('Delete failed',false); }
+}
+
+function escHtml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+
+// Init
+(async()=>{
+  const ok = await checkPremium();
+  if (ok) await loadMonth();
+})();
+</script>
+</body>
+</html>

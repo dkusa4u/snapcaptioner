@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Caption Tracker — SnapCaption AI</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0f0f13;color:#e8e8f0;min-height:100vh}
+
+/* Nav */
+.nav{display:flex;align-items:center;gap:12px;padding:14px 20px;background:#16161e;border-bottom:1px solid rgba(255,255,255,.07)}
+.nav-logo{font-weight:800;font-size:1.1rem;background:linear-gradient(135deg,#a855f7,#38bdf8);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.nav-links{display:flex;gap:8px;margin-left:auto}
+.nav-link{color:#a0a0b8;font-size:.82rem;text-decoration:none;padding:6px 12px;border-radius:8px;transition:all .2s}
+.nav-link:hover,.nav-link.active{background:rgba(168,85,247,.15);color:#c084fc}
+
+/* Hero */
+.hero{padding:28px 20px 0;text-align:center}
+.hero h1{font-size:1.5rem;font-weight:800;background:linear-gradient(135deg,#a855f7,#38bdf8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:6px}
+.hero p{color:#78788a;font-size:.88rem}
+
+/* Stats row */
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:20px 20px 0;max-width:720px;margin:0 auto}
+.stat-card{background:#1a1a24;border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:16px;text-align:center}
+.stat-num{font-size:1.8rem;font-weight:800;background:linear-gradient(135deg,#a855f7,#38bdf8);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.stat-lbl{font-size:.75rem;color:#78788a;margin-top:2px}
+
+/* Filters */
+.filters{display:flex;gap:8px;padding:16px 20px 0;max-width:720px;margin:0 auto;flex-wrap:wrap}
+.filter-chip{padding:6px 14px;border-radius:20px;border:1px solid rgba(255,255,255,.1);background:transparent;color:#a0a0b8;font-size:.8rem;cursor:pointer;transition:all .2s}
+.filter-chip.active{background:rgba(168,85,247,.2);border-color:rgba(168,85,247,.5);color:#c084fc}
+
+/* Session cards */
+.sessions{padding:16px 20px 40px;max-width:720px;margin:0 auto;display:flex;flex-direction:column;gap:12px}
+.session-card{background:#1a1a24;border:1px solid rgba(255,255,255,.07);border-radius:16px;overflow:hidden;transition:border-color .2s}
+.session-card.has-used{border-color:rgba(74,222,128,.2)}
+.session-head{display:flex;align-items:center;gap:10px;padding:14px 16px;cursor:pointer}
+.session-date{font-size:.78rem;color:#78788a}
+.session-platform{font-size:.72rem;padding:3px 8px;border-radius:10px;font-weight:600;text-transform:uppercase;letter-spacing:.04em}
+.p-instagram{background:rgba(168,85,247,.2);color:#c084fc}
+.p-tiktok{background:rgba(0,0,0,.4);color:#e2e2e2;border:1px solid rgba(255,255,255,.1)}
+.p-twitter{background:rgba(29,155,240,.15);color:#60b4f0}
+.p-linkedin{background:rgba(0,119,181,.15);color:#5aade0}
+.p-facebook{background:rgba(24,119,242,.15);color:#69a8f5}
+.session-preview{font-size:.82rem;color:#c0c0d8;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.session-badge{font-size:.7rem;padding:3px 8px;border-radius:8px;white-space:nowrap}
+.badge-used{background:rgba(74,222,128,.15);color:#4ade80;border:1px solid rgba(74,222,128,.2)}
+.badge-gen{background:rgba(96,96,160,.15);color:#a0a0c0}
+.session-toggle{color:#78788a;font-size:.8rem;transition:transform .3s}
+.session-toggle.open{transform:rotate(180deg)}
+
+/* Captions list */
+.captions-list{padding:0 16px 16px;display:none;flex-direction:column;gap:8px}
+.captions-list.open{display:flex}
+.caption-row{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:10px;padding:12px;cursor:pointer;transition:all .2s;position:relative}
+.caption-row:hover{border-color:rgba(168,85,247,.3)}
+.caption-row.selected{border-color:rgba(74,222,128,.4);background:rgba(74,222,128,.06)}
+.caption-row .caption-text{font-size:.82rem;line-height:1.5;color:#d0d0e8}
+.caption-row .caption-num{font-size:.7rem;color:#78788a;margin-bottom:4px}
+.caption-row .used-tick{position:absolute;top:8px;right:10px;color:#4ade80;font-size:.9rem}
+
+/* Performance inputs */
+.perf-section{padding:12px 16px 16px;border-top:1px solid rgba(255,255,255,.06);display:none}
+.perf-section.open{display:block}
+.perf-title{font-size:.78rem;color:#a0a0b8;margin-bottom:10px;font-weight:600}
+.perf-inputs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px}
+.perf-input{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:8px;color:#e8e8f0;font-size:.8rem;text-align:center;width:100%}
+.perf-input:focus{outline:none;border-color:rgba(168,85,247,.5)}
+.perf-input::placeholder{color:#50506a}
+.perf-note{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:8px;color:#e8e8f0;font-size:.8rem;width:100%;resize:none;font-family:inherit}
+.perf-note:focus{outline:none;border-color:rgba(168,85,247,.5)}
+.save-perf-btn{margin-top:8px;padding:8px 16px;background:linear-gradient(135deg,#a855f7,#38bdf8);border:none;border-radius:8px;color:#fff;font-size:.8rem;font-weight:600;cursor:pointer;transition:opacity .2s}
+.save-perf-btn:hover{opacity:.85}
+
+/* Empty / loading / upgrade */
+.msg-box{text-align:center;padding:60px 20px;color:#78788a}
+.msg-box .icon{font-size:3rem;margin-bottom:12px}
+.msg-box h3{color:#c0c0d8;margin-bottom:6px}
+.upgrade-box{background:linear-gradient(135deg,rgba(168,85,247,.15),rgba(56,189,248,.1));border:1px solid rgba(168,85,247,.3);border-radius:20px;padding:30px 20px;text-align:center;max-width:420px;margin:40px auto 0}
+.upgrade-box h3{font-size:1.1rem;font-weight:700;margin-bottom:8px}
+.upgrade-box p{font-size:.85rem;color:#a0a0b8;margin-bottom:16px}
+.upgrade-btn{padding:10px 24px;background:linear-gradient(135deg,#a855f7,#38bdf8);border:none;border-radius:10px;color:#fff;font-weight:700;cursor:pointer;font-size:.9rem}
+
+/* Pagination */
+.pagination{display:flex;justify-content:center;gap:8px;padding:0 20px 40px}
+.page-btn{padding:7px 14px;border:1px solid rgba(255,255,255,.1);background:transparent;color:#a0a0b8;border-radius:8px;cursor:pointer;font-size:.82rem;transition:all .2s}
+.page-btn:hover,.page-btn.active{background:rgba(168,85,247,.2);border-color:rgba(168,85,247,.4);color:#c084fc}
+.page-btn:disabled{opacity:.3;cursor:not-allowed}
+
+/* Toast */
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(80px);background:#1e1e2e;border:1px solid rgba(74,222,128,.3);color:#4ade80;padding:10px 18px;border-radius:10px;font-size:.82rem;transition:transform .3s;z-index:9999}
+.toast.show{transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <span class="nav-logo">📊 SnapCaption</span>
+  <div class="nav-links">
+    <a href="app.html"      class="nav-link">✦ Studio</a>
+    <a href="tracker.html"  class="nav-link active">📊 Tracker</a>
+    <a href="calendar.html" class="nav-link">📅 Calendar</a>
+  </div>
+</nav>
+
+<div class="hero">
+  <h1>Caption A/B Tracker</h1>
+  <p>See which captions you used and track their performance</p>
+</div>
+
+<div class="stats-row" id="statsRow">
+  <div class="stat-card"><div class="stat-num" id="statGen">—</div><div class="stat-lbl">Generated</div></div>
+  <div class="stat-card"><div class="stat-num" id="statUsed">—</div><div class="stat-lbl">Marked Used</div></div>
+  <div class="stat-card"><div class="stat-num" id="statRate">—</div><div class="stat-lbl">Use Rate</div></div>
+</div>
+
+<div class="filters">
+  <button class="filter-chip active" data-filter="all"       onclick="setFilter(this,'all')">All</button>
+  <button class="filter-chip"        data-filter="generated" onclick="setFilter(this,'generated')">Unused</button>
+  <button class="filter-chip"        data-filter="used"      onclick="setFilter(this,'used')">Used ✓</button>
+  <button class="filter-chip"        data-filter="skipped"   onclick="setFilter(this,'skipped')">Skipped</button>
+</div>
+
+<div id="mainContent">
+  <div class="msg-box"><div class="icon">⏳</div><p>Loading your caption history…</p></div>
+</div>
+
+<div class="pagination" id="pagination"></div>
+<div class="toast" id="toast"></div>
+
+<script>
+const TOKEN = localStorage.getItem('sc_token');
+const BASE  = 'api';
+let currentPage   = 1;
+let currentFilter = 'all';
+let allItems      = [];
+
+if (!TOKEN) { location.href = 'login.html'; }
+
+async function apiFetch(url, opts={}) {
+  const r = await fetch(url, {
+    ...opts,
+    headers: { 'Authorization': 'Bearer '+TOKEN, 'Content-Type': 'application/json', ...(opts.headers||{}) }
+  });
+  return r.json();
+}
+
+function toast(msg, ok=true) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.style.borderColor = ok ? 'rgba(74,222,128,.3)' : 'rgba(248,113,113,.3)';
+  t.style.color = ok ? '#4ade80' : '#f87171';
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 2600);
+}
+
+async function loadStats() {
+  const d = await apiFetch(`${BASE}/caption-tracker.php?action=stats`);
+  if (d.error) return;
+  const gen  = parseInt(d.overall?.total_generated)||0;
+  const used = parseInt(d.overall?.total_used)||0;
+  const rate = gen ? Math.round(used/gen*100) : 0;
+  document.getElementById('statGen').textContent  = gen;
+  document.getElementById('statUsed').textContent = used;
+  document.getElementById('statRate').textContent = rate+'%';
+}
+
+async function loadHistory(page=1) {
+  currentPage = page;
+  const d = await apiFetch(`${BASE}/caption-tracker.php?action=history&page=${page}`);
+
+  if (d.error === 'premium_required') {
+    document.getElementById('mainContent').innerHTML = `
+      <div class="sessions">
+        <div class="upgrade-box">
+          <h3>⭐ Premium Feature</h3>
+          <p>Caption A/B Tracker is included with SnapCaption Premium — see every caption you've generated, mark which ones you used, and track likes, comments & reach.</p>
+          <button class="upgrade-btn" onclick="location.href='pricing.html'">Upgrade to Premium</button>
+        </div>
+      </div>`;
+    return;
+  }
+
+  allItems = d.items || [];
+  renderSessions();
+  renderPagination(d.page, d.page_count);
+}
+
+function setFilter(el, f) {
+  document.querySelectorAll('.filter-chip').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  currentFilter = f;
+  renderSessions();
+}
+
+function renderSessions() {
+  const filtered = currentFilter === 'all'
+    ? allItems
+    : allItems.filter(i => i.status === currentFilter);
+
+  const wrap = document.getElementById('mainContent');
+
+  if (!filtered.length) {
+    wrap.innerHTML = `<div class="msg-box"><div class="icon">📭</div><h3>Nothing here yet</h3><p>Generate some captions in the Studio to start tracking.</p></div>`;
+    return;
+  }
+
+  const platformLabel = {instagram:'📸 Instagram',tiktok:'🎵 TikTok',twitter:'🐦 Twitter',linkedin:'💼 LinkedIn',facebook:'👍 Facebook'};
+
+  const html = `<div class="sessions">` + filtered.map(item => {
+    const caps    = item.captions || [];
+    const preview = caps[0] ? caps[0].substring(0,60)+'…' : '(no preview)';
+    const isUsed  = item.status === 'used';
+    const dateStr = new Date(item.created_at).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+    const pClass  = 'p-'+(item.platform||'instagram');
+    const pLabel  = platformLabel[item.platform] || item.platform;
+
+    return `
+    <div class="session-card ${isUsed?'has-used':''}" data-id="${item.id}">
+      <div class="session-head" onclick="toggleSession(${item.id})">
+        <span class="session-date">${dateStr}</span>
+        <span class="session-platform ${pClass}">${pLabel}</span>
+        <span class="session-preview">${escHtml(preview)}</span>
+        <span class="session-badge ${isUsed?'badge-used':'badge-gen'}">${isUsed?'✓ Used':'Generated'}</span>
+        <span class="session-toggle" id="tog-${item.id}">▾</span>
+      </div>
+      <div class="captions-list" id="caps-${item.id}">
+        ${caps.map((c,i)=>`
+          <div class="caption-row ${item.used_caption===c?'selected':''}" onclick="selectCaption(${item.id},'${encodeURIComponent(c)}',this)">
+            <div class="caption-num">Caption ${i+1} — click to mark as used</div>
+            <div class="caption-text">${escHtml(c)}</div>
+            ${item.used_caption===c?'<span class="used-tick">✓</span>':''}
+          </div>`).join('')}
+      </div>
+      <div class="perf-section ${isUsed?'open':''}" id="perf-${item.id}">
+        <div class="perf-title">📈 Performance (optional)</div>
+        <div class="perf-inputs">
+          <input class="perf-input" id="likes-${item.id}"    type="number" placeholder="❤️ Likes"    value="${item.likes||''}">
+          <input class="perf-input" id="comments-${item.id}" type="number" placeholder="💬 Comments" value="${item.comments||''}">
+          <input class="perf-input" id="reach-${item.id}"    type="number" placeholder="👁 Reach"    value="${item.reach||''}">
+        </div>
+        <textarea class="perf-note" id="note-${item.id}" rows="2" placeholder="Notes (e.g. 'posted 9am Monday, got great response')">${item.perf_note||''}</textarea>
+        <button class="save-perf-btn" onclick="savePerf(${item.id})">Save Performance Data</button>
+      </div>
+    </div>`;
+  }).join('') + `</div>`;
+
+  wrap.innerHTML = html;
+}
+
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function toggleSession(id) {
+  const caps = document.getElementById('caps-'+id);
+  const tog  = document.getElementById('tog-'+id);
+  const isOpen = caps.classList.contains('open');
+  caps.classList.toggle('open', !isOpen);
+  tog.classList.toggle('open', !isOpen);
+}
+
+async function selectCaption(id, encodedCap, el) {
+  const cap = decodeURIComponent(encodedCap);
+  const data = await apiFetch(`${BASE}/caption-tracker.php`, {
+    method:'POST',
+    body: JSON.stringify({ action:'update', id, status:'used', used_caption:cap })
+  });
+  if (data.ok) {
+    // Update UI
+    el.closest('.session-card').querySelectorAll('.caption-row').forEach(r=>{
+      r.classList.remove('selected');
+      const tick = r.querySelector('.used-tick');
+      if (tick) tick.remove();
+    });
+    el.classList.add('selected');
+    if (!el.querySelector('.used-tick')) {
+      const tick = document.createElement('span');
+      tick.className='used-tick'; tick.textContent='✓'; el.appendChild(tick);
+    }
+    el.closest('.session-card').classList.add('has-used');
+    document.querySelector(`#perf-${id}`).classList.add('open');
+    const badge = el.closest('.session-card').querySelector('.session-badge');
+    if (badge) { badge.className='session-badge badge-used'; badge.textContent='✓ Used'; }
+    toast('Caption marked as used!');
+    loadStats();
+  }
+}
+
+async function savePerf(id) {
+  const likes    = parseInt(document.getElementById('likes-'+id).value)||null;
+  const comments = parseInt(document.getElementById('comments-'+id).value)||null;
+  const reach    = parseInt(document.getElementById('reach-'+id).value)||null;
+  const note     = document.getElementById('note-'+id).value.trim()||null;
+  const data = await apiFetch(`${BASE}/caption-tracker.php`, {
+    method:'POST',
+    body: JSON.stringify({ action:'update', id, likes, comments, reach, perf_note:note })
+  });
+  if (data.ok) toast('Performance saved!');
+  else toast('Save failed', false);
+}
+
+function renderPagination(page, pageCount) {
+  const pg = document.getElementById('pagination');
+  if (pageCount <= 1) { pg.innerHTML=''; return; }
+  let html = '';
+  html += `<button class="page-btn" onclick="loadHistory(${page-1})" ${page<=1?'disabled':''}>← Prev</button>`;
+  for (let i=1;i<=pageCount;i++) {
+    html += `<button class="page-btn ${i===page?'active':''}" onclick="loadHistory(${i})">${i}</button>`;
+  }
+  html += `<button class="page-btn" onclick="loadHistory(${page+1})" ${page>=pageCount?'disabled':''}>Next →</button>`;
+  pg.innerHTML = html;
+}
+
+// Init
+loadStats();
+loadHistory(1);
+</script>
+</body>
+</html>

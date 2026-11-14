@@ -750,7 +750,12 @@
     <div class="logo-icon">📸</div>
     SnapCaption AI
   </a>
-  <div style="display:flex;align-items:center;gap:10px;" id="navRight">
+  <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;" id="navRight">
+    <!-- Tool links (premium) -->
+    <div id="navTools" style="display:none;align-items:center;gap:4px;">
+      <a href="tracker.html"  style="font-size:.78rem;color:#a0a0b8;text-decoration:none;padding:4px 9px;border-radius:7px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);" title="Caption A/B Tracker">📊 Tracker</a>
+      <a href="calendar.html" style="font-size:.78rem;color:#a0a0b8;text-decoration:none;padding:4px 9px;border-radius:7px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);" title="Content Calendar">📅 Calendar</a>
+    </div>
     <!-- Usage pill (always visible for free/guest) -->
     <div class="usage-pill" id="usagePill">
       <div class="usage-dots">
@@ -1239,6 +1244,7 @@
     if (user.plan === 'premium' || user.plan === 'teams') {
       document.getElementById('usagePill').style.display = 'none';
       document.getElementById('planInfoText').style.display = 'none';
+      document.getElementById('navTools').style.display = 'flex';
       showGenLocked(false);
     } else {
       // Free user — show gen button (API enforces daily caption limit)
@@ -1253,6 +1259,7 @@
     authToken = null; currentUser = null;
     document.getElementById('navGuest').style.display = 'flex';
     document.getElementById('navUser').style.display = 'none';
+    document.getElementById('navTools').style.display = 'none';
     document.getElementById('usagePill').style.display = 'flex';
   }
 
@@ -1497,6 +1504,16 @@
     btn.disabled = false;
     spinner.style.display = 'none';
     btnText.textContent = '✨ Generate 5 Captions';
+
+    // Auto-save captions to tracker (fire-and-forget, no UI impact)
+    if (currentToken && data.captions && data.captions.length) {
+      const capTexts = data.captions.map(c => c.text);
+      fetch('api/caption-tracker.php', {
+        method: 'POST',
+        headers: { 'Authorization': 'Bearer ' + currentToken, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'save', captions: capTexts, platform: platform.toLowerCase(), language: language })
+      }).catch(() => {}); // silent fail
+    }
 
     // Scroll to results on mobile
     if (window.innerWidth < 768) {
