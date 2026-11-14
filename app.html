@@ -1052,18 +1052,18 @@
         <span id="btnText">✨ Generate 5 Captions</span>
       </button>
 
-      <!-- Gen Locked (free/guest users) -->
+      <!-- Gen Locked (guest users only — free users DO get captions after login) -->
       <div class="gen-locked" id="genLocked">
-        <div class="lock-info">🔒</div>
-        <div class="lock-label">AI Captions — Premium Only</div>
-        <div class="lock-sub">Upgrade to get 5 AI-generated captions per day</div>
-        <a href="pricing.html">Upgrade to Premium — $7/mo</a>
+        <div class="lock-info">✨</div>
+        <div class="lock-label">Sign in for Free AI Captions</div>
+        <div class="lock-sub">Free account: 3 AI captions/day · Premium: 5/day</div>
+        <a href="login.html">Sign in / Create Free Account →</a>
       </div>
     </div>
 
     <!-- Free limit info -->
     <div id="planInfoText" style="padding:10px 4px;font-size:.72rem;color:var(--muted);text-align:center;line-height:1.6;">
-      Free plan: 3 photo edits/day · <a href="pricing.html" style="color:var(--grad2);font-weight:600;">Upgrade for AI captions</a>
+      Free plan: 3 AI captions/day · 3 photo edits/day · <a href="pricing.html" style="color:var(--grad2);font-weight:600;">Upgrade for unlimited edits</a>
     </div>
   </div>
 
@@ -1080,11 +1080,11 @@
         <!-- Before/After slider -->
         <div class="ba-container" id="baContainer">
           <div class="ba-before">
-            <img src="https://images.unsplash.com/photo-1529665253569-6d01c0eaf7b6?w=600&q=80&fit=crop&crop=faces" class="ba-img" alt="Before" crossorigin="anonymous">
+            <img src="https://images.unsplash.com/photo-1529665253569-6d01c0eaf7b6?w=600&q=80&fit=crop&crop=faces" class="ba-img" alt="Before">
             <span class="ba-label ba-label-left">BEFORE</span>
           </div>
           <div class="ba-after" id="baAfter">
-            <img src="https://images.unsplash.com/photo-1529665253569-6d01c0eaf7b6?w=600&q=80&fit=crop&crop=faces" class="ba-img" id="baAfterImg" alt="After AI" crossorigin="anonymous">
+            <img src="https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=600&q=80&fit=crop&crop=center" class="ba-img" id="baAfterImg" alt="After AI">
             <span class="ba-label ba-label-right">AFTER AI ✦</span>
           </div>
           <div class="ba-handle" id="baHandle">
@@ -1170,8 +1170,9 @@
       }
       updateBaCta(d.plan);
     } catch(e) {
-      // Network error — stay with cached state; default to locked
-      if (!stored || stored.plan === 'free' || !stored.plan) {
+      // Network error — if user has stored credentials keep them unlocked
+      // Only lock guests (no stored user at all)
+      if (!stored) {
         showGenLocked(true);
       }
       updateUsageUI();
@@ -2078,18 +2079,20 @@
     window.addEventListener('touchend', () => isDragging = false);
 
     // Tab switching → swap after image src and/or CSS filter
-    const baseSrc = afterImg.src;
+    // personSrc = the before image (used for filter-only tabs like Cinematic/Studio)
+    const personSrc = document.querySelector('.ba-before .ba-img')?.src
+      || 'https://images.unsplash.com/photo-1529665253569-6d01c0eaf7b6?w=600&q=80&fit=crop&crop=faces';
     tabs.forEach(tab => {
       tab.addEventListener('click', () => {
         tabs.forEach(t => t.classList.remove('active'));
         tab.classList.add('active');
-        afterImg.src = tab.dataset.afterSrc || baseSrc;
+        afterImg.src = tab.dataset.afterSrc || personSrc;
         afterImg.style.filter = tab.dataset.filter || '';
       });
     });
-    // Apply first tab on load
+    // Apply first tab on load — Eiffel is default active tab
     if (tabs[0]) {
-      afterImg.src = tabs[0].dataset.afterSrc || baseSrc;
+      afterImg.src = tabs[0].dataset.afterSrc || personSrc;
       afterImg.style.filter = tabs[0].dataset.filter || '';
     }
 
