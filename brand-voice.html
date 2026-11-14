@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Brand Voice — SnapCaption AI</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0f0f13;color:#e8e8f0;min-height:100vh}
+
+/* Nav */
+.nav{display:flex;align-items:center;gap:12px;padding:14px 20px;background:#16161e;border-bottom:1px solid rgba(255,255,255,.07)}
+.nav-logo{font-weight:800;font-size:1.1rem;background:linear-gradient(135deg,#a855f7,#38bdf8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;text-decoration:none}
+.nav-links{display:flex;gap:8px;margin-left:auto}
+.nav-link{color:#a0a0b8;font-size:.82rem;text-decoration:none;padding:6px 12px;border-radius:8px;transition:all .2s}
+.nav-link:hover,.nav-link.active{background:rgba(168,85,247,.15);color:#c084fc}
+.ham-btn{display:none;flex-direction:column;gap:4px;background:none;border:none;cursor:pointer;padding:6px;margin-left:auto}
+.ham-btn span{display:block;width:20px;height:2px;background:#a0a0b8;border-radius:2px}
+
+/* Hero */
+.hero{padding:28px 20px 0;text-align:center}
+.hero h1{font-size:1.6rem;font-weight:800;background:linear-gradient(135deg,#a855f7,#38bdf8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:8px}
+.hero p{color:#78788a;font-size:.88rem;max-width:460px;margin:0 auto}
+
+/* Plan badge */
+.plan-badge{display:inline-flex;align-items:center;gap:5px;font-size:.72rem;font-weight:700;padding:4px 10px;border-radius:12px;margin-top:10px;text-transform:uppercase;letter-spacing:.04em}
+.badge-free{background:rgba(255,255,255,.07);color:#78788a}
+.badge-starter{background:rgba(96,165,250,.12);color:#60a5fa}
+.badge-premium{background:rgba(168,85,247,.18);color:#c084fc}
+.badge-pro{background:linear-gradient(135deg,rgba(168,85,247,.2),rgba(236,72,153,.2));color:#e879f9}
+
+/* Main layout */
+.main{max-width:800px;margin:0 auto;padding:24px 20px 60px;display:flex;flex-direction:column;gap:20px}
+
+/* Card base */
+.card{background:#1a1a24;border:1px solid rgba(255,255,255,.07);border-radius:18px;padding:20px}
+.card-title{font-size:.9rem;font-weight:700;color:#e0e0f0;margin-bottom:4px;display:flex;align-items:center;gap:7px}
+.card-desc{font-size:.8rem;color:#78788a;margin-bottom:16px}
+
+/* Voice textarea */
+.voice-wrap{position:relative}
+.voice-textarea{width:100%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:14px;color:#e8e8f0;font-size:.88rem;line-height:1.6;resize:vertical;min-height:140px;font-family:inherit;transition:border-color .2s}
+.voice-textarea:focus{outline:none;border-color:rgba(168,85,247,.5);background:rgba(168,85,247,.04)}
+.voice-textarea::placeholder{color:#40405a}
+.char-count{position:absolute;bottom:10px;right:12px;font-size:.7rem;color:#50506a}
+.char-count.warn{color:#f59e0b}
+.char-count.over{color:#f87171}
+
+/* Tone tags */
+.tone-label{font-size:.78rem;font-weight:600;color:#a0a0b8;margin-bottom:8px}
+.tone-grid{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:16px}
+.tone-tag{padding:5px 12px;border-radius:14px;border:1px solid rgba(255,255,255,.1);background:transparent;color:#78788a;font-size:.78rem;cursor:pointer;transition:all .2s;user-select:none}
+.tone-tag:hover{border-color:rgba(168,85,247,.4);color:#c084fc}
+.tone-tag.on{background:rgba(168,85,247,.2);border-color:rgba(168,85,247,.5);color:#d8b4fe}
+
+/* Save button */
+.save-row{display:flex;align-items:center;gap:12px}
+.save-btn{padding:11px 28px;background:linear-gradient(135deg,#a855f7,#ec4899);border:none;border-radius:12px;color:#fff;font-weight:700;font-size:.9rem;cursor:pointer;transition:opacity .2s;white-space:nowrap}
+.save-btn:hover{opacity:.88}
+.save-btn:disabled{opacity:.45;cursor:not-allowed}
+.save-status{font-size:.8rem;color:#78788a}
+.save-status.ok{color:#4ade80}
+.save-status.err{color:#f87171}
+
+/* Example templates */
+.templates-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.tmpl-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:14px;cursor:pointer;transition:all .2s}
+.tmpl-card:hover{border-color:rgba(168,85,247,.35);background:rgba(168,85,247,.06)}
+.tmpl-name{font-size:.8rem;font-weight:700;color:#c0c0d8;margin-bottom:5px;display:flex;align-items:center;gap:5px}
+.tmpl-preview{font-size:.75rem;color:#60607a;line-height:1.5}
+
+/* Live preview */
+.preview-box{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:14px;min-height:80px;font-size:.83rem;line-height:1.6;color:#a0a0c0}
+.preview-box.has-voice{color:#d0d0e8;border-color:rgba(168,85,247,.2)}
+.preview-placeholder{color:#40405a;font-style:italic}
+
+/* Tips list */
+.tips{list-style:none;display:flex;flex-direction:column;gap:8px}
+.tips li{display:flex;gap:10px;font-size:.8rem;color:#78788a;line-height:1.5}
+.tips li .tip-icon{font-size:.9rem;flex-shrink:0;margin-top:1px}
+
+/* Upgrade gate */
+.upgrade-gate{background:linear-gradient(135deg,rgba(168,85,247,.12),rgba(236,72,153,.08));border:1px solid rgba(168,85,247,.25);border-radius:18px;padding:36px 24px;text-align:center}
+.upgrade-gate h2{font-size:1.2rem;font-weight:800;margin-bottom:8px}
+.upgrade-gate p{font-size:.85rem;color:#a0a0b8;max-width:380px;margin:0 auto 20px}
+.upgrade-feat{display:flex;flex-direction:column;gap:7px;margin:0 auto 22px;max-width:300px;text-align:left}
+.upgrade-feat li{display:flex;align-items:center;gap:8px;font-size:.82rem;color:#c0c0d8}
+.upgrade-feat li::before{content:'✓';color:#a855f7;font-weight:700;flex-shrink:0}
+.upgrade-cta{padding:12px 32px;background:linear-gradient(135deg,#a855f7,#ec4899);border:none;border-radius:12px;color:#fff;font-weight:700;font-size:.95rem;cursor:pointer;transition:opacity .2s}
+.upgrade-cta:hover{opacity:.88}
+
+/* Toast */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:#1e1e2e;border:1px solid rgba(74,222,128,.3);color:#4ade80;padding:10px 20px;border-radius:12px;font-size:.82rem;transition:transform .3s;z-index:9999;white-space:nowrap}
+.toast.error{border-color:rgba(248,113,113,.3);color:#f87171}
+.toast.show{transform:translateX(-50%) translateY(0)}
+
+/* Mobile */
+@media(max-width:600px){
+  .templates-grid{grid-template-columns:1fr}
+  .ham-btn{display:flex}
+  .nav-links{display:none}
+  .save-row{flex-direction:column;align-items:flex-start}
+  .save-btn{width:100%;text-align:center}
+}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <a href="app.html" class="nav-logo">✦ SnapCaption</a>
+  <div class="nav-links" id="navLinks">
+    <a href="app.html"        class="nav-link">✦ Studio</a>
+    <a href="brand-voice.html" class="nav-link active">🎙️ Brand Voice</a>
+    <a href="tracker.html"    class="nav-link">📊 Tracker</a>
+    <a href="calendar.html"   class="nav-link">📅 Calendar</a>
+    <a href="pricing.html"    class="nav-link" id="navUpgrade" style="display:none">⚡ Upgrade</a>
+  </div>
+  <button class="ham-btn" onclick="document.getElementById('navLinks').style.display=document.getElementById('navLinks').style.display==='flex'?'none':'flex'">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<div class="hero">
+  <h1>🎙️ Brand Voice</h1>
+  <p>Tell the AI how you sound. Every caption will match your style automatically.</p>
+  <div id="planBadge" class="plan-badge badge-free" style="display:none"></div>
+</div>
+
+<div class="main" id="mainContent" style="display:none">
+
+  <!-- Voice Editor Card -->
+  <div class="card" id="editorCard">
+    <div class="card-title">✍️ Your Brand Voice</div>
+    <div class="card-desc">Describe your brand personality, tone, and style in plain English. The AI reads this before every caption.</div>
+
+    <!-- Tone tag shortcuts -->
+    <div class="tone-label">Quick tone tags — click to add:</div>
+    <div class="tone-grid" id="toneTags">
+      <span class="tone-tag" data-phrase="Witty and playful">😄 Witty & Playful</span>
+      <span class="tone-tag" data-phrase="Professional and trustworthy">💼 Professional</span>
+      <span class="tone-tag" data-phrase="Inspirational and motivating">🔥 Inspirational</span>
+      <span class="tone-tag" data-phrase="Casual and conversational">💬 Casual</span>
+      <span class="tone-tag" data-phrase="Luxury and aspirational">✨ Luxury</span>
+      <span class="tone-tag" data-phrase="Educational and informative">📚 Educational</span>
+      <span class="tone-tag" data-phrase="Bold and direct">⚡ Bold</span>
+      <span class="tone-tag" data-phrase="Warm and empathetic">🤗 Warm</span>
+      <span class="tone-tag" data-phrase="Humorous with clever wordplay">🎭 Humorous</span>
+      <span class="tone-tag" data-phrase="Minimalist, no fluff">🎯 Minimalist</span>
+    </div>
+
+    <div class="voice-wrap">
+      <textarea class="voice-textarea" id="voiceInput" maxlength="1000"
+        placeholder="Example: Witty and playful. I sell handmade jewelry to women 25-40. Use casual language, light humor, and always end with a question to spark comments. Avoid corporate-speak. Use emojis sparingly — 1-2 max. Keep captions under 150 characters when possible."
+        oninput="onVoiceInput()"></textarea>
+      <span class="char-count" id="charCount">0 / 1000</span>
+    </div>
+
+    <div class="save-row" style="margin-top:14px">
+      <button class="save-btn" id="saveBtn" onclick="saveBrandVoice()" disabled>Save Brand Voice</button>
+      <span class="save-status" id="saveStatus"></span>
+    </div>
+  </div>
+
+  <!-- Live Preview Card -->
+  <div class="card">
+    <div class="card-title">👁️ How the AI sees your voice</div>
+    <div class="card-desc">This is exactly what gets sent to the AI before generating your captions.</div>
+    <div class="preview-box" id="previewBox">
+      <span class="preview-placeholder">Start typing your brand voice above to see the preview…</span>
+    </div>
+  </div>
+
+  <!-- Example Templates -->
+  <div class="card">
+    <div class="card-title">💡 Starter templates</div>
+    <div class="card-desc">Click any template to load it — then customize it for your brand.</div>
+    <div class="templates-grid" id="templatesGrid">
+      <!-- Injected by JS -->
+    </div>
+  </div>
+
+  <!-- Tips Card -->
+  <div class="card">
+    <div class="card-title">🏆 Tips for a great brand voice</div>
+    <ul class="tips">
+      <li><span class="tip-icon">🎯</span><span><strong>Be specific:</strong> "Fun and punchy for fitness enthusiasts aged 20–35" beats "friendly."</span></li>
+      <li><span class="tip-icon">📐</span><span><strong>Set length rules:</strong> "Keep captions under 120 characters" or "always write 3 short paragraphs."</span></li>
+      <li><span class="tip-icon">😊</span><span><strong>Emoji guidance:</strong> Tell it how many to use and which style fits your brand.</span></li>
+      <li><span class="tip-icon">🚫</span><span><strong>Say what to avoid:</strong> "No corporate buzzwords", "never use exclamation points", "avoid hashtags in the body."</span></li>
+      <li><span class="tip-icon">📣</span><span><strong>Add a CTA style:</strong> "Always end with a question", "include a soft CTA", or "no CTA."</span></li>
+      <li><span class="tip-icon">🔄</span><span><strong>Update often:</strong> Your brand voice evolves — revisit this quarterly.</span></li>
+    </ul>
+  </div>
+
+</div>
+
+<!-- Upgrade gate (shown for free/starter) -->
+<div class="main" id="upgradeGate" style="display:none">
+  <div class="upgrade-gate">
+    <div style="font-size:2.5rem;margin-bottom:10px">🎙️</div>
+    <h2>Brand Voice requires Premium</h2>
+    <p>Train the AI to write exactly like your brand — consistent tone, style, and personality across every caption.</p>
+    <ul class="upgrade-feat">
+      <li>Saved brand voice applied to all captions</li>
+      <li>Tone tag shortcuts</li>
+      <li>Works across all platforms & languages</li>
+      <li>Unlimited caption generation</li>
+    </ul>
+    <button class="upgrade-cta" onclick="location.href='pricing.html'">Upgrade to Premium — $9.99/mo</button>
+  </div>
+</div>
+
+<!-- Login gate -->
+<div class="main" id="loginGate" style="display:none">
+  <div class="upgrade-gate">
+    <div style="font-size:2.5rem;margin-bottom:10px">🔐</div>
+    <h2>Sign in to continue</h2>
+    <p>Brand Voice is available for Premium and Pro accounts.</p>
+    <button class="upgrade-cta" onclick="location.href='login.html?redirect=brand-voice.html'">Sign In</button>
+    <p style="margin-top:12px;font-size:.8rem;color:#78788a">No account? <a href="signup.html" style="color:#c084fc">Create one free</a></p>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const API = '/api';
+let currentToken  = null;
+let currentUser   = null;
+let savedVoice    = '';
+let isDirty       = false;
+
+// ── Templates ─────────────────────────────────────────────
+const TEMPLATES = [
+  {
+    name: '🛍️ Lifestyle Brand',
+    icon: '🛍️',
+    preview: 'Warm, aspirational, relatable…',
+    voice: `Warm, aspirational, and relatable. I create lifestyle content for women 25–40 who value self-care and intentional living. Use casual, friendly language with occasional light humor. Always sound like a trusted friend, not a brand. Include 1–2 relevant emojis. End captions with a question to spark engagement. Avoid corporate buzzwords and hard selling.`
+  },
+  {
+    name: '🏋️ Fitness Coach',
+    icon: '🏋️',
+    preview: 'Bold, motivating, no excuses…',
+    voice: `Bold, motivating, and no-excuses. I'm a fitness coach targeting busy professionals who want results fast. Use punchy, direct language with powerful action verbs. Short sentences only. 1–2 fire or muscle emojis max. Always end with a challenge or call-to-action. No fluff, no filler. Keep captions under 150 characters when possible.`
+  },
+  {
+    name: '🍽️ Food & Restaurant',
+    icon: '🍽️',
+    preview: 'Sensory, mouth-watering, vivid…',
+    voice: `Sensory, mouth-watering, and vivid. I run a modern restaurant targeting foodies and date-night couples. Use descriptive language that evokes taste, smell, and texture. Keep it concise and evocative — 1–3 sentences max. Include 1–3 food emojis. No nutrition claims. Always make the reader hungry. End with our signature tagline: "Come hungry. Leave happy."`
+  },
+  {
+    name: '📱 Tech / SaaS',
+    icon: '📱',
+    preview: 'Smart, conversational, jargon-free…',
+    voice: `Smart, conversational, and jargon-free. I market a SaaS tool to small business owners who aren't technical. Explain benefits in plain English — focus on outcomes, not features. Use "you" language. Keep it under 2 short sentences plus a CTA. No technical buzzwords. 0–1 emoji. CTA style: "Try it free →" or "See how it works."`
+  },
+  {
+    name: '🎨 Creative / Artist',
+    icon: '🎨',
+    preview: 'Poetic, authentic, story-driven…',
+    voice: `Poetic, authentic, and story-driven. I'm an independent artist sharing my creative process. Write in first person with a journal-like, intimate tone. Embrace imperfection and vulnerability. Use line breaks for rhythm. 2–4 sentences. 1–2 artistic emojis. No salesy language — let the work speak. End with an introspective question or open thought.`
+  },
+  {
+    name: '💼 B2B / Professional',
+    icon: '💼',
+    preview: 'Authoritative, data-driven, concise…',
+    voice: `Authoritative, data-driven, and concise. I create LinkedIn and professional content for B2B buyers and executives. Lead with insight or a surprising stat. Use confident, direct language. No fluff. 3–5 sentences max. 0 emojis. End with a thought-provoking question or bold statement. Avoid passive voice.`
+  }
+];
+
+// ── Init ─────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', async () => {
+  currentToken = localStorage.getItem('sc_token');
+  try { currentUser = JSON.parse(localStorage.getItem('sc_user')); } catch {}
+
+  if (!currentToken || !currentUser) {
+    document.getElementById('loginGate').style.display = '';
+    return;
+  }
+
+  const plan = currentUser.plan || 'free';
+  const hasAccess = ['premium','pro','teams'].includes(plan);
+
+  // Plan badge
+  const badge = document.getElementById('planBadge');
+  badge.style.display = '';
+  badge.textContent   = plan.charAt(0).toUpperCase() + plan.slice(1);
+  badge.className     = 'plan-badge badge-' + (plan === 'teams' ? 'pro' : plan);
+
+  // Upgrade link for free/starter
+  if (!hasAccess) {
+    document.getElementById('navUpgrade').style.display = '';
+    document.getElementById('upgradeGate').style.display = '';
+    return;
+  }
+
+  document.getElementById('mainContent').style.display = '';
+  buildTemplates();
+  await loadVoice();
+});
+
+// ── Load saved voice ──────────────────────────────────────
+async function loadVoice() {
+  try {
+    const r = await fetch(`${API}/brand-voice.php`, {
+      headers: { Authorization: `Bearer ${currentToken}` }
+    });
+    const data = await r.json();
+    if (data.success && data.brand_voice) {
+      savedVoice = data.brand_voice;
+      document.getElementById('voiceInput').value = savedVoice;
+      updateCharCount(savedVoice.length);
+      updatePreview(savedVoice);
+      syncToneTags(savedVoice);
+      document.getElementById('saveBtn').disabled = true;
+    }
+  } catch {}
+}
+
+// ── Voice input handler ───────────────────────────────────
+function onVoiceInput() {
+  const val = document.getElementById('voiceInput').value;
+  updateCharCount(val.length);
+  updatePreview(val);
+  syncToneTags(val);
+  isDirty = val !== savedVoice;
+  document.getElementById('saveBtn').disabled = !isDirty || val.trim() === '';
+  document.getElementById('saveStatus').textContent = '';
+}
+
+function updateCharCount(n) {
+  const el = document.getElementById('charCount');
+  el.textContent = `${n} / 1000`;
+  el.className = 'char-count' + (n > 950 ? ' over' : n > 800 ? ' warn' : '');
+}
+
+function updatePreview(voice) {
+  const box = document.getElementById('previewBox');
+  if (!voice.trim()) {
+    box.className = 'preview-box';
+    box.innerHTML = '<span class="preview-placeholder">Start typing your brand voice above to see the preview…</span>';
+    return;
+  }
+  box.className = 'preview-box has-voice';
+  box.textContent = `[Brand Voice]\n${voice}`;
+}
+
+// ── Tone tags ─────────────────────────────────────────────
+function syncToneTags(voice) {
+  document.querySelectorAll('.tone-tag').forEach(tag => {
+    tag.classList.toggle('on', voice.includes(tag.dataset.phrase));
+  });
+}
+
+document.getElementById('toneTags').addEventListener('click', e => {
+  const tag = e.target.closest('.tone-tag');
+  if (!tag) return;
+  const phrase = tag.dataset.phrase;
+  const ta = document.getElementById('voiceInput');
+  if (ta.value.includes(phrase)) {
+    ta.value = ta.value.replace(phrase + '. ', '').replace('. ' + phrase, '').replace(phrase, '').trim();
+  } else {
+    ta.value = ta.value.trim() ? ta.value.trim() + '. ' + phrase : phrase;
+  }
+  onVoiceInput();
+});
+
+// ── Save ──────────────────────────────────────────────────
+async function saveBrandVoice() {
+  const voice = document.getElementById('voiceInput').value.trim();
+  if (!voice) return;
+
+  const btn = document.getElementById('saveBtn');
+  const status = document.getElementById('saveStatus');
+  btn.disabled = true;
+  btn.textContent = 'Saving…';
+
+  try {
+    const r = await fetch(`${API}/brand-voice.php`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${currentToken}`
+      },
+      body: JSON.stringify({ brand_voice: voice })
+    });
+    const data = await r.json();
+    if (data.success) {
+      savedVoice = voice;
+      isDirty    = false;
+      status.className   = 'save-status ok';
+      status.textContent = '✓ Saved! Your next caption will use this voice.';
+      btn.textContent    = 'Save Brand Voice';
+      btn.disabled       = true;
+      toast('Brand voice saved ✓');
+      // Update localStorage user
+      if (currentUser) {
+        currentUser.brand_voice = voice;
+        localStorage.setItem('sc_user', JSON.stringify(currentUser));
+      }
+    } else {
+      throw new Error(data.message || 'Save failed');
+    }
+  } catch (err) {
+    status.className   = 'save-status err';
+    status.textContent = '✗ ' + err.message;
+    btn.textContent    = 'Save Brand Voice';
+    btn.disabled       = false;
+    toast(err.message, true);
+  }
+}
+
+// ── Templates ─────────────────────────────────────────────
+function buildTemplates() {
+  const grid = document.getElementById('templatesGrid');
+  grid.innerHTML = TEMPLATES.map((t, i) => `
+    <div class="tmpl-card" onclick="loadTemplate(${i})">
+      <div class="tmpl-name">${t.name}</div>
+      <div class="tmpl-preview">${escHtml(t.voice.substring(0,90))}…</div>
+    </div>
+  `).join('');
+}
+
+function loadTemplate(i) {
+  const ta = document.getElementById('voiceInput');
+  ta.value = TEMPLATES[i].voice;
+  onVoiceInput();
+  ta.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  toast('Template loaded — customize it for your brand!');
+}
+
+// ── Helpers ───────────────────────────────────────────────
+function escHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+let toastTimer;
+function toast(msg, isErr = false) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className   = 'toast' + (isErr ? ' error' : '') + ' show';
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('show'), 3000);
+}
+
+// Warn on unsaved changes
+window.addEventListener('beforeunload', e => {
+  if (isDirty) { e.preventDefault(); e.returnValue = ''; }
+});
+</script>
+</body>
+</html>
