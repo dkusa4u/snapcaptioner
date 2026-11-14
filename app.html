@@ -1437,7 +1437,15 @@
       const r = await fetch('api/check-usage.php', {
         headers: { 'Authorization': 'Bearer ' + authToken }
       });
-      if (!r.ok) { clearAuth(); return; }
+      // Only clear auth on explicit 401/403 (bad token), not on server errors (5xx)
+      if (r.status === 401 || r.status === 403) { clearAuth(); return; }
+      if (!r.ok) {
+        // Server error (503 = missing config, 500 = crash) — keep user logged in,
+        // apply stored user data, fall back to client-side defaults
+        currentUser = stored;
+        applyUserUI(stored);
+        return;
+      }
       const d = await r.json();
       currentUser = stored;
 
@@ -1929,7 +1937,7 @@
       if (authToken) headers['Authorization'] = 'Bearer ' + authToken;
       const r = await fetch('api/track-enhance.php', { method: 'POST', headers });
       const d = await r.json();
-      if (!d.allowed) {
+      if (d.allowed === false) {
         alert(d.message || 'Daily photo edit limit reached. Upgrade to Premium for unlimited edits.');
         location.href = 'pricing.html';
         return;

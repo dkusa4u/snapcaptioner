@@ -413,7 +413,9 @@
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password, remember })
       });
-      const data = await res.json();
+
+      let data;
+      try { data = await res.json(); } catch(e) { data = {}; }
 
       if (res.ok && data.success) {
         // Store session token
@@ -424,13 +426,14 @@
         // Redirect
         const redirect = urlParams.get('redirect') || (plan ? `app.html?plan=${plan}` : 'app.html');
         window.location.href = redirect;
+      } else if (res.status === 503 || data.error === 'server_not_configured') {
+        showError('The server is being set up. Please try again in a few minutes.');
       } else {
         showError(data.message || 'Invalid email or password.');
         document.getElementById('password').classList.add('error');
       }
     } catch (err) {
-      // PHP not connected yet — demo flow
-      showError('Unable to connect. Please try again shortly.');
+      showError('Unable to connect. Please check your internet connection and try again.');
     }
 
     btn.disabled = false;

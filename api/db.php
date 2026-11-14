@@ -1,4 +1,18 @@
 <?php
+// Guard: if config.php is missing (never committed to git), return a clear JSON error
+// instead of a PHP fatal that produces un-parseable HTML.
+if (!file_exists(__DIR__ . '/config.php')) {
+    http_response_code(503);
+    header('Content-Type: application/json');
+    header('Access-Control-Allow-Origin: *');
+    header('Access-Control-Allow-Headers: Authorization, Content-Type');
+    echo json_encode([
+        'success' => false,
+        'error'   => 'server_not_configured',
+        'message' => 'Service temporarily unavailable. Please try again shortly.',
+    ]);
+    exit;
+}
 require_once __DIR__ . '/config.php';
 
 function getDB(): PDO {
