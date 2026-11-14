@@ -1373,11 +1373,12 @@
         <!-- Before/After slider -->
         <div class="ba-container" id="baContainer">
           <div class="ba-before">
-            <img src="https://images.unsplash.com/photo-sUYWjWWCx68?w=600&h=900&q=90&fit=crop&crop=top" class="ba-img" alt="Before">
+            <!-- Woman on tropical beach — same person, different background demo -->
+            <img src="https://images.unsplash.com/photo-1529963183134-61a90db47eaf?w=600&h=900&q=90&fit=crop&crop=faces,top" class="ba-img" alt="Before — beach photo">
             <span class="ba-label ba-label-left">YOUR PHOTO</span>
           </div>
-          <!-- After: AI-transformed background scene (always clearly visible) -->
-          <div class="ba-after" id="baAfter" style="background-image:url('https://images.unsplash.com/photo-Q5YmoshplRk?w=600&h=900&q=90&fit=crop&crop=center')">
+          <!-- After: AI-transformed to Eiffel Tower / Paris background -->
+          <div class="ba-after" id="baAfter" style="background-image:url('https://images.unsplash.com/photo-1499856871958-5b9627545d1a?w=600&h=900&q=90&fit=crop&crop=center')">
             <span class="ba-label ba-label-right">AI TRANSFORM ✦</span>
           </div>
           <div class="ba-handle" id="baHandle">
@@ -1393,7 +1394,7 @@
 
         <!-- Transform style tabs -->
         <div class="ba-tabs" id="baTabs">
-          <button class="ba-tab active" data-bg="https://images.unsplash.com/photo-Q5YmoshplRk?w=600&h=900&q=90&fit=crop&crop=center">🗼 Paris</button>
+          <button class="ba-tab active" data-bg="https://images.unsplash.com/photo-1499856871958-5b9627545d1a?w=600&h=900&q=90&fit=crop&crop=center">🗼 Paris</button>
           <button class="ba-tab" data-bg="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=600&q=90&fit=crop&crop=center">🌅 Beach</button>
           <button class="ba-tab" data-bg="https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=600&q=90&fit=crop&crop=center">🏯 Tokyo</button>
           <button class="ba-tab" data-bg="https://images.unsplash.com/photo-1534430480872-3498386e7856?w=600&q=90&fit=crop&crop=center">🌴 Maldives</button>
@@ -1916,19 +1917,40 @@
 
   // ── Copy helpers ───────────────────────────────────────
   function copyCaption(btn, text) {
-    navigator.clipboard.writeText(text).then(() => {
-      btn.textContent = 'Copied!';
-      btn.classList.add('copied');
+    const done = () => {
+      btn.textContent = 'Copied!'; btn.classList.add('copied');
       setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 1600);
-    });
+    };
+    if (navigator.clipboard && location.protocol === 'https:') {
+      navigator.clipboard.writeText(text).then(done).catch(() => _fallbackCopy(text, done));
+    } else {
+      _fallbackCopy(text, done);
+    }
   }
   function copyHashtag(el) {
-    const text = '#' + el.textContent.replace(/[🟢🟡🔴]/g,'').trim();
-    navigator.clipboard.writeText(text).then(() => {
-      const orig = el.innerHTML;
-      el.textContent = 'Copied!';
-      setTimeout(() => { el.innerHTML = orig; }, 1200);
-    });
+    // Strip the tier indicator and get just the hashtag text
+    const tagNode = el.childNodes[0];
+    const rawText = tagNode ? tagNode.textContent.trim() : el.textContent.trim();
+    const text = rawText.startsWith('#') ? rawText : '#' + rawText.replace(/[🟢🟡🔴]/g,'').trim();
+    const orig = el.innerHTML;
+    const done = () => { el.textContent = 'Copied!'; setTimeout(() => { el.innerHTML = orig; }, 1200); };
+
+    if (navigator.clipboard && location.protocol === 'https:') {
+      navigator.clipboard.writeText(text).then(done).catch(() => _fallbackCopy(text, done));
+    } else {
+      _fallbackCopy(text, done);
+    }
+  }
+
+  function _fallbackCopy(text, cb) {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.cssText = 'position:fixed;top:0;left:0;opacity:0;width:1px;height:1px;';
+    document.body.appendChild(ta);
+    ta.focus(); ta.select();
+    try { document.execCommand('copy'); } catch(e) {}
+    document.body.removeChild(ta);
+    if (cb) cb();
   }
 
   // ── Canvas Photo Enhance ───────────────────────────────
