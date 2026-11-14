@@ -42,28 +42,23 @@ $today = date('Y-m-d');
 $user      = tokenAuth();                               // null = unauthenticated guest
 $isPremium = $user && $user['plan'] !== 'free';
 
-// AI captions are premium-only — block guests and free users
+// Block guests (must be signed in to use AI captions)
 if (!$user) {
     http_response_code(403);
     echo json_encode([
         'error'       => 'login_required',
-        'message'     => 'Sign in to use AI captions.',
+        'message'     => 'Sign in to generate AI captions.',
         'login_url'   => '/login.html',
     ]);
     exit;
 }
 
-if (!$isPremium) {
-    http_response_code(403);
-    echo json_encode([
-        'error'       => 'premium_required',
-        'message'     => 'AI captions are a Premium feature. Upgrade to unlock 5 AI captions per day.',
-        'upgrade_url' => '/pricing.html',
-    ]);
-    exit;
-}
+// Determine daily limit: free users get FREE_DAILY_LIMIT, premium get PREMIUM_AI_DAILY
+$aiDailyLimit = $isPremium
+    ? PREMIUM_AI_DAILY
+    : (defined('FREE_DAILY_LIMIT') ? FREE_DAILY_LIMIT : 3);
 
-// Premium users: enforce daily AI caption limit
+// Enforce daily AI caption limit for all logged-in users
 $db        = getDB();
 $stmt      = $db->prepare(
     "SELECT COUNT(*) FROM usage_log
@@ -72,13 +67,14 @@ $stmt      = $db->prepare(
 $stmt->execute([$user['id']]);
 $usedToday = (int) $stmt->fetchColumn();
 
-if ($usedToday >= PREMIUM_AI_DAILY) {
+if ($usedToday >= $aiDailyLimit) {
+    $upgradeHint = $isPremium ? '' : ' Upgrade to Premium for more.';
     http_response_code(429);
     echo json_encode([
-        'error'       => 'premium_limit_reached',
-        'message'     => 'You\'ve used all ' . PREMIUM_AI_DAILY . ' AI captions for today. Resets at midnight.',
+        'error'       => 'daily_limit_reached',
+        'message'     => 'You\'ve used all ' . $aiDailyLimit . ' AI captions for today.' . $upgradeHint . ' Resets at midnight.',
         'used'        => $usedToday,
-        'limit'       => PREMIUM_AI_DAILY,
+        'limit'       => $aiDailyLimit,
         'resets_at'   => date('Y-m-d', strtotime('+1 day')) . ' 00:00:00',
     ]);
     exit;
@@ -348,9 +344,9 @@ if ($user) {
 
     $result['usage'] = [
         'used'       => $usedNow,
-        'limit'      => PREMIUM_AI_DAILY,
-        'remaining'  => max(0, PREMIUM_AI_DAILY - $usedNow),
-        'is_premium' => true,
+        'limit'      => $aiDailyLimit,
+        'remaining'  => max(0, $aiDailyLimit - $usedNow),
+        'is_premium' => $isPremium,
     ];
 }
 

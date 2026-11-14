@@ -1052,8 +1052,8 @@
         document.getElementById('planInfoText').style.display = 'none';
         showGenLocked(false);
       } else {
-        // Free user — lock AI captions
-        showGenLocked(true);
+        // Free user — show gen button (API enforces daily caption limit)
+        showGenLocked(false);
         updateUsageUI();
       }
     } catch(e) {
@@ -1085,7 +1085,8 @@
       document.getElementById('planInfoText').style.display = 'none';
       showGenLocked(false);
     } else {
-      showGenLocked(true);
+      // Free user — show gen button (API enforces daily caption limit)
+      showGenLocked(false);
     }
   }
 
@@ -1778,9 +1779,16 @@
       document.getElementById('usagePill').style.display = 'none';
       return;
     }
-    // Free / guest: show enhance counter in pill
-    const left = Math.max(0, enhanceLimit - enhanceUsed);
-    document.getElementById('usageText').textContent = `${left} edits left`;
+    // Free logged-in: show captions + edits; Guest: show edits only
+    if (currentUser) {
+      const capsLeft  = Math.max(0, aiLimit - aiUsed);
+      const editsLeft = Math.max(0, enhanceLimit - enhanceUsed);
+      document.getElementById('usageText').textContent =
+        `${capsLeft} caption${capsLeft !== 1 ? 's' : ''} · ${editsLeft} edits left`;
+    } else {
+      const left = Math.max(0, enhanceLimit - enhanceUsed);
+      document.getElementById('usageText').textContent = `${left} edits left`;
+    }
     ['d1','d2','d3'].forEach((id,i) => {
       const dot = document.getElementById(id);
       if (dot) dot.classList.toggle('used', i < enhanceUsed);

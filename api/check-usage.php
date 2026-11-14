@@ -71,11 +71,12 @@ try {
     $txDailyLimit = defined('AI_TRANSFORM_DAILY') ? AI_TRANSFORM_DAILY : 5;
 
     if ($plan === 'free') {
-        $aiLimit    = 0;              // Free users cannot use AI captions
-        $aiRemain   = 0;
+        $freeCaptionLimit = defined('FREE_DAILY_LIMIT') ? FREE_DAILY_LIMIT : 3;
+        $aiLimit    = $freeCaptionLimit;
+        $aiRemain   = max(0, $freeCaptionLimit - $aiUsed);
         $enhLimit   = FREE_ENHANCE_DAILY;
         $enhRemain  = max(0, FREE_ENHANCE_DAILY - $enhUsed);
-        $txLimit    = 0;              // Free users cannot use AI transforms
+        $txLimit    = 0;              // AI transforms are premium-only
         $txRemain   = 0;
     } else {
         // Premium or teams
