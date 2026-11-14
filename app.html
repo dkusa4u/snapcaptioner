@@ -339,22 +339,74 @@
   .upgrade-banner a:hover { background: rgba(168,85,247,.1); }
 
   /* HASHTAGS */
+  /* ── HASHTAG BLOCK ───────────────────────────────────────────────── */
   .hashtag-block { background: var(--card); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; }
-  .hash-header { padding: 14px 16px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 8px; }
-  .hash-body { padding: 14px 16px; }
-  .hash-chips { display: flex; flex-wrap: wrap; gap: 7px; }
-  .hash-chip {
-    display: flex; align-items: center; gap: 5px;
-    padding: 5px 11px; border-radius: 100px; font-size: .82rem; font-weight: 600;
-    cursor: pointer; transition: opacity .15s;
+  .hash-header { padding: 14px 16px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .hash-header-title { font-size: .88rem; font-weight: 700; }
+  .hash-counts { display: flex; gap: 8px; margin-left: auto; flex-wrap: wrap; align-items: center; }
+  .hash-count-pill {
+    display: flex; align-items: center; gap: 4px;
+    font-size: .72rem; font-weight: 600; padding: 3px 9px; border-radius: 20px;
   }
-  .hash-chip:hover { opacity: .8; }
-  .hash-chip .str { font-size: .7rem; opacity: .8; }
-  .hash-chip.sweet { background: var(--green-bg); border: 1px solid rgba(16,185,129,.25); color: #34d399; }
-  .hash-chip.comp { background: var(--yellow-bg); border: 1px solid rgba(245,158,11,.25); color: #fbbf24; }
-  .hash-chip.sat { background: var(--red-bg); border: 1px solid rgba(239,68,68,.2); color: #f87171; }
-  .hash-legend { display: flex; gap: 14px; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border); flex-wrap: wrap; }
-  .hash-legend span { font-size: .78rem; color: #b0b8d0; display: flex; align-items: center; gap: 4px; }
+  .hash-count-pill.sweet { background: rgba(16,185,129,.1); color: #34d399; border: 1px solid rgba(16,185,129,.2); }
+  .hash-count-pill.comp  { background: rgba(245,158,11,.1);  color: #fbbf24; border: 1px solid rgba(245,158,11,.2); }
+  .hash-count-pill.sat   { background: rgba(239,68,68,.08);  color: #f87171; border: 1px solid rgba(239,68,68,.18); }
+  /* Action bar */
+  .hash-action-bar {
+    display: flex; gap: 7px; padding: 11px 16px; border-bottom: 1px solid var(--border);
+    background: var(--bg2); flex-wrap: wrap; align-items: center;
+  }
+  .hash-action-btn {
+    display: flex; align-items: center; gap: 5px; white-space: nowrap;
+    font-size: .77rem; font-weight: 700; padding: 6px 13px; border-radius: 8px;
+    border: none; cursor: pointer; transition: all .15s; letter-spacing: .01em;
+  }
+  .hash-action-btn.primary {
+    background: linear-gradient(135deg, var(--grad1), var(--grad3)); color: #fff;
+  }
+  .hash-action-btn.primary:hover { opacity: .9; transform: translateY(-1px); }
+  .hash-action-btn.secondary {
+    background: var(--bg3); border: 1px solid var(--border2); color: var(--muted2);
+  }
+  .hash-action-btn.secondary:hover { color: var(--text); border-color: rgba(168,85,247,.4); transform: translateY(-1px); }
+  /* Platform tip */
+  .hash-platform-tip {
+    display: flex; align-items: flex-start; gap: 8px;
+    margin: 14px 16px 10px; padding: 10px 13px;
+    background: rgba(168,85,247,.06); border: 1px solid rgba(168,85,247,.18);
+    border-radius: 10px; font-size: .77rem; color: var(--muted2); line-height: 1.5;
+  }
+  .hash-platform-tip b { color: var(--text); }
+  /* Tier sections */
+  .hash-body { padding: 0 16px 14px; }
+  .hash-tier-section { margin-top: 12px; }
+  .hash-tier-head {
+    display: flex; align-items: center; gap: 7px; margin-bottom: 8px;
+  }
+  .hash-tier-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .hash-tier-dot.sweet { background: #10b981; box-shadow: 0 0 6px rgba(16,185,129,.5); }
+  .hash-tier-dot.comp  { background: #f59e0b; box-shadow: 0 0 6px rgba(245,158,11,.4); }
+  .hash-tier-dot.sat   { background: #ef4444; box-shadow: 0 0 6px rgba(239,68,68,.4); }
+  .hash-tier-label { font-size: .78rem; font-weight: 700; color: var(--muted2); }
+  .hash-tier-reach { font-size: .7rem; color: var(--muted); }
+  .hash-copy-tier {
+    margin-left: auto; font-size: .7rem; font-weight: 700;
+    background: var(--bg3); border: 1px solid var(--border2); color: var(--muted);
+    border-radius: 6px; padding: 3px 10px; cursor: pointer; transition: all .15s;
+  }
+  .hash-copy-tier:hover { color: var(--text); border-color: rgba(168,85,247,.4); }
+  .hash-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .hash-chip {
+    display: inline-flex; align-items: center;
+    padding: 5px 11px; border-radius: 100px; font-size: .78rem; font-weight: 600;
+    cursor: pointer; transition: all .18s; user-select: none;
+  }
+  .hash-chip:hover { transform: translateY(-1px); filter: brightness(1.2); }
+  .hash-chip:active { transform: scale(.96); }
+  .hash-chip.sweet { background: rgba(16,185,129,.1); border: 1px solid rgba(16,185,129,.25); color: #34d399; }
+  .hash-chip.comp  { background: rgba(245,158,11,.1);  border: 1px solid rgba(245,158,11,.25); color: #fbbf24; }
+  .hash-chip.sat   { background: rgba(239,68,68,.08);  border: 1px solid rgba(239,68,68,.2);  color: #f87171; }
+  .hash-chip.copied-flash { background: rgba(168,85,247,.18) !important; color: #c084fc !important; border-color: rgba(168,85,247,.4) !important; }
   .dot { width: 7px; height: 7px; border-radius: 50%; }
 
   /* EXTRAS ROW */
@@ -1833,7 +1885,12 @@
   }
 
   // ── Render Results ─────────────────────────────────────
+  let _lastPlatform = 'Instagram';  // tracks current platform for hashtag actions
+  let _lastHashtags = [];           // tracks current hashtag data for Copy All
+
   function renderResults(data, platform) {
+    _lastPlatform = platform;
+    _lastHashtags = data.hashtags || [];
     const panel = document.getElementById('resultsPanel');
     const isPremium = currentUser?.plan === 'premium' || currentUser?.plan === 'teams';
 
@@ -1869,14 +1926,73 @@
       captionHTML += `
       <div class="upgrade-banner">
         <span>🔒 2 more captions hidden</span>
-        <a href="pricing.html">Unlock All — $7/mo</a>
+        <a href="pricing.html">Unlock All — from $4.99/mo</a>
       </div>`;
     }
 
-    const hashHTML = data.hashtags.map(h => `
-      <div class="hash-chip ${h.tier}" onclick="copyHashtag(this)">
-        #${h.tag}<span class="str">(${h.tier === 'sweet' ? '🟢' : h.tier === 'comp' ? '🟡' : '🔴'})</span>
-      </div>`).join('');
+    // ── Build hashtag block ──────────────────────────────
+    const sweet = data.hashtags.filter(h => h.tier === 'sweet');
+    const comp  = data.hashtags.filter(h => h.tier === 'comp');
+    const sat   = data.hashtags.filter(h => h.tier === 'sat');
+    const totalHash = data.hashtags.length;
+
+    // Platform-specific hashtag guidance
+    const platHashTips = {
+      Instagram: '<b>Instagram:</b> Use 5–9 in your caption · copy the Sweet Spot set · drop the rest in your first comment for 3× reach boost',
+      TikTok:    '<b>TikTok:</b> 3–5 hashtags max performs best · lean on Sweet Spot tags · trending > niche on this platform',
+      LinkedIn:  '<b>LinkedIn:</b> 3–5 niche hashtags only · broad tags dilute B2B targeting · avoid anything oversaturated',
+      X:         '<b>X (Twitter):</b> 1–2 hashtags max · more than 2 reduces reach · only use when joining a trending topic',
+      Facebook:  '<b>Facebook:</b> 1–2 hashtags at most · organic discovery here is topic-based, not hashtag-driven',
+      Pinterest: '<b>Pinterest:</b> 2–5 descriptive tags · keywords in the caption matter more than hashtag count here',
+    };
+    const hashTip = platHashTips[platform] || '<b>Tip:</b> Use Sweet Spot hashtags first — they give the best reach-to-competition ratio';
+
+    // Build tier section HTML
+    function tierSection(chips, tierKey, label, reachHint) {
+      if (!chips.length) return '';
+      const chipsHTML = chips.map(h =>
+        `<div class="hash-chip ${h.tier}" onclick="copyHashtag(this)" data-tag="${escAttr(h.tag)}">#${escHtml(h.tag)}</div>`
+      ).join('');
+      return `
+      <div class="hash-tier-section">
+        <div class="hash-tier-head">
+          <div class="hash-tier-dot ${tierKey}"></div>
+          <span class="hash-tier-label">${label}</span>
+          <span class="hash-tier-reach">${reachHint}</span>
+          <button class="hash-copy-tier" onclick="copyHashGroup('${tierKey}',this)">Copy ${chips.length}</button>
+        </div>
+        <div class="hash-chips" data-tier="${tierKey}">${chipsHTML}</div>
+      </div>`;
+    }
+
+    const firstCommentBtn = platform === 'Instagram' || platform === 'Facebook'
+      ? `<button class="hash-action-btn secondary" onclick="copyFirstComment()">📋 First Comment</button>` : '';
+
+    const hashBlockHTML = `
+    <div class="hashtag-block">
+      <div class="hash-header">
+        <span class="hash-header-title">#️⃣ ${totalHash} Hashtags</span>
+        <div class="hash-counts">
+          <span class="hash-count-pill sweet">🟢 ${sweet.length} Sweet</span>
+          <span class="hash-count-pill comp">🟡 ${comp.length} Comp</span>
+          <span class="hash-count-pill sat">🔴 ${sat.length} Sat</span>
+        </div>
+      </div>
+      <div class="hash-action-bar">
+        <button class="hash-action-btn primary" onclick="copyAllHash(this)">⚡ Copy All ${totalHash}</button>
+        ${firstCommentBtn}
+        <span style="font-size:.72rem;color:var(--muted);margin-left:auto;">Click any tag to copy it</span>
+      </div>
+      <div class="hash-platform-tip">
+        <span style="font-size:1rem;flex-shrink:0;">💡</span>
+        <span>${hashTip}</span>
+      </div>
+      <div class="hash-body">
+        ${tierSection(sweet, 'sweet', 'Sweet Spot', '10K – 500K reach')}
+        ${tierSection(comp,  'comp',  'Competitive', '500K – 2M reach')}
+        ${tierSection(sat,   'sat',   'Oversaturated', '2M+ reach')}
+      </div>
+    </div>`;
 
     // Before/After enhancement section (uses uploaded photo for "before")
     const beforeSrc = document.getElementById('photoPreview').src;
@@ -1892,20 +2008,7 @@
       </div>
 
       <!-- Hashtags -->
-      <div class="hashtag-block">
-        <div class="hash-header">
-          <span style="font-size:.88rem;font-weight:700;">#️⃣ 20 Hashtags</span>
-          <span style="font-size:.7rem;color:var(--muted);margin-left:auto;">Click to copy</span>
-        </div>
-        <div class="hash-body">
-          <div class="hash-chips">${hashHTML}</div>
-          <div class="hash-legend">
-            <span><div class="dot" style="background:var(--green)"></div> Sweet spot</span>
-            <span><div class="dot" style="background:var(--yellow)"></div> Competitive</span>
-            <span><div class="dot" style="background:var(--red)"></div> Oversaturated</span>
-          </div>
-        </div>
-      </div>
+      ${hashBlockHTML}
 
       <!-- Extras row -->
       <div class="extras-row">
@@ -2038,18 +2141,92 @@
     }
   }
   function copyHashtag(el) {
-    // Strip the tier indicator and get just the hashtag text
-    const tagNode = el.childNodes[0];
-    const rawText = tagNode ? tagNode.textContent.trim() : el.textContent.trim();
-    const text = rawText.startsWith('#') ? rawText : '#' + rawText.replace(/[🟢🟡🔴]/g,'').trim();
-    const orig = el.innerHTML;
-    const done = () => { el.textContent = 'Copied!'; setTimeout(() => { el.innerHTML = orig; }, 1200); };
-
+    const tag = el.dataset.tag || el.textContent.replace(/[🟢🟡🔴]/g,'').trim();
+    const text = tag.startsWith('#') ? tag : '#' + tag;
+    const origHTML = el.innerHTML;
+    el.classList.add('copied-flash');
+    el.textContent = '✓ Copied';
+    setTimeout(() => { el.classList.remove('copied-flash'); el.innerHTML = origHTML; }, 1100);
     if (navigator.clipboard && location.protocol === 'https:') {
-      navigator.clipboard.writeText(text).then(done).catch(() => _fallbackCopy(text, done));
+      navigator.clipboard.writeText(text).catch(() => _fallbackCopy(text));
     } else {
-      _fallbackCopy(text, done);
+      _fallbackCopy(text);
     }
+  }
+
+  function copyHashGroup(tier, btn) {
+    const chips = document.querySelectorAll(`.hash-chips[data-tier="${tier}"] .hash-chip`);
+    const tags  = Array.from(chips).map(el => '#' + el.dataset.tag).join(' ');
+    if (!tags) return;
+    const orig = btn.textContent;
+    btn.textContent = '✓ Copied!';
+    setTimeout(() => btn.textContent = orig, 1400);
+    if (navigator.clipboard && location.protocol === 'https:') {
+      navigator.clipboard.writeText(tags).catch(() => _fallbackCopy(tags));
+    } else {
+      _fallbackCopy(tags);
+    }
+  }
+
+  function copyAllHash(btn) {
+    const tags = _lastHashtags.map(h => '#' + h.tag).join(' ');
+    if (!tags) return;
+    const orig = btn.innerHTML;
+    btn.innerHTML = '✓ All Copied!';
+    setTimeout(() => { btn.innerHTML = orig; }, 1400);
+    if (navigator.clipboard && location.protocol === 'https:') {
+      navigator.clipboard.writeText(tags).catch(() => _fallbackCopy(tags));
+    } else {
+      _fallbackCopy(tags);
+    }
+  }
+
+  function copyFirstComment() {
+    // Format: each hashtag on its own line, preceded by a dot·line separator for Instagram's first comment trick
+    const sweet = _lastHashtags.filter(h => h.tier === 'sweet');
+    const comp  = _lastHashtags.filter(h => h.tier === 'comp');
+    const sat   = _lastHashtags.filter(h => h.tier === 'sat');
+    const all   = [...sweet, ...comp, ...sat];
+    // Instagram first comment format: 5 blank lines then hashtags grouped
+    const formatted = '.\n.\n.\n.\n.\n' +
+      all.map(h => '#' + h.tag).join(' ');
+    // Flash all chips briefly
+    document.querySelectorAll('.hash-chip').forEach(el => {
+      el.classList.add('copied-flash');
+      setTimeout(() => el.classList.remove('copied-flash'), 1200);
+    });
+    if (navigator.clipboard && location.protocol === 'https:') {
+      navigator.clipboard.writeText(formatted).catch(() => _fallbackCopy(formatted));
+    } else {
+      _fallbackCopy(formatted);
+    }
+    // Show toast
+    _showToast('📋 First comment copied — paste as your first comment after posting!');
+  }
+
+  function _showToast(msg) {
+    let t = document.getElementById('sc-toast');
+    if (!t) {
+      t = document.createElement('div');
+      t.id = 'sc-toast';
+      t.style.cssText = `
+        position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(80px);
+        background:#1e1e32; border:1px solid rgba(168,85,247,.4); color:#e8e8f0;
+        font-size:.82rem; font-weight:600; padding:11px 20px; border-radius:12px;
+        z-index:9999; transition:transform .3s cubic-bezier(.34,1.56,.64,1), opacity .3s;
+        opacity:0; white-space:nowrap; max-width:calc(100vw - 48px); text-align:center;
+        box-shadow:0 8px 32px rgba(0,0,0,.5);
+      `;
+      document.body.appendChild(t);
+    }
+    t.textContent = msg;
+    t.style.opacity = '1';
+    t.style.transform = 'translateX(-50%) translateY(0)';
+    clearTimeout(t._timer);
+    t._timer = setTimeout(() => {
+      t.style.opacity = '0';
+      t.style.transform = 'translateX(-50%) translateY(80px)';
+    }, 3000);
   }
 
   function _fallbackCopy(text, cb) {
