@@ -945,6 +945,195 @@
     font-size: .62rem; font-weight: 700; letter-spacing: .06em;
     padding: 2px 8px; border-radius: 20px; white-space: nowrap;
   }
+
+  /* ══════════════════════════════════════════
+     CAPTION HISTORY MODAL
+  ══════════════════════════════════════════ */
+  .hist-overlay {
+    position: fixed; inset: 0; z-index: 9000;
+    background: rgba(6,8,22,.82);
+    backdrop-filter: blur(6px);
+    display: none; align-items: flex-start; justify-content: center;
+    padding: 20px 12px; overflow-y: auto;
+    animation: histFadeIn .22s ease;
+  }
+  .hist-overlay.open { display: flex; }
+  @keyframes histFadeIn { from { opacity:0; } to { opacity:1; } }
+
+  .hist-modal {
+    background: var(--surface);
+    border: 1px solid rgba(255,255,255,.09);
+    border-radius: 20px;
+    width: 100%; max-width: 860px;
+    box-shadow: 0 32px 80px rgba(0,0,0,.7);
+    overflow: hidden;
+    animation: histSlideUp .28s cubic-bezier(.22,.97,.58,1);
+  }
+  @keyframes histSlideUp { from { transform:translateY(28px); opacity:0; } to { transform:translateY(0); opacity:1; } }
+
+  /* Header */
+  .hist-modal-head {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 20px 24px 16px;
+    border-bottom: 1px solid rgba(255,255,255,.07);
+  }
+  .hist-modal-title { display: flex; align-items: center; gap: 12px; }
+  .hist-title-icon {
+    font-size: 1.6rem; width: 46px; height: 46px;
+    background: linear-gradient(135deg, rgba(103,58,183,.35), rgba(0,181,197,.2));
+    border-radius: 12px; display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .hist-close-btn {
+    width: 34px; height: 34px; border-radius: 50%;
+    border: 1px solid rgba(255,255,255,.12); background: rgba(255,255,255,.06);
+    color: var(--muted); font-size: .9rem; cursor: pointer; flex-shrink: 0;
+    transition: background .15s, color .15s;
+  }
+  .hist-close-btn:hover { background: rgba(255,255,255,.14); color: var(--text); }
+
+  /* Filter tabs */
+  .hist-filter-bar {
+    display: flex; gap: 6px; padding: 14px 20px 12px;
+    border-bottom: 1px solid rgba(255,255,255,.06);
+    overflow-x: auto; scrollbar-width: none;
+  }
+  .hist-filter-bar::-webkit-scrollbar { display: none; }
+  .hist-filter-tab {
+    padding: 6px 14px; border-radius: 20px; font-size: .78rem; font-weight: 600;
+    white-space: nowrap; cursor: pointer; flex-shrink: 0;
+    border: 1px solid rgba(255,255,255,.1); background: rgba(255,255,255,.04);
+    color: var(--muted2); transition: all .18s;
+  }
+  .hist-filter-tab:hover { border-color: rgba(255,255,255,.2); color: var(--text); }
+  .hist-filter-tab.active {
+    background: linear-gradient(135deg, var(--grad1), var(--grad2));
+    border-color: transparent; color: #fff;
+  }
+
+  /* Body */
+  .hist-body { padding: 18px 20px 20px; min-height: 320px; }
+
+  /* Loading state */
+  .hist-loading {
+    display: flex; align-items: center; justify-content: center;
+    gap: 12px; padding: 60px 0; color: var(--muted2); font-size: .9rem;
+  }
+  .hist-spinner {
+    width: 22px; height: 22px; border-radius: 50%;
+    border: 2px solid rgba(255,255,255,.12);
+    border-top-color: var(--grad2);
+    animation: spin .7s linear infinite;
+  }
+
+  /* Cards grid */
+  .hist-cards {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+  }
+  @media (max-width: 600px) { .hist-cards { grid-template-columns: 1fr; } }
+
+  /* Individual card */
+  .hist-card {
+    background: rgba(255,255,255,.04);
+    border: 1px solid rgba(255,255,255,.08);
+    border-radius: 14px; padding: 14px;
+    transition: border-color .18s, transform .18s;
+    display: flex; flex-direction: column; gap: 10px;
+  }
+  .hist-card:hover { border-color: rgba(255,255,255,.18); transform: translateY(-1px); }
+  .hist-card.deleting { opacity: 0; transform: scale(.9); transition: all .3s; pointer-events: none; }
+
+  /* Card top row */
+  .hist-card-top { display: flex; align-items: center; gap: 8px; }
+  .hist-plat-badge {
+    font-size: .7rem; font-weight: 700; padding: 3px 9px; border-radius: 20px;
+    letter-spacing: .03em; white-space: nowrap;
+  }
+  .hist-plat-badge.Instagram { background: rgba(228,64,95,.18); color: #f47b8f; border: 1px solid rgba(228,64,95,.25); }
+  .hist-plat-badge.TikTok    { background: rgba(0,242,234,.12); color: #00f2ea; border: 1px solid rgba(0,242,234,.22); }
+  .hist-plat-badge.LinkedIn  { background: rgba(0,119,181,.18); color: #60b8ff; border: 1px solid rgba(0,119,181,.25); }
+  .hist-plat-badge.X         { background: rgba(255,255,255,.08); color: #ccc; border: 1px solid rgba(255,255,255,.14); }
+  .hist-plat-badge.Facebook  { background: rgba(24,119,242,.18); color: #60a0ff; border: 1px solid rgba(24,119,242,.25); }
+  .hist-plat-badge.Pinterest { background: rgba(230,0,35,.18); color: #ff6680; border: 1px solid rgba(230,0,35,.25); }
+  .hist-plat-badge.default   { background: rgba(255,255,255,.08); color: #ccc; border: 1px solid rgba(255,255,255,.14); }
+
+  .hist-date {
+    font-size: .7rem; color: var(--muted); margin-left: auto; white-space: nowrap;
+  }
+  .hist-fav-btn {
+    background: none; border: none; cursor: pointer; font-size: .9rem;
+    padding: 2px 4px; border-radius: 6px; opacity: .55; transition: opacity .15s, transform .18s;
+  }
+  .hist-fav-btn:hover { opacity: 1; transform: scale(1.15); }
+  .hist-fav-btn.on { opacity: 1; }
+
+  /* Caption preview */
+  .hist-preview {
+    font-size: .78rem; color: #bdc3d6; line-height: 1.55;
+    display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  /* Star rating */
+  .hist-stars { display: flex; gap: 3px; align-items: center; }
+  .hist-star {
+    font-size: 1.1rem; cursor: pointer; transition: transform .12s;
+    color: rgba(255,255,255,.18); line-height: 1;
+  }
+  .hist-star:hover { transform: scale(1.2); }
+  .hist-star.on { color: #f5c518; }
+  .hist-star-label { font-size: .68rem; color: var(--muted); margin-left: 4px; }
+
+  /* Card actions */
+  .hist-card-actions { display: flex; gap: 8px; margin-top: 2px; }
+  .hist-reuse-btn {
+    flex: 1; padding: 8px 0; border-radius: 9px; font-size: .78rem; font-weight: 700;
+    cursor: pointer; border: 1px solid rgba(103,58,183,.45);
+    background: rgba(103,58,183,.18); color: #c9b6ff;
+    transition: background .18s, border-color .18s;
+  }
+  .hist-reuse-btn:hover { background: rgba(103,58,183,.32); border-color: rgba(103,58,183,.7); }
+  .hist-delete-btn {
+    width: 36px; height: 36px; border-radius: 9px; font-size: .82rem;
+    cursor: pointer; border: 1px solid rgba(255,80,80,.2);
+    background: rgba(255,80,80,.08); color: #ff8080;
+    transition: background .18s;
+  }
+  .hist-delete-btn:hover { background: rgba(255,80,80,.22); }
+
+  /* Hashtag count badge on card */
+  .hist-hash-badge {
+    font-size: .66rem; color: var(--muted2); padding: 2px 7px;
+    background: rgba(255,255,255,.05); border-radius: 20px;
+    border: 1px solid rgba(255,255,255,.07);
+  }
+
+  /* Empty state */
+  .hist-empty {
+    text-align: center; padding: 60px 0 40px;
+  }
+
+  /* Load more */
+  .hist-load-more {
+    padding: 10px 32px; border-radius: 24px; font-size: .82rem; font-weight: 700;
+    cursor: pointer; border: 1px solid rgba(255,255,255,.15);
+    background: rgba(255,255,255,.06); color: var(--muted2);
+    transition: background .18s, color .18s;
+  }
+  .hist-load-more:hover { background: rgba(255,255,255,.12); color: var(--text); }
+
+  /* Reuse success flash */
+  .hist-reuse-flash {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+    background: linear-gradient(135deg,var(--grad1),var(--grad2));
+    color: #fff; font-size: .86rem; font-weight: 700;
+    padding: 12px 28px; border-radius: 50px;
+    box-shadow: 0 8px 24px rgba(0,0,0,.5); z-index: 9999;
+    animation: toastUp .3s ease, toastFade .3s ease 2.2s forwards;
+    white-space: nowrap;
+  }
 </style>
 </head>
 <body>
@@ -970,6 +1159,7 @@
   <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;" id="navRight">
     <!-- Tool links (premium) -->
     <div id="navTools" style="display:none;align-items:center;gap:4px;">
+      <button onclick="openHistory()" id="historyNavBtn" style="font-size:.78rem;color:#a0a0b8;cursor:pointer;padding:4px 9px;border-radius:7px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);display:flex;align-items:center;gap:5px;" title="Caption History">📚 History</button>
       <a href="tracker.html"  style="font-size:.78rem;color:#a0a0b8;text-decoration:none;padding:4px 9px;border-radius:7px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);" title="Caption A/B Tracker">📊 Tracker</a>
       <a href="calendar.html" style="font-size:.78rem;color:#a0a0b8;text-decoration:none;padding:4px 9px;border-radius:7px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);" title="Content Calendar">📅 Calendar</a>
     </div>
@@ -998,6 +1188,54 @@
     </div>
   </div>
 </nav>
+
+<!-- ══════════════════════════════════════════════════════════
+     CAPTION HISTORY MODAL
+══════════════════════════════════════════════════════════ -->
+<div id="historyModal" class="hist-overlay" onclick="if(event.target===this)closeHistory()">
+  <div class="hist-modal">
+    <!-- Header -->
+    <div class="hist-modal-head">
+      <div class="hist-modal-title">
+        <span class="hist-title-icon">📚</span>
+        <div>
+          <div style="font-size:1.1rem;font-weight:800;color:var(--text);">Caption History</div>
+          <div id="histSubtitle" style="font-size:.74rem;color:var(--muted2);margin-top:1px;">Your last 20 caption sets</div>
+        </div>
+      </div>
+      <button class="hist-close-btn" onclick="closeHistory()" aria-label="Close history">✕</button>
+    </div>
+
+    <!-- Filter tabs -->
+    <div class="hist-filter-bar">
+      <button class="hist-filter-tab active" data-filter="all"       onclick="switchHistFilter(this,'all','')">All</button>
+      <button class="hist-filter-tab"        data-filter="favs"      onclick="switchHistFilter(this,'favs','')">⭐ Faves</button>
+      <button class="hist-filter-tab"        data-filter="Instagram" onclick="switchHistFilter(this,'plat','Instagram')">📸 IG</button>
+      <button class="hist-filter-tab"        data-filter="TikTok"    onclick="switchHistFilter(this,'plat','TikTok')">🎵 TT</button>
+      <button class="hist-filter-tab"        data-filter="LinkedIn"  onclick="switchHistFilter(this,'plat','LinkedIn')">💼 LI</button>
+      <button class="hist-filter-tab"        data-filter="X"         onclick="switchHistFilter(this,'plat','X')">🐦 X</button>
+      <button class="hist-filter-tab"        data-filter="Facebook"  onclick="switchHistFilter(this,'plat','Facebook')">📘 FB</button>
+      <button class="hist-filter-tab"        data-filter="Pinterest" onclick="switchHistFilter(this,'plat','Pinterest')">📌 Pin</button>
+    </div>
+
+    <!-- Cards grid -->
+    <div class="hist-body" id="histBody">
+      <div class="hist-loading" id="histLoading">
+        <div class="hist-spinner"></div>
+        <span>Loading your history…</span>
+      </div>
+      <div class="hist-cards" id="histCards"></div>
+      <div class="hist-empty" id="histEmpty" style="display:none;">
+        <div style="font-size:2.8rem;margin-bottom:12px;">📭</div>
+        <div style="font-size:1rem;font-weight:700;color:var(--text);margin-bottom:6px;">No captions yet</div>
+        <div style="font-size:.82rem;color:var(--muted2);">Generate your first caption set to see it here.</div>
+      </div>
+      <div id="histLoadMoreWrap" style="display:none;text-align:center;padding:16px 0;">
+        <button class="hist-load-more" onclick="loadMoreHistory()">Load More</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 <!-- LOADING OVERLAY -->
 <div id="loadingOverlay">
@@ -2956,6 +3194,293 @@
     selectedBgPrompt = null;
     const ci = document.getElementById('bgCustomInput');
     if (ci) ci.value = '';
+  }
+
+  // ══════════════════════════════════════════════════════════
+  //  CAPTION HISTORY PANEL  (Feature 2)
+  // ══════════════════════════════════════════════════════════
+
+  let _histPage      = 1;
+  let _histTotalPages = 1;
+  let _histFilter    = 'all';   // 'all' | 'favs' | platform name
+  let _histFavOnly   = false;
+  let _histPlatform  = '';      // '' = all platforms
+
+  const PLAT_ICONS = {
+    Instagram:'📸', TikTok:'🎵', LinkedIn:'💼', X:'🐦', Facebook:'📘', Pinterest:'📌'
+  };
+
+  function openHistory() {
+    if (!currentToken) {
+      window.location.href = 'login.html'; return;
+    }
+    const modal = document.getElementById('historyModal');
+    modal.classList.add('open');
+    document.body.style.overflow = 'hidden';
+    // Reset to first page / all filter
+    _histPage     = 1;
+    _histFilter   = 'all';
+    _histFavOnly  = false;
+    _histPlatform = '';
+    document.querySelectorAll('.hist-filter-tab').forEach(t => t.classList.remove('active'));
+    document.querySelector('.hist-filter-tab[data-filter="all"]').classList.add('active');
+    _fetchHistory(true);
+  }
+
+  function closeHistory() {
+    document.getElementById('historyModal').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  // Close on Escape
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeHistory();
+  });
+
+  function switchHistFilter(el, type, platform) {
+    document.querySelectorAll('.hist-filter-tab').forEach(t => t.classList.remove('active'));
+    el.classList.add('active');
+    _histFavOnly  = type === 'favs';
+    _histPlatform = type === 'plat' ? platform : '';
+    _histFilter   = el.dataset.filter;
+    _histPage     = 1;
+    _fetchHistory(true);
+  }
+
+  function loadMoreHistory() {
+    if (_histPage < _histTotalPages) {
+      _histPage++;
+      _fetchHistory(false);
+    }
+  }
+
+  async function _fetchHistory(replace) {
+    const cards   = document.getElementById('histCards');
+    const loading = document.getElementById('histLoading');
+    const empty   = document.getElementById('histEmpty');
+    const lmWrap  = document.getElementById('histLoadMoreWrap');
+
+    if (replace) {
+      loading.style.display = 'flex';
+      cards.innerHTML = '';
+      empty.style.display = 'none';
+      lmWrap.style.display = 'none';
+    }
+
+    try {
+      let url = `api/caption-history.php?page=${_histPage}&limit=20`;
+      if (_histFavOnly)   url += '&favorites=1';
+      if (_histPlatform)  url += `&platform=${encodeURIComponent(_histPlatform)}`;
+
+      const res  = await fetch(url, {
+        headers: { 'Authorization': 'Bearer ' + currentToken }
+      });
+      const json = await res.json();
+
+      loading.style.display = 'none';
+
+      if (!json.success || !json.data?.length) {
+        if (replace) empty.style.display = 'block';
+        lmWrap.style.display = 'none';
+        return;
+      }
+
+      _histTotalPages = json.pages || 1;
+
+      // Update subtitle
+      const sub = document.getElementById('histSubtitle');
+      if (sub) sub.textContent = `${json.total} caption set${json.total !== 1 ? 's' : ''} saved`;
+
+      // Render cards
+      const html = json.data.map(row => _buildHistCard(row)).join('');
+      if (replace) cards.innerHTML = html;
+      else         cards.insertAdjacentHTML('beforeend', html);
+
+      lmWrap.style.display = (_histPage < _histTotalPages) ? 'block' : 'none';
+
+    } catch (err) {
+      loading.style.display = 'none';
+      if (replace) {
+        cards.innerHTML = `<div style="text-align:center;padding:40px;color:var(--muted2);font-size:.85rem;">⚠️ Could not load history. Please try again.</div>`;
+      }
+    }
+  }
+
+  function _buildHistCard(row) {
+    const icon    = PLAT_ICONS[row.platform] || '📲';
+    const platCls = ['Instagram','TikTok','LinkedIn','X','Facebook','Pinterest']
+                      .includes(row.platform) ? row.platform : 'default';
+    const preview = (row.caption_1 || '').replace(/<[^>]+>/g,'').slice(0, 140) + (row.caption_1?.length > 140 ? '…' : '');
+    const dateStr = _fmtHistDate(row.created_at);
+    const favOn   = row.favorited ? 'on' : '';
+    const favEmoji= row.favorited ? '❤️' : '🤍';
+    const rating  = parseInt(row.rating) || 0;
+    const hashCnt = Array.isArray(row.hashtags) ? row.hashtags.length : 0;
+
+    // Build 5 stars
+    const stars = [1,2,3,4,5].map(n =>
+      `<span class="hist-star ${n <= rating ? 'on' : ''}" data-id="${row.id}" data-n="${n}" onclick="_setRating(${row.id},${n},this)">★</span>`
+    ).join('');
+
+    const starLabel = rating > 0 ? ['','Meh','OK','Good','Great','Fire 🔥'][rating] : 'Rate it';
+
+    return `
+    <div class="hist-card" id="hcard-${row.id}" data-id="${row.id}">
+      <div class="hist-card-top">
+        <span class="hist-plat-badge ${platCls}">${icon} ${row.platform}</span>
+        ${hashCnt ? `<span class="hist-hash-badge">#️⃣ ${hashCnt}</span>` : ''}
+        <span class="hist-date">${dateStr}</span>
+        <button class="hist-fav-btn ${favOn}" id="hfav-${row.id}"
+          onclick="_toggleFav(${row.id},this)" title="${row.favorited ? 'Unfavorite' : 'Favorite'}">${favEmoji}</button>
+      </div>
+      <div class="hist-preview">${escHtml(preview)}</div>
+      <div class="hist-stars">
+        ${stars}
+        <span class="hist-star-label" id="hstar-lbl-${row.id}">${starLabel}</span>
+      </div>
+      <div class="hist-card-actions">
+        <button class="hist-reuse-btn" onclick="_reuseHistory(${row.id})">↩️ Reuse Captions</button>
+        <button class="hist-delete-btn" onclick="_deleteHistItem(${row.id})" title="Delete">🗑️</button>
+      </div>
+    </div>`;
+  }
+
+  function _fmtHistDate(ts) {
+    if (!ts) return '';
+    const d = new Date(ts.replace(' ', 'T') + 'Z');
+    const now = new Date();
+    const diff = Math.floor((now - d) / 1000);
+    if (diff < 60) return 'Just now';
+    if (diff < 3600) return `${Math.floor(diff/60)}m ago`;
+    if (diff < 86400) return `${Math.floor(diff/3600)}h ago`;
+    if (diff < 172800) return 'Yesterday';
+    return d.toLocaleDateString(undefined, { month:'short', day:'numeric' });
+  }
+
+  async function _toggleFav(id, btn) {
+    const wasOn = btn.classList.contains('on');
+    // Optimistic UI
+    btn.classList.toggle('on');
+    btn.textContent = wasOn ? '🤍' : '❤️';
+    btn.title = wasOn ? 'Favorite' : 'Unfavorite';
+
+    try {
+      const res = await fetch('api/caption-history.php', {
+        method: 'POST',
+        headers: { 'Content-Type':'application/json', 'Authorization':'Bearer '+currentToken },
+        body: JSON.stringify({ action:'favorite', id })
+      });
+      const json = await res.json();
+      if (!json.success) throw new Error();
+      // If in favorites-only view and we just un-favorited, fade out card
+      if (_histFavOnly && wasOn) {
+        const card = document.getElementById(`hcard-${id}`);
+        if (card) {
+          card.classList.add('deleting');
+          setTimeout(() => { card.remove(); _checkHistEmpty(); }, 320);
+        }
+      }
+    } catch (e) {
+      // Revert
+      btn.classList.toggle('on');
+      btn.textContent = wasOn ? '❤️' : '🤍';
+    }
+  }
+
+  async function _setRating(id, stars, el) {
+    // Update all 5 stars in this card optimistically
+    const card = document.getElementById(`hcard-${id}`);
+    if (!card) return;
+    card.querySelectorAll('.hist-star').forEach(s => {
+      s.classList.toggle('on', parseInt(s.dataset.n) <= stars);
+    });
+    const labels = ['','Meh','OK','Good','Great','Fire 🔥'];
+    const lbl = document.getElementById(`hstar-lbl-${id}`);
+    if (lbl) lbl.textContent = labels[stars] || '';
+
+    try {
+      await fetch('api/caption-history.php', {
+        method: 'POST',
+        headers: { 'Content-Type':'application/json', 'Authorization':'Bearer '+currentToken },
+        body: JSON.stringify({ action:'rating', id, rating: stars })
+      });
+    } catch (e) { /* silent — optimistic already applied */ }
+  }
+
+  async function _reuseHistory(id) {
+    // Fetch single record by ID
+    try {
+      const res  = await fetch(`api/caption-history.php?id=${id}`, {
+        headers: { 'Authorization':'Bearer '+currentToken }
+      });
+      const json = await res.json();
+      if (!json.success || !json.data) return;
+
+      const row = json.data;
+
+      // Build data object matching renderResults() format
+      const captions = [1,2,3,4,5]
+        .map(n => row[`caption_${n}`])
+        .filter(Boolean)
+        .map((text, i) => ({
+          text,
+          hook_score: Array.isArray(row.hook_scores) ? (row.hook_scores[i] || 7) : 7
+        }));
+
+      const data = {
+        captions,
+        hashtags:      Array.isArray(row.hashtags) ? row.hashtags : [],
+        best_time:     row.best_time || '—',
+        best_time_note: '',
+        alt_text:      row.alt_text || '',
+        engagement_tip: row.engagement_tip || ''
+      };
+
+      closeHistory();
+      renderResults(data, row.platform || 'Instagram');
+
+      // Flash a toast
+      const t = document.createElement('div');
+      t.className = 'hist-reuse-flash';
+      t.textContent = `✅ Captions loaded from ${row.platform} history!`;
+      document.body.appendChild(t);
+      setTimeout(() => t.remove(), 2700);
+
+      // Scroll to results
+      setTimeout(() => {
+        document.getElementById('resultsPanel')?.scrollIntoView({ behavior:'smooth' });
+      }, 300);
+
+    } catch (e) {
+      _showToast('⚠️ Could not load this caption set.');
+    }
+  }
+
+  async function _deleteHistItem(id) {
+    const card = document.getElementById(`hcard-${id}`);
+    if (!card) return;
+    if (!confirm('Delete this caption set? This cannot be undone.')) return;
+
+    card.classList.add('deleting');
+    setTimeout(async () => {
+      card.remove();
+      _checkHistEmpty();
+    }, 320);
+
+    try {
+      await fetch(`api/caption-history.php?id=${id}`, {
+        method: 'DELETE',
+        headers: { 'Authorization':'Bearer '+currentToken }
+      });
+    } catch (e) { /* silent */ }
+  }
+
+  function _checkHistEmpty() {
+    const cards = document.getElementById('histCards');
+    const empty = document.getElementById('histEmpty');
+    if (cards && !cards.children.length) {
+      empty.style.display = 'block';
+    }
   }
 </script>
 
