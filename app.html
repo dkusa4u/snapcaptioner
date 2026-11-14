@@ -728,6 +728,145 @@
   }
   .ba-cta:hover { opacity: .88; }
   .ba-hint { font-size: .65rem; color: var(--muted); text-align: center; }
+
+  /* ── AI Background Swap ──────────────────────────────── */
+  .bg-swap-wrap {
+    display: none; margin-top: 10px;
+    flex-direction: column; gap: 0;
+  }
+  .bg-swap-wrap.active { display: flex; }
+
+  .bg-swap-panel {
+    background: rgba(255,255,255,.04);
+    border: 1px solid rgba(255,255,255,.10);
+    border-radius: 14px; padding: 14px 14px 16px;
+  }
+  .bg-swap-head {
+    display: flex; align-items: center;
+    justify-content: space-between; margin-bottom: 10px;
+  }
+  .bg-swap-title {
+    font-size: .84rem; font-weight: 700; color: var(--text);
+    display: flex; align-items: center; gap: 7px;
+  }
+  .bg-swap-badge {
+    background: linear-gradient(135deg, #f59e0b, #ef4444);
+    color: #fff; font-size: .58rem; font-weight: 800;
+    letter-spacing: .06em; padding: 2px 7px; border-radius: 20px;
+  }
+  .bg-swap-ctr { font-size: .72rem; color: var(--muted2); }
+
+  .bg-tabs {
+    display: flex; gap: 5px; flex-wrap: wrap; margin-bottom: 10px;
+  }
+  .bg-tab {
+    background: rgba(255,255,255,.07);
+    border: 1px solid rgba(255,255,255,.12);
+    color: var(--muted2); font-size: .7rem; font-weight: 600;
+    border-radius: 20px; padding: 4px 10px; cursor: pointer;
+    transition: all .15s;
+  }
+  .bg-tab.active, .bg-tab:hover {
+    background: linear-gradient(135deg, var(--grad1), var(--grad2));
+    color: #fff; border-color: transparent;
+  }
+  .bg-presets { margin-bottom: 10px; }
+  .bg-cat { display: flex; flex-wrap: wrap; gap: 6px; }
+  .bg-btn {
+    background: rgba(255,255,255,.07);
+    border: 1px solid rgba(255,255,255,.12);
+    color: var(--text); font-size: .72rem; font-weight: 500;
+    border-radius: 8px; padding: 6px 10px; cursor: pointer;
+    transition: all .15s;
+  }
+  .bg-btn:hover { background: rgba(255,255,255,.13); }
+  .bg-btn.selected {
+    background: linear-gradient(135deg, var(--grad1), var(--grad2));
+    color: #fff; border-color: transparent;
+  }
+  .bg-custom-row { margin-bottom: 10px; }
+  .bg-custom-input {
+    width: 100%; background: rgba(255,255,255,.07);
+    border: 1px solid rgba(255,255,255,.14);
+    border-radius: 10px; color: var(--text);
+    font-size: .78rem; padding: 8px 12px;
+    outline: none; box-sizing: border-box;
+  }
+  .bg-custom-input:focus { border-color: var(--grad2); }
+  .bg-custom-input::placeholder { color: var(--muted2); }
+  .bg-swap-btn {
+    width: 100%;
+    background: linear-gradient(135deg, var(--grad1), var(--grad2));
+    color: #fff; font-size: .85rem; font-weight: 700;
+    border: none; border-radius: 11px; padding: 11px;
+    cursor: pointer; transition: opacity .18s;
+  }
+  .bg-swap-btn:hover { opacity: .88; }
+  .bg-swap-btn:disabled { opacity: .45; cursor: not-allowed; }
+  .bg-swap-loading {
+    display: none; align-items: center; gap: 10px;
+    justify-content: center; padding: 12px 0;
+  }
+  .bg-swap-loading.active { display: flex; }
+  .bg-swap-spinner {
+    width: 22px; height: 22px; border-radius: 50%;
+    border: 2px solid rgba(124,58,237,.2);
+    border-top-color: var(--grad2);
+    animation: txSpin 0.9s linear infinite; flex-shrink: 0;
+  }
+  .bg-swap-loading-text { font-size: .78rem; color: var(--muted2); }
+  .bg-swap-locked {
+    display: none; align-items: center; gap: 12px;
+    background: rgba(255,255,255,.04);
+    border: 1px dashed rgba(255,255,255,.12);
+    border-radius: 14px; padding: 14px;
+  }
+  .bg-swap-locked.active { display: flex; }
+  .bsl-icon { font-size: 1.6rem; }
+  .bsl-text { flex: 1; display: flex; flex-direction: column; gap: 2px; }
+  .bsl-text strong { font-size: .84rem; color: var(--text); }
+  .bsl-text span { font-size: .72rem; color: var(--muted2); }
+  .bsl-text a { color: var(--grad2); text-decoration: none; }
+  .bg-result-panel {
+    display: none;
+    background: rgba(255,255,255,.04);
+    border: 1px solid rgba(255,255,255,.10);
+    border-radius: 14px; padding: 14px; margin-top: 10px;
+  }
+  .bg-result-panel.active { display: block; }
+  .bg-result-head {
+    display: flex; align-items: center;
+    justify-content: space-between; margin-bottom: 10px;
+    flex-wrap: wrap; gap: 8px;
+  }
+  .bg-result-head > span { font-size: .84rem; font-weight: 700; color: var(--text); }
+  .bg-result-actions { display: flex; gap: 6px; flex-wrap: wrap; }
+  .bg-result-btn {
+    background: linear-gradient(135deg, var(--grad1), var(--grad2));
+    color: #fff; font-size: .72rem; font-weight: 700;
+    border: none; border-radius: 8px; padding: 6px 12px; cursor: pointer;
+  }
+  .bg-result-btn-secondary {
+    background: rgba(255,255,255,.1);
+    border: 1px solid rgba(255,255,255,.18);
+    color: var(--text);
+  }
+  .bg-ba-wrap {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+  }
+  .bg-ba-before, .bg-ba-after {
+    position: relative; border-radius: 10px; overflow: hidden;
+  }
+  .bg-ba-img {
+    width: 100%; aspect-ratio: 4/3; object-fit: cover; display: block;
+  }
+  .bg-ba-label {
+    position: absolute; bottom: 6px; left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0,0,0,.55); color: #fff;
+    font-size: .62rem; font-weight: 700; letter-spacing: .06em;
+    padding: 2px 8px; border-radius: 20px; white-space: nowrap;
+  }
 </style>
 </head>
 <body>
@@ -929,6 +1068,109 @@
           <span>Teleport to Paris, Tokyo, Maldives & 17 more scenes</span>
         </div>
         <a href="pricing.html" class="atl-btn">Unlock</a>
+      </div>
+
+      <!-- AI Background Swap (Real OpenAI API) -->
+      <div class="bg-swap-wrap" id="bgSwapWrap">
+        <!-- Premium: full panel -->
+        <div class="bg-swap-panel" id="bgSwapPanel" style="display:none">
+          <div class="bg-swap-head">
+            <span class="bg-swap-title">🌅 AI Background Swap <span class="bg-swap-badge">NEW</span></span>
+            <span class="bg-swap-ctr" id="bgSwapCtr"></span>
+          </div>
+          <div class="bg-tabs">
+            <button class="bg-tab active" onclick="switchBgTab('landmarks',this)">🌍 Landmarks</button>
+            <button class="bg-tab" onclick="switchBgTab('nature',this)">🌿 Nature</button>
+            <button class="bg-tab" onclick="switchBgTab('lifestyle',this)">✨ Lifestyle</button>
+            <button class="bg-tab" onclick="switchBgTab('night',this)">🌙 Night & Sky</button>
+            <button class="bg-tab" onclick="switchBgTab('fantasy',this)">🔮 Fantasy</button>
+          </div>
+          <div class="bg-presets">
+            <div class="bg-cat" id="bgCat-landmarks">
+              <button class="bg-btn" onclick="selectBgPreset('Eiffel Tower in Paris with the Seine river and city skyline',this)">🗼 Eiffel Tower</button>
+              <button class="bg-btn" onclick="selectBgPreset('Dubai skyline with Burj Khalifa at sunset',this)">🏙️ Dubai</button>
+              <button class="bg-btn" onclick="selectBgPreset('New York City Times Square at night with neon lights',this)">🗽 NYC Times Sq</button>
+              <button class="bg-btn" onclick="selectBgPreset('Golden Gate Bridge San Francisco with foggy bay',this)">🌉 Golden Gate</button>
+              <button class="bg-btn" onclick="selectBgPreset('Tokyo Shibuya crossing at night with bright neon lights',this)">🌸 Tokyo Night</button>
+              <button class="bg-btn" onclick="selectBgPreset('London Tower Bridge over the Thames at dusk',this)">🇬🇧 Tower Bridge</button>
+              <button class="bg-btn" onclick="selectBgPreset('Santorini Greece with iconic blue-domed white churches overlooking the sea',this)">🏛️ Santorini</button>
+              <button class="bg-btn" onclick="selectBgPreset('Ancient Colosseum in Rome at golden hour',this)">🏟️ Colosseum</button>
+              <button class="bg-btn" onclick="selectBgPreset('Barcelona Sagrada Familia cathedral with blue sky',this)">⛪ Sagrada Família</button>
+              <button class="bg-btn" onclick="selectBgPreset('Kyoto Japan with hundreds of red torii gates at Fushimi Inari shrine',this)">⛩️ Kyoto Torii</button>
+            </div>
+            <div class="bg-cat" id="bgCat-nature" style="display:none">
+              <button class="bg-btn" onclick="selectBgPreset('Maldives overwater bungalow with turquoise lagoon and white sand beach',this)">🏝️ Maldives</button>
+              <button class="bg-btn" onclick="selectBgPreset('Japanese cherry blossom park with pink sakura falling petals',this)">🌸 Cherry Blossoms</button>
+              <button class="bg-btn" onclick="selectBgPreset('Crystal-clear Milky Way starry night sky over mountains',this)">🌌 Milky Way</button>
+              <button class="bg-btn" onclick="selectBgPreset('Tropical beach at sunset with palm trees and golden sky',this)">🌅 Tropical Sunset</button>
+              <button class="bg-btn" onclick="selectBgPreset('Tuscany Italy lavender fields in bloom with rolling hills and cypress trees',this)">💜 Tuscany</button>
+              <button class="bg-btn" onclick="selectBgPreset('Swiss Alps mountain peak with snow and alpine meadow',this)">🏔️ Swiss Alps</button>
+              <button class="bg-btn" onclick="selectBgPreset('Kyoto bamboo forest with tall green bamboo on both sides of the path',this)">🎋 Bamboo Forest</button>
+              <button class="bg-btn" onclick="selectBgPreset('Aurora Borealis Northern Lights dancing over snowy landscape',this)">💚 Aurora Borealis</button>
+              <button class="bg-btn" onclick="selectBgPreset('Sahara Desert golden sand dunes at sunrise',this)">🏜️ Sahara Dunes</button>
+              <button class="bg-btn" onclick="selectBgPreset('Lush tropical rainforest with waterfalls and exotic flowers',this)">🌿 Rainforest</button>
+            </div>
+            <div class="bg-cat" id="bgCat-lifestyle" style="display:none">
+              <button class="bg-btn" onclick="selectBgPreset('Cozy luxury home library with floor-to-ceiling bookshelves and warm lighting',this)">📚 Cozy Library</button>
+              <button class="bg-btn" onclick="selectBgPreset('Aesthetic Parisian café terrace with outdoor seating and Haussmann architecture',this)">☕ Paris Café</button>
+              <button class="bg-btn" onclick="selectBgPreset('Luxury penthouse apartment with panoramic city view at night through floor-to-ceiling windows',this)">🏙️ Penthouse</button>
+              <button class="bg-btn" onclick="selectBgPreset('Hollywood Walk of Fame Los Angeles with star-studded sidewalk',this)">⭐ Hollywood</button>
+              <button class="bg-btn" onclick="selectBgPreset('Monaco luxury yacht deck on turquoise Mediterranean sea',this)">🛥️ Monaco Yacht</button>
+              <button class="bg-btn" onclick="selectBgPreset('Amalfi Coast Italy colorful cliffside villa overlooking the turquoise sea',this)">🌊 Amalfi Coast</button>
+            </div>
+            <div class="bg-cat" id="bgCat-night" style="display:none">
+              <button class="bg-btn" onclick="selectBgPreset('Neon-lit rainy Tokyo street at night with reflections on wet pavement',this)">🌧️ Neon Tokyo</button>
+              <button class="bg-btn" onclick="selectBgPreset('Aurora Borealis green and purple lights dancing over dark starry sky',this)">💚 Aurora Night</button>
+              <button class="bg-btn" onclick="selectBgPreset('New York City skyline at night with glowing skyscrapers and lights',this)">🌆 NYC Night</button>
+              <button class="bg-btn" onclick="selectBgPreset('Full moon night on a serene lake with moonlight reflections on water',this)">🌕 Moonlit Lake</button>
+            </div>
+            <div class="bg-cat" id="bgCat-fantasy" style="display:none">
+              <button class="bg-btn" onclick="selectBgPreset('Outer space galaxy backdrop with colorful nebula and thousands of stars',this)">🚀 Galaxy Space</button>
+              <button class="bg-btn" onclick="selectBgPreset('Enchanted autumn forest with golden leaves and magical sun rays through trees',this)">🍂 Enchanted Forest</button>
+              <button class="bg-btn" onclick="selectBgPreset('Ancient Greek ruins at golden hour with marble columns and blue Mediterranean sky',this)">🏛️ Greek Ruins</button>
+              <button class="bg-btn" onclick="selectBgPreset('Underwater ocean world with colorful coral reef and tropical fish',this)">🐠 Underwater</button>
+            </div>
+          </div>
+          <div class="bg-custom-row">
+            <input type="text" id="bgCustomInput" class="bg-custom-input"
+              placeholder="✍️ Or describe your own background…"
+              oninput="clearBgPresetSelection()">
+          </div>
+          <button class="bg-swap-btn" id="bgSwapBtn" onclick="doRealBgSwap()">🌅 Swap Background</button>
+          <div class="bg-swap-loading" id="bgSwapLoading">
+            <div class="bg-swap-spinner"></div>
+            <div class="bg-swap-loading-text">AI is replacing the background… ~30 sec</div>
+          </div>
+        </div>
+        <!-- Free: locked teaser -->
+        <div class="bg-swap-locked" id="bgSwapLocked">
+          <div class="bsl-icon">🌅</div>
+          <div class="bsl-text">
+            <strong>AI Background Swap</strong>
+            <span>Place yourself anywhere — Paris, Maldives, Space &amp; 27 more.<br>Free: 1/day · <a href="pricing.html">Premium: 5/day →</a></span>
+          </div>
+        </div>
+        <!-- Result panel (shown after successful swap) -->
+        <div class="bg-result-panel" id="bgResultPanel">
+          <div class="bg-result-head">
+            <span>✅ Background Swapped!</span>
+            <div class="bg-result-actions">
+              <button class="bg-result-btn" onclick="downloadSwappedBg()">⬇️ Download</button>
+              <button class="bg-result-btn bg-result-btn-secondary" onclick="useBgAsPhoto()">📸 Use as Photo</button>
+              <button class="bg-result-btn bg-result-btn-secondary" onclick="closeBgResult()">✕</button>
+            </div>
+          </div>
+          <div class="bg-ba-wrap">
+            <div class="bg-ba-before">
+              <img id="bgBaBefore" class="bg-ba-img" alt="Original">
+              <span class="bg-ba-label">ORIGINAL</span>
+            </div>
+            <div class="bg-ba-after">
+              <img id="bgBaAfter" class="bg-ba-img" alt="New Background">
+              <span class="bg-ba-label">AI SWAPPED ✦</span>
+            </div>
+          </div>
+        </div>
       </div>
 
       <!-- Selectors -->
@@ -1251,6 +1493,7 @@
       showGenLocked(false);
     }
     updateBaCta(user.plan);
+    if (document.getElementById('bgSwapWrap').classList.contains('active')) initBgSwapUI();
   }
 
   function clearAuth() {
@@ -1261,6 +1504,7 @@
     document.getElementById('navUser').style.display = 'none';
     document.getElementById('navTools').style.display = 'none';
     document.getElementById('usagePill').style.display = 'flex';
+    if (document.getElementById('bgSwapWrap').classList.contains('active')) initBgSwapUI();
   }
 
   async function doLogout() {
@@ -1326,6 +1570,10 @@
       preTransformB64 = null;
       document.getElementById('undoTransformBtn').style.display = 'none';
       document.querySelectorAll('.tg-btn').forEach(b => b.classList.remove('active'));
+      // Show AI Background Swap section
+      document.getElementById('bgSwapWrap').classList.add('active');
+      closeBgResult();
+      initBgSwapUI();
     };
     reader.readAsDataURL(file);
   }
@@ -2265,6 +2513,133 @@
   function updateBaCta(plan) {
     const cta = document.getElementById('baCta');
     if (cta) cta.style.display = (plan === 'premium' || plan === 'teams') ? 'none' : '';
+  }
+
+  // ── AI Background Swap ──────────────────────────────────────────
+  let selectedBgPrompt = null;
+  let swappedImageBase64 = null;
+
+  function initBgSwapUI() {
+    const user = currentUser;
+    const isPrem = user && (user.plan === 'premium' || user.plan === 'teams');
+    document.getElementById('bgSwapPanel').style.display  = isPrem ? '' : 'none';
+    document.getElementById('bgSwapLocked').style.display = isPrem ? 'none' : '';
+    if (isPrem) refreshBgSwapCtr();
+  }
+
+  async function refreshBgSwapCtr() {
+    if (!authToken) return;
+    try {
+      const r = await fetch('api/bg-swap.php', {
+        headers: { 'Authorization': 'Bearer ' + authToken }
+      });
+      const d = await r.json();
+      if (d.limit) {
+        document.getElementById('bgSwapCtr').textContent = d.used + '/' + d.limit + ' today';
+      }
+    } catch(e) {}
+  }
+
+  function switchBgTab(cat, btn) {
+    document.querySelectorAll('.bg-tab').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.bg-cat').forEach(c => c.style.display = 'none');
+    const el = document.getElementById('bgCat-' + cat);
+    if (el) el.style.display = 'flex';
+  }
+
+  function selectBgPreset(prompt, btn) {
+    document.querySelectorAll('.bg-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    selectedBgPrompt = prompt;
+    document.getElementById('bgCustomInput').value = '';
+  }
+
+  function clearBgPresetSelection() {
+    document.querySelectorAll('.bg-btn').forEach(b => b.classList.remove('selected'));
+    selectedBgPrompt = null;
+  }
+
+  async function doRealBgSwap() {
+    if (!authToken) {
+      alert('Please sign in to use AI Background Swap.');
+      return;
+    }
+    if (!currentImageBase64) {
+      alert('Please upload a photo first.');
+      return;
+    }
+    const customVal = (document.getElementById('bgCustomInput').value || '').trim();
+    const bgPrompt = customVal || selectedBgPrompt;
+    if (!bgPrompt) {
+      alert('Please select a background preset or describe your own background.');
+      return;
+    }
+    const btn = document.getElementById('bgSwapBtn');
+    const loading = document.getElementById('bgSwapLoading');
+    btn.style.display = 'none';
+    loading.classList.add('active');
+    document.getElementById('bgResultPanel').classList.remove('active');
+    try {
+      const res = await fetch('api/bg-swap.php', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + authToken
+        },
+        body: JSON.stringify({ image_base64: currentImageBase64, bg_prompt: bgPrompt })
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        if (data.error === 'daily_limit_reached') {
+          const planLabel = data.is_prem ? 'Premium' : 'Free';
+          alert('Daily limit reached (' + data.limit + ' swaps for ' + planLabel + ' plan). Try again tomorrow!');
+        } else {
+          alert(data.error || 'Something went wrong. Please try again.');
+        }
+        return;
+      }
+      if (data.success) {
+        swappedImageBase64 = data.image_base64;
+        document.getElementById('bgBaBefore').src = 'data:image/png;base64,' + originalImageBase64;
+        document.getElementById('bgBaAfter').src  = 'data:image/png;base64,' + swappedImageBase64;
+        document.getElementById('bgResultPanel').classList.add('active');
+        document.getElementById('bgSwapCtr').textContent = data.used + '/' + data.limit + ' today';
+        document.getElementById('bgResultPanel').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+    } catch(e) {
+      alert('Network error. Please check your connection and try again.');
+    } finally {
+      loading.classList.remove('active');
+      btn.style.display = '';
+    }
+  }
+
+  function downloadSwappedBg() {
+    if (!swappedImageBase64) return;
+    const a = document.createElement('a');
+    a.href = 'data:image/png;base64,' + swappedImageBase64;
+    a.download = 'snapcaption-bg-swap.png';
+    a.click();
+  }
+
+  function useBgAsPhoto() {
+    if (!swappedImageBase64) return;
+    currentImageBase64 = swappedImageBase64;
+    originalImageBase64 = swappedImageBase64;
+    document.getElementById('photoPreview').src = 'data:image/png;base64,' + swappedImageBase64;
+    uploadZone.classList.add('has-photo');
+    closeBgResult();
+  }
+
+  function closeBgResult() {
+    const panel = document.getElementById('bgResultPanel');
+    if (panel) panel.classList.remove('active');
+    swappedImageBase64 = null;
+    document.querySelectorAll('.bg-btn').forEach(b => b.classList.remove('selected'));
+    selectedBgPrompt = null;
+    const ci = document.getElementById('bgCustomInput');
+    if (ci) ci.value = '';
   }
 </script>
 
