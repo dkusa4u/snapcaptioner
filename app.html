@@ -1353,6 +1353,187 @@
     border-top-color: var(--grad2); border-radius: 50%;
     animation: spin .8s linear infinite;
   }
+
+  /* ═══════════════════════════════════════════════════════════
+     MOBILE-RESPONSIVE SYSTEM  (< 768px and < 480px)
+  ═══════════════════════════════════════════════════════════ */
+
+  /* ── Hamburger menu button ── */
+  .ham-btn {
+    display: none;
+    background: rgba(255,255,255,.07); border: 1px solid var(--border);
+    color: var(--text); border-radius: 8px;
+    width: 36px; height: 36px;
+    align-items: center; justify-content: center;
+    font-size: 1.1rem; cursor: pointer; flex-shrink: 0;
+  }
+
+  /* ── Mobile nav drawer ── */
+  .mobile-drawer {
+    display: none;
+    position: fixed; top: 56px; left: 0; right: 0; bottom: 0;
+    background: rgba(9,9,15,.97); z-index: 49;
+    flex-direction: column; padding: 20px 16px; gap: 10px;
+    overflow-y: auto;
+  }
+  .mobile-drawer.open { display: flex; }
+  .mob-nav-link {
+    display: flex; align-items: center; gap: 10px;
+    padding: 14px 16px; border-radius: 12px;
+    background: rgba(255,255,255,.04); border: 1px solid var(--border);
+    color: var(--text); font-size: .92rem; font-weight: 600;
+    text-decoration: none; cursor: pointer;
+  }
+  .mob-nav-link:hover, .mob-nav-link.active { background: rgba(168,85,247,.12); border-color: rgba(168,85,247,.3); color: var(--grad2); }
+  .mob-nav-link button { background: none; border: none; color: inherit; font: inherit; cursor: pointer; width: 100%; text-align: left; display: flex; align-items: center; gap: 10px; }
+  .mob-nav-sep { height: 1px; background: var(--border); margin: 6px 0; }
+  .mob-nav-plan { font-size: .72rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .07em; padding: 4px 0 2px 2px; }
+
+  /* ── Bottom toolbar (mobile only, sticky) ── */
+  .mobile-bottom-bar {
+    display: none;
+    position: fixed; bottom: 0; left: 0; right: 0;
+    background: rgba(13,13,20,.97); border-top: 1px solid var(--border);
+    padding: 10px 16px 14px;
+    z-index: 100;
+  }
+  .mobile-generate-bar {
+    display: flex; gap: 8px; align-items: center;
+  }
+  .mob-gen-btn {
+    flex: 1; padding: 13px; border-radius: 12px; border: none; cursor: pointer;
+    background: linear-gradient(135deg,#7c3aed,#ec4899);
+    color: #fff; font-family: inherit; font-size: .95rem; font-weight: 800;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
+  .mob-gen-btn:disabled { opacity: .4; cursor: not-allowed; }
+  .mob-gen-btn .spinner {
+    width: 16px; height: 16px; border-radius: 50%;
+    border: 2px solid rgba(255,255,255,.3); border-top-color: #fff;
+    animation: spin .7s linear infinite; display: none;
+  }
+
+  /* ─────────────────────────────────────────────────────────
+     @ 768px — tablet / small laptop breakpoint
+  ───────────────────────────────────────────────────────── */
+  @media (max-width: 768px) {
+    /* Nav: hide desktop right cluster, show hamburger */
+    #navRight { display: none !important; }
+    .ham-btn { display: flex; }
+
+    /* Bottom sticky generate */
+    .mobile-bottom-bar { display: block; }
+    /* Add padding so content isn't buried under bottom bar */
+    body { padding-bottom: 76px; }
+
+    /* Modals go full-screen */
+    .hist-modal,
+    .rp-modal,
+    .vs-modal {
+      width: 100% !important;
+      max-width: 100% !important;
+      height: 100dvh !important;
+      max-height: 100dvh !important;
+      border-radius: 0 !important;
+      margin: 0 !important;
+    }
+    .hist-overlay,
+    .rp-overlay,
+    .vs-overlay {
+      padding: 0 !important;
+      align-items: stretch !important;
+    }
+
+    /* Keep desktop generate button but hide it */
+    .gen-btn { display: none; }
+
+    /* Upload zone — slightly shorter */
+    .upload-zone { min-height: 220px; }
+  }
+
+  /* ─────────────────────────────────────────────────────────
+     @ 480px — phone breakpoint
+  ───────────────────────────────────────────────────────── */
+  @media (max-width: 480px) {
+    /* Tighter layout */
+    .app-wrap { padding: 10px 10px 20px; gap: 12px; }
+
+    /* Selector grid: 1 column on tiny screens */
+    .sel-row { grid-template-columns: 1fr; }
+
+    /* Platform tabs: smaller text, scroll */
+    .platform-tabs { gap: 4px; overflow-x: auto; flex-wrap: nowrap; padding-bottom: 4px; }
+    .platform-tabs::-webkit-scrollbar { display: none; }
+    .plat-tab { padding: 7px 11px; font-size: .78rem; white-space: nowrap; flex-shrink: 0; }
+
+    /* Caption actions: bigger tap targets */
+    .cap-btn, .tts-btn, .schedule-btn {
+      padding: 8px 14px;
+      font-size: .82rem;
+      min-height: 36px;
+    }
+
+    /* Before/after block: stack on very small */
+    .ba-row { grid-template-columns: 1fr; }
+
+    /* Hash chips: bigger tap area */
+    .hash-chip { padding: 7px 13px; font-size: .82rem; }
+
+    /* Hashtag action buttons */
+    .hash-action-btn { padding: 8px 14px; min-height: 38px; }
+
+    /* Extra cards: single column */
+    .extras-row { grid-template-columns: 1fr; }
+
+    /* Panel heads: compress */
+    .panel-head { padding: 12px 14px; }
+
+    /* Caption items: tighter */
+    .caption-item { padding: 12px 12px; }
+
+    /* Repurpose / Video script options grids */
+    .rp-opts { grid-template-columns: 1fr !important; }
+    .vs-row   { grid-template-columns: 1fr !important; }
+
+    /* Platform tabs on rp modal: scroll */
+    .rp-platform-tabs { overflow-x: auto; flex-wrap: nowrap; }
+    .rp-plat-tab { flex-shrink: 0; }
+
+    /* Duration tabs: scroll */
+    .vs-dur-tabs { overflow-x: auto; flex-wrap: nowrap; }
+    .vs-dur-tab { flex-shrink: 0; }
+
+    /* History modal card grid: 1 col */
+    .hist-cards { grid-template-columns: 1fr; }
+
+    /* Nav logo: smaller */
+    .nav-logo { font-size: .88rem; }
+
+    /* Hashtag header: stack */
+    .hash-header { flex-direction: column; align-items: flex-start; gap: 6px; }
+    .hash-counts { margin-left: 0; }
+
+    /* Captions header: wrap */
+    .captions-header { flex-wrap: wrap; gap: 6px; }
+
+    /* Upgrade banner: stack */
+    .upgrade-banner { flex-direction: column; gap: 8px; align-items: flex-start; }
+    .upgrade-banner a { align-self: stretch; text-align: center; }
+
+    /* Engagement meter: wrap gracefully */
+    .eng-meter { flex-wrap: wrap; gap: 5px; }
+    .eng-label { min-width: auto; }
+  }
+
+  /* ─────────────────────────────────────────────────────────
+     @ 380px — small phone (iPhone SE, etc.)
+  ───────────────────────────────────────────────────────── */
+  @media (max-width: 380px) {
+    .app-wrap { padding: 8px 8px 16px; }
+    .panel-head-title { font-size: .82rem; }
+    select, .context-input { font-size: .85rem; padding: 9px 28px 9px 11px; }
+    .mob-gen-btn { font-size: .88rem; padding: 12px; }
+  }
 </style>
 </head>
 <body>
@@ -1369,12 +1550,39 @@
   <button class="pwa-close" id="pwaDismissBtn" aria-label="Dismiss">×</button>
 </div>
 
+<!-- MOBILE DRAWER -->
+<div class="mobile-drawer" id="mobileDrawer">
+  <span class="mob-nav-plan">Tools</span>
+  <div class="mob-nav-link" id="mobHistBtn"><button onclick="closeMobileDrawer();openHistory()">📚 Caption History</button></div>
+  <div class="mob-nav-link" id="mobRepurposeBtn"><button onclick="closeMobileDrawer();openRepurpose()">🔗 Repurpose Content</button></div>
+  <div class="mob-nav-link" id="mobScriptBtn"><button onclick="closeMobileDrawer();openVideoScript()">🎬 Reel Script</button></div>
+  <a class="mob-nav-link" href="tracker.html">📊 Caption Tracker</a>
+  <a class="mob-nav-link" href="calendar.html">📅 Content Calendar</a>
+  <div class="mob-nav-sep"></div>
+  <span class="mob-nav-plan">Account</span>
+  <div class="mob-nav-link" id="mobUpgradeRow" style="display:none;"><a href="pricing.html" style="color:inherit;text-decoration:none;display:flex;align-items:center;gap:10px;width:100%;">⚡ Upgrade Plan</a></div>
+  <div class="mob-nav-link" id="mobLogoutRow" style="display:none;"><button onclick="closeMobileDrawer();doLogout()">🚪 Sign Out</button></div>
+  <a class="mob-nav-link" href="login.html" id="mobLoginRow">🔑 Sign In</a>
+</div>
+
+<!-- MOBILE BOTTOM BAR -->
+<div class="mobile-bottom-bar" id="mobileBottomBar">
+  <div class="mobile-generate-bar">
+    <button class="mob-gen-btn" id="mobGenBtn" onclick="generateCaptions()">
+      <span class="spinner" id="mobGenSpinner"></span>
+      <span id="mobGenBtnText">✨ Generate Captions</span>
+    </button>
+  </div>
+</div>
+
 <!-- NAV -->
 <nav>
   <a href="index.html" class="nav-logo">
     <div class="logo-icon">📸</div>
     SnapCaption AI
   </a>
+  <!-- Hamburger (mobile only) -->
+  <button class="ham-btn" id="hamBtn" onclick="toggleMobileDrawer()" aria-label="Menu">☰</button>
   <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;" id="navRight">
     <!-- Tool links (premium) -->
     <div id="navTools" style="display:none;align-items:center;gap:4px;">
@@ -1396,7 +1604,7 @@
     <!-- Guest: show login + upgrade -->
     <div id="navGuest" style="display:flex;align-items:center;gap:8px;">
       <a href="login.html" style="font-size:.82rem;color:var(--muted2);text-decoration:none;">Sign in</a>
-      <a href="pricing.html" class="upgrade-link">Upgrade $7</a>
+      <a href="pricing.html" class="upgrade-link">Upgrade $4.99</a>
     </div>
     <!-- Logged-in: show user badge + logout -->
     <div id="navUser" style="display:none;align-items:center;gap:8px;">
@@ -3906,6 +4114,71 @@
       empty.style.display = 'block';
     }
   }
+
+  /* ═══════════════════════════════════════════════════
+     MOBILE DRAWER / HAMBURGER
+  ═══════════════════════════════════════════════════ */
+  function toggleMobileDrawer() {
+    const drawer = document.getElementById('mobileDrawer');
+    const btn    = document.getElementById('hamBtn');
+    if (!drawer) return;
+    const isOpen = drawer.classList.toggle('open');
+    btn.textContent = isOpen ? '✕' : '☰';
+    btn.setAttribute('aria-expanded', isOpen);
+    document.body.style.overflow = isOpen ? 'hidden' : '';
+  }
+  function closeMobileDrawer() {
+    const drawer = document.getElementById('mobileDrawer');
+    const btn    = document.getElementById('hamBtn');
+    if (!drawer) return;
+    drawer.classList.remove('open');
+    if (btn) { btn.textContent = '☰'; btn.setAttribute('aria-expanded', false); }
+    document.body.style.overflow = '';
+  }
+
+  // Close drawer on ESC or outside tap
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeMobileDrawer(); });
+
+  // Mirror mobile generate button state to main gen button
+  function _syncMobGenBtn() {
+    const main = document.getElementById('genBtn');
+    const mob  = document.getElementById('mobGenBtn');
+    const mobSpinner = document.getElementById('mobGenSpinner');
+    const mobText    = document.getElementById('mobGenBtnText');
+    if (!mob || !main) return;
+    const disabled = main.disabled;
+    mob.disabled = disabled;
+    if (mobSpinner) mobSpinner.style.display = disabled ? 'block' : 'none';
+    if (mobText)    mobText.textContent = disabled ? 'Generating…' : '✨ Generate Captions';
+  }
+
+  // Update mobile drawer auth state when user logs in/out
+  function _updateMobDrawerAuth() {
+    const loggedIn = !!currentToken;
+    const loginRow   = document.getElementById('mobLoginRow');
+    const logoutRow  = document.getElementById('mobLogoutRow');
+    const upgradeRow = document.getElementById('mobUpgradeRow');
+    if (loginRow)   loginRow.style.display   = loggedIn ? 'none' : '';
+    if (logoutRow)  logoutRow.style.display  = loggedIn ? '' : 'none';
+    if (upgradeRow) upgradeRow.style.display = loggedIn ? '' : 'none';
+    // Show/hide premium tool rows
+    const isPremium = currentUser && ['premium','teams','pro','starter'].includes(currentUser.plan);
+    ['mobHistBtn','mobRepurposeBtn','mobScriptBtn'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.style.opacity = isPremium ? '1' : '.55';
+    });
+  }
+
+  // Hook into the existing auth flow
+  document.addEventListener('snapcap:authReady', () => {
+    _updateMobDrawerAuth();
+    // Observe genBtn disabled state for mobile sync
+    const genBtn = document.getElementById('genBtn');
+    if (genBtn) {
+      new MutationObserver(() => _syncMobGenBtn())
+        .observe(genBtn, { attributes: true, attributeFilter: ['disabled'] });
+    }
+  });
 </script>
 
 <!-- ── PWA Service Worker + Install Prompt ── -->
