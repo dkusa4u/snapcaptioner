@@ -629,11 +629,13 @@
           }
         } catch(e) {}
       }
-      // Fallback if Stripe call fails
+      // Fallback if Stripe call fails — go to pricing page or app
       goBtn.textContent = `Continue to Checkout →`;
       goBtn.style.opacity = '1';
       goBtn.style.pointerEvents = 'auto';
-      goBtn.href = redirect || `app.html`;
+      // Never send to checkout.html (doesn't exist); pricing.html is the safe fallback
+      const safeFallback = (redirect && !redirect.includes('checkout.html')) ? redirect : `pricing.html?upgrade=${plan}`;
+      goBtn.href = safeFallback;
     } else {
       document.getElementById('success-msg').textContent =
         `Account created for ${email}. You can start generating captions right away — no verification needed.`;

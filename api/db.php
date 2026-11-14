@@ -16,7 +16,8 @@ if (!file_exists(__DIR__ . '/config.php')) {
 require_once __DIR__ . '/config.php';
 
 function getDB(): PDO {
-    static $pdo = null;
+    static $pdo         = null;
+    static $initialized = false;
     if ($pdo) return $pdo;
 
     $dsn = 'mysql:host=' . DB_HOST . ';dbname=' . DB_NAME . ';charset=utf8mb4';
@@ -25,6 +26,16 @@ function getDB(): PDO {
         PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
         PDO::ATTR_EMULATE_PREPARES   => false,
     ]);
+
+    // Auto-create tables on first connection so setup.php never needs to be run manually.
+    // initDB() calls getDB() which returns $pdo immediately (already set), so no recursion.
+    if (!$initialized) {
+        $initialized = true;
+        try { initDB(); } catch (PDOException $e) {
+            error_log('db.php auto-init failed: ' . $e->getMessage());
+        }
+    }
+
     return $pdo;
 }
 
@@ -92,15 +103,20 @@ function tokenAuth(): ?array {
     if (!preg_match('/^Bearer\s+(\S+)$/i', $bearer, $m)) return null;
     $token = $m[1];
 
-    $db   = getDB();
-    $stmt = $db->prepare("
-        SELECT u.id, u.first_name, u.last_name, u.email, u.plan, u.brand_voice
-        FROM tokens t JOIN users u ON t.user_id = u.id
-        WHERE t.token = ? AND t.expires_at > NOW()
-        LIMIT 1
-    ");
-    $stmt->execute([$token]);
-    return $stmt->fetch() ?: null;
+    try {
+        $db   = getDB();
+        $stmt = $db->prepare("
+            SELECT u.id, u.first_name, u.last_name, u.email, u.plan, u.brand_voice
+            FROM tokens t JOIN users u ON t.user_id = u.id
+            WHERE t.token = ? AND t.expires_at > NOW()
+            LIMIT 1
+        ");
+        $stmt->execute([$token]);
+        return $stmt->fetch() ?: null;
+    } catch (PDOException $e) {
+        error_log('tokenAuth failed: ' . $e->getMessage());
+        return null;
+    }
 }
 
 function json_out(array $data, int $status = 200): never {

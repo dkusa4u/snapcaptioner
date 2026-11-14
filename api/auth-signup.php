@@ -53,10 +53,11 @@ try {
     $tok = $db->prepare('INSERT INTO tokens (user_id, token, expires_at) VALUES (?,?,?)');
     $tok->execute([$userId, $rawToken, $expires]);
 
-    // Redirect logic
+    // Redirect logic — send paid-plan signups to pricing page for Stripe checkout.
+    // checkout.html does not exist; pricing.html shows the upgrade CTA.
     $redirect = null;
-    if ($plan === 'premium') $redirect = 'checkout.html?plan=premium';
-    if ($plan === 'teams')   $redirect = 'checkout.html?plan=teams';
+    if ($plan === 'premium') $redirect = 'pricing.html?upgrade=premium';
+    if ($plan === 'teams')   $redirect = 'pricing.html?upgrade=teams';
 
     json_out([
         'success'  => true,
