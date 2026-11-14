@@ -6,465 +6,720 @@
 <title>Content Calendar — SnapCaption AI</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0f0f13;color:#e8e8f0;min-height:100vh}
+:root{
+  --bg:#0f0f13;--card:#1a1a24;--card2:#1e1e2c;--border:rgba(255,255,255,.08);
+  --text:#e8e8f0;--muted:#78788a;--muted2:#a0a0b8;
+  --grad1:#a855f7;--grad2:#38bdf8;
+  --ig:#a855f7;--tt:#e2e2e2;--tw:#38bdf8;--li:#0ea5e9;--fb:#60a5fa;--yt:#ef4444;--pi:#f43f5e;--ot:#fb923c;
+}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
 
-/* Nav */
-.nav{display:flex;align-items:center;gap:12px;padding:14px 20px;background:#16161e;border-bottom:1px solid rgba(255,255,255,.07)}
-.nav-logo{font-weight:800;font-size:1.1rem;background:linear-gradient(135deg,#a855f7,#38bdf8);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.nav-links{display:flex;gap:8px;margin-left:auto}
-.nav-link{color:#a0a0b8;font-size:.82rem;text-decoration:none;padding:6px 12px;border-radius:8px;transition:all .2s}
-.nav-link:hover,.nav-link.active{background:rgba(168,85,247,.15);color:#c084fc}
+/* ── NAV ── */
+.nav{display:flex;align-items:center;gap:12px;padding:14px 20px;background:#16161e;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:200}
+.nav-logo{font-weight:800;font-size:1.05rem;background:linear-gradient(135deg,var(--grad1),var(--grad2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;text-decoration:none}
+.nav-links{display:flex;gap:6px;margin-left:auto;flex-wrap:wrap}
+.nav-link{color:var(--muted2);font-size:.8rem;text-decoration:none;padding:5px 11px;border-radius:8px;background:rgba(255,255,255,.04);border:1px solid var(--border)}
+.nav-link:hover,.nav-link.active{background:rgba(168,85,247,.15);color:#c084fc;border-color:rgba(168,85,247,.3)}
 
-/* Top bar */
-.top-bar{display:flex;align-items:center;gap:12px;padding:16px 20px;max-width:860px;margin:0 auto}
-.month-nav{display:flex;align-items:center;gap:10px}
-.month-btn{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);color:#e8e8f0;width:32px;height:32px;border-radius:8px;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;transition:all .2s}
+/* ── TOOLBAR ── */
+.toolbar{display:flex;align-items:center;gap:10px;padding:16px 20px;max-width:1100px;margin:0 auto;flex-wrap:wrap}
+.month-nav{display:flex;align-items:center;gap:8px}
+.month-btn{background:var(--card);border:1px solid var(--border);color:var(--text);width:34px;height:34px;border-radius:8px;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center}
 .month-btn:hover{background:rgba(168,85,247,.2)}
-.month-label{font-size:1.1rem;font-weight:700;min-width:150px;text-align:center}
-.add-btn{margin-left:auto;padding:8px 18px;background:linear-gradient(135deg,#a855f7,#38bdf8);border:none;border-radius:10px;color:#fff;font-weight:700;font-size:.85rem;cursor:pointer;transition:opacity .2s}
-.add-btn:hover{opacity:.85}
+.month-label{font-size:1.1rem;font-weight:700;min-width:160px;text-align:center}
+.today-btn{padding:7px 14px;background:var(--card);border:1px solid var(--border);border-radius:8px;color:var(--muted2);font-size:.82rem;cursor:pointer}
+.today-btn:hover{background:rgba(255,255,255,.08);color:var(--text)}
+.view-tabs{display:flex;gap:4px;margin-left:auto}
+.view-tab{padding:7px 14px;border-radius:8px;font-size:.82rem;cursor:pointer;background:var(--card);border:1px solid var(--border);color:var(--muted2)}
+.view-tab.active{background:linear-gradient(135deg,var(--grad1),var(--grad2));border-color:transparent;color:#fff;font-weight:600}
+.add-post-btn{padding:8px 18px;background:linear-gradient(135deg,var(--grad1),var(--grad2));border:none;border-radius:10px;color:#fff;font-weight:700;font-size:.85rem;cursor:pointer;display:flex;align-items:center;gap:6px}
+.add-post-btn:hover{opacity:.88}
 
-/* Platform legend */
-.legend{display:flex;gap:10px;padding:0 20px 12px;max-width:860px;margin:0 auto;flex-wrap:wrap}
-.leg-item{display:flex;align-items:center;gap:5px;font-size:.74rem;color:#a0a0b8}
+/* ── PLATFORM LEGEND ── */
+.legend{display:flex;gap:10px;padding:0 20px 12px;max-width:1100px;margin:0 auto;flex-wrap:wrap}
+.leg-item{display:flex;align-items:center;gap:5px;font-size:.73rem;color:var(--muted2);padding:3px 8px;border-radius:50px;background:rgba(255,255,255,.04);border:1px solid var(--border)}
 .leg-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
 
-/* Calendar grid */
-.cal-wrap{padding:0 20px 40px;max-width:860px;margin:0 auto}
-.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:1px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.06);border-radius:14px;overflow:hidden}
-.cal-header{background:#16161e;padding:8px 4px;text-align:center;font-size:.72rem;font-weight:700;color:#78788a;text-transform:uppercase;letter-spacing:.06em}
-.cal-day{background:#1a1a24;min-height:80px;padding:6px;cursor:pointer;transition:background .15s;position:relative}
-.cal-day:hover{background:#1e1e2c}
-.cal-day.today .day-num{background:linear-gradient(135deg,#a855f7,#38bdf8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-weight:800}
-.cal-day.other-month .day-num{color:#3a3a50}
-.cal-day.selected{background:#1e1e2e;outline:2px solid rgba(168,85,247,.4)}
-.day-num{font-size:.8rem;color:#a0a0b8;margin-bottom:4px}
-.day-dots{display:flex;flex-wrap:wrap;gap:3px}
-.day-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+/* ── CALENDAR GRID ── */
+.cal-wrap{padding:0 20px 60px;max-width:1100px;margin:0 auto}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:1px;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:16px;overflow:hidden}
+.cal-header-cell{background:#16161e;padding:9px 4px;text-align:center;font-size:.7rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.07em}
+.cal-day{
+  background:var(--card);min-height:95px;padding:7px 6px;cursor:pointer;
+  transition:background .15s;position:relative;vertical-align:top;
+}
+.cal-day:hover{background:var(--card2)}
+.cal-day.today{outline:2px solid rgba(168,85,247,.5);outline-offset:-2px}
+.cal-day.other-month{background:#141418}
+.cal-day.other-month .day-num{color:#2c2c40}
+.cal-day.selected{background:rgba(168,85,247,.1)}
+.day-num{
+  font-size:.8rem;font-weight:600;color:var(--muted2);display:inline-flex;
+  align-items:center;justify-content:center;
+  width:22px;height:22px;border-radius:50%;margin-bottom:4px;
+}
+.cal-day.today .day-num{background:linear-gradient(135deg,var(--grad1),var(--grad2));color:#fff;font-weight:800}
+.day-posts{display:flex;flex-direction:column;gap:3px;overflow:hidden}
+.day-post-pill{
+  display:flex;align-items:center;gap:4px;padding:2px 6px;border-radius:5px;
+  font-size:.7rem;line-height:1.3;cursor:pointer;overflow:hidden;
+  white-space:nowrap;text-overflow:ellipsis;
+  background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.08);
+}
+.day-post-pill:hover{opacity:.8}
+.pill-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.pill-title{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;font-size:.68rem}
+.day-more{font-size:.65rem;color:var(--muted);text-align:center;margin-top:2px;cursor:pointer}
+.day-more:hover{color:var(--grad2)}
 
 /* Platform colors */
-.c-instagram{background:#a855f7}
-.c-tiktok   {background:#e2e2e2}
-.c-twitter  {background:#38bdf8}
-.c-linkedin {background:#0ea5e9}
-.c-facebook {background:#60a5fa}
-.c-other    {background:#fb923c}
+.pc-instagram{background:var(--ig)}
+.pc-tiktok   {background:var(--tt)}
+.pc-twitter  {background:var(--tw)}
+.pc-linkedin {background:var(--li)}
+.pc-facebook {background:var(--fb)}
+.pc-youtube  {background:var(--yt)}
+.pc-pinterest{background:var(--pi)}
+.pc-other    {background:var(--ot)}
+.pt-instagram{color:var(--ig)}
+.pt-tiktok   {color:var(--tt)}
+.pt-twitter  {color:var(--tw)}
+.pt-linkedin {color:var(--li)}
+.pt-facebook {color:var(--fb)}
+.pt-youtube  {color:var(--yt)}
+.pt-pinterest{color:var(--pi)}
+.pt-other    {color:var(--ot)}
 
-/* Side panel */
-.panel-wrap{padding:0 20px 40px;max-width:860px;margin:0 auto;display:none}
-.panel{background:#1a1a24;border:1px solid rgba(255,255,255,.08);border-radius:16px;overflow:hidden}
-.panel-head{display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid rgba(255,255,255,.06)}
-.panel-date{font-weight:700;font-size:.95rem}
-.panel-close{margin-left:auto;background:none;border:none;color:#78788a;cursor:pointer;font-size:1.1rem;line-height:1}
-.panel-posts{padding:12px 16px;display:flex;flex-direction:column;gap:8px}
-.post-item{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:10px;padding:10px 12px;display:flex;gap:10px;align-items:flex-start}
-.post-dot-col{padding-top:3px}
-.post-info{flex:1;min-width:0}
-.post-title{font-size:.85rem;font-weight:600;color:#e8e8f0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.post-meta{display:flex;gap:8px;margin-top:3px;flex-wrap:wrap}
-.post-time{font-size:.72rem;color:#78788a}
-.post-status{font-size:.7rem;padding:2px 7px;border-radius:6px;font-weight:600}
-.s-idea  {background:rgba(251,146,60,.15);color:#fb923c}
-.s-draft {background:rgba(56,189,248,.15);color:#38bdf8}
-.s-ready {background:rgba(168,85,247,.15);color:#c084fc}
-.s-posted{background:rgba(74,222,128,.15);color:#4ade80}
-.post-actions{display:flex;gap:6px;margin-top:6px}
-.post-action-btn{font-size:.72rem;padding:3px 8px;border-radius:6px;border:1px solid rgba(255,255,255,.1);background:transparent;color:#a0a0b8;cursor:pointer;transition:all .2s}
-.post-action-btn:hover{background:rgba(255,255,255,.08)}
-.post-action-btn.del{color:#f87171;border-color:rgba(248,113,113,.2)}
-.post-action-btn.del:hover{background:rgba(248,113,113,.1)}
-.empty-day{text-align:center;padding:20px;color:#50506a;font-size:.82rem}
+/* Status pill styles */
+.status-idea   {border-color:rgba(168,85,247,.3)!important;color:var(--muted2)}
+.status-draft  {border-color:rgba(56,189,248,.3)!important;color:#38bdf8}
+.status-ready  {border-color:rgba(16,185,129,.3)!important;color:#34d399}
+.status-posted {opacity:.5}
 
-/* Modal */
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);display:flex;align-items:center;justify-content:center;z-index:1000;padding:16px;display:none}
+/* ── LIST VIEW ── */
+.list-view{display:none;flex-direction:column;gap:10px;padding:0 20px 60px;max-width:1100px;margin:0 auto}
+.list-view.active{display:flex}
+.list-date-group{}
+.list-date-label{font-size:.78rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;padding:10px 0 6px;border-bottom:1px solid var(--border);margin-bottom:6px}
+.list-post-card{
+  display:flex;align-items:center;gap:12px;padding:12px 14px;
+  background:var(--card);border:1px solid var(--border);border-radius:12px;cursor:pointer;
+}
+.list-post-card:hover{background:var(--card2)}
+.lpc-platform{width:7px;height:7px;border-radius:50%;flex-shrink:0;align-self:stretch;border-radius:4px;width:4px}
+.lpc-time{font-size:.78rem;color:var(--muted);min-width:50px}
+.lpc-title{font-size:.88rem;font-weight:600;flex:1}
+.lpc-status{font-size:.72rem;padding:3px 8px;border-radius:50px;border:1px solid;font-weight:600}
+.lpc-plat-badge{font-size:.72rem;padding:2px 8px;border-radius:50px;background:rgba(255,255,255,.07);color:var(--muted2)}
+
+/* ── POST DETAIL MODAL ── */
+.modal-overlay{
+  display:none;position:fixed;inset:0;background:rgba(0,0,0,.72);
+  z-index:500;align-items:center;justify-content:center;padding:20px;
+}
 .modal-overlay.open{display:flex}
-.modal{background:#1a1a24;border:1px solid rgba(255,255,255,.1);border-radius:20px;width:100%;max-width:440px;overflow:hidden}
-.modal-head{display:flex;align-items:center;padding:16px 18px;border-bottom:1px solid rgba(255,255,255,.07)}
-.modal-title{font-weight:700;font-size:1rem}
-.modal-close{margin-left:auto;background:none;border:none;color:#78788a;cursor:pointer;font-size:1.2rem}
-.modal-body{padding:18px;display:flex;flex-direction:column;gap:12px}
-.form-group{display:flex;flex-direction:column;gap:5px}
-.form-label{font-size:.78rem;color:#a0a0b8;font-weight:600}
-.form-input,.form-select,.form-textarea{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:9px 12px;color:#e8e8f0;font-size:.85rem;font-family:inherit;width:100%;transition:border-color .2s}
-.form-input:focus,.form-select:focus,.form-textarea:focus{outline:none;border-color:rgba(168,85,247,.5)}
-.form-select option{background:#1a1a24}
+.modal-box{
+  width:100%;max-width:580px;background:var(--card);border:1px solid var(--border);
+  border-radius:20px;overflow:hidden;box-shadow:0 24px 72px rgba(0,0,0,.7);
+  max-height:90vh;overflow-y:auto;
+}
+.modal-head{
+  display:flex;align-items:center;gap:10px;padding:16px 20px;
+  border-bottom:1px solid var(--border);background:rgba(255,255,255,.03);
+  position:sticky;top:0;z-index:1;background:var(--card);
+}
+.modal-title{font-size:.95rem;font-weight:700;flex:1}
+.modal-close{width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,.07);border:1px solid var(--border);color:var(--text);cursor:pointer;font-size:.9rem;display:flex;align-items:center;justify-content:center}
+.modal-close:hover{background:rgba(255,255,255,.14)}
+.modal-body{padding:20px;display:flex;flex-direction:column;gap:14px}
+.form-label{font-size:.78rem;color:var(--muted2);margin-bottom:5px}
+.form-input,.form-select,.form-textarea{
+  width:100%;background:rgba(255,255,255,.06);border:1px solid var(--border);
+  border-radius:8px;padding:10px 12px;color:var(--text);font-size:.88rem;
+  outline:none;box-sizing:border-box;
+}
+.form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--grad2)}
+.form-textarea{resize:vertical;min-height:100px;font-family:inherit}
 .form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.form-textarea{resize:none}
-.modal-foot{padding:12px 18px;border-top:1px solid rgba(255,255,255,.07);display:flex;gap:8px;justify-content:flex-end}
-.btn-cancel{padding:8px 16px;background:transparent;border:1px solid rgba(255,255,255,.1);border-radius:10px;color:#a0a0b8;cursor:pointer;font-size:.85rem}
-.btn-save{padding:8px 20px;background:linear-gradient(135deg,#a855f7,#38bdf8);border:none;border-radius:10px;color:#fff;font-weight:700;cursor:pointer;font-size:.85rem;transition:opacity .2s}
-.btn-save:hover{opacity:.85}
+@media(max-width:480px){.form-row{grid-template-columns:1fr}}
+.status-select-wrap{display:flex;gap:6px;flex-wrap:wrap}
+.status-btn{padding:7px 14px;border-radius:50px;font-size:.8rem;cursor:pointer;background:rgba(255,255,255,.06);border:1px solid var(--border);color:var(--muted2);font-weight:600}
+.status-btn.active-idea   {background:rgba(168,85,247,.2);border-color:var(--grad1);color:#c084fc}
+.status-btn.active-draft  {background:rgba(56,189,248,.15);border-color:var(--grad2);color:#7dd3fc}
+.status-btn.active-ready  {background:rgba(16,185,129,.15);border-color:#10b981;color:#34d399}
+.status-btn.active-posted {background:rgba(107,114,128,.15);border-color:#6b7280;color:var(--muted2)}
+.modal-actions{display:flex;gap:8px;padding:16px 20px;border-top:1px solid var(--border);background:var(--card);position:sticky;bottom:0}
+.save-btn{flex:1;padding:11px;background:linear-gradient(135deg,var(--grad1),var(--grad2));border:none;border-radius:10px;color:#fff;font-weight:700;font-size:.88rem;cursor:pointer}
+.save-btn:hover{opacity:.88}
+.save-btn:disabled{opacity:.45;cursor:default}
+.delete-btn{padding:11px 16px;background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.3);border-radius:10px;color:#f87171;font-weight:600;font-size:.88rem;cursor:pointer}
+.delete-btn:hover{background:rgba(239,68,68,.2)}
 
-/* Upgrade */
-.upgrade-box{background:linear-gradient(135deg,rgba(168,85,247,.15),rgba(56,189,248,.1));border:1px solid rgba(168,85,247,.3);border-radius:20px;padding:30px 20px;text-align:center;max-width:420px;margin:40px auto}
-.upgrade-box h3{font-size:1.1rem;font-weight:700;margin-bottom:8px}
-.upgrade-box p{font-size:.85rem;color:#a0a0b8;margin-bottom:16px}
-.upgrade-btn{padding:10px 24px;background:linear-gradient(135deg,#a855f7,#38bdf8);border:none;border-radius:10px;color:#fff;font-weight:700;cursor:pointer;font-size:.9rem}
+/* ── QUICK-ADD DAY INDICATOR ── */
+.cal-day.drop-target{background:rgba(168,85,247,.15)!important;outline:2px dashed rgba(168,85,247,.5);outline-offset:-2px}
 
-/* Toast */
-.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(80px);background:#1e1e2e;border:1px solid rgba(74,222,128,.3);color:#4ade80;padding:10px 18px;border-radius:10px;font-size:.82rem;transition:transform .3s;z-index:9999}
-.toast.show{transform:translateX(-50%) translateY(0)}
+/* ── EMPTY MONTH ── */
+.empty-month{text-align:center;padding:60px 20px;color:var(--muted);font-size:.9rem;grid-column:span 7}
+
+/* ── TOAST ── */
+.snap-toast{
+  position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(0);
+  background:linear-gradient(135deg,var(--grad1),var(--grad2));
+  color:#fff;font-size:.86rem;font-weight:700;
+  padding:12px 28px;border-radius:50px;
+  box-shadow:0 8px 24px rgba(0,0,0,.5);z-index:9999;
+  animation:toastUp .3s ease,toastFade .3s ease 2.2s forwards;
+}
+@keyframes toastUp{from{transform:translateX(-50%) translateY(20px);opacity:0}to{transform:translateX(-50%) translateY(0);opacity:1}}
+@keyframes toastFade{to{opacity:0;pointer-events:none}}
+
+/* ── SPINNER ── */
+.cal-spinner{
+  display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);
+  z-index:999;align-items:center;justify-content:center;
+}
+.cal-spinner.active{display:flex}
+.spin-ring{width:40px;height:40px;border:3px solid rgba(255,255,255,.12);border-top-color:var(--grad2);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── MOBILE ── */
+@media(max-width:640px){
+  .cal-day{min-height:60px;padding:4px 3px}
+  .day-post-pill{display:none}
+  .day-num{font-size:.75rem}
+  .month-label{min-width:120px;font-size:.95rem}
+  .toolbar{gap:6px}
+  .view-tabs{display:none}
+}
 </style>
 </head>
 <body>
 
+<!-- Nav -->
 <nav class="nav">
-  <span class="nav-logo">📅 SnapCaption</span>
+  <a href="app.html" class="nav-logo">📸 SnapCaption AI</a>
   <div class="nav-links">
-    <a href="app.html"      class="nav-link">✦ Studio</a>
-    <a href="tracker.html"  class="nav-link">📊 Tracker</a>
+    <a href="app.html" class="nav-link">📷 Caption</a>
+    <a href="tracker.html" class="nav-link">📊 Tracker</a>
     <a href="calendar.html" class="nav-link active">📅 Calendar</a>
+    <a href="pricing.html" class="nav-link">⭐ Upgrade</a>
+    <a href="dashboard.html" class="nav-link">👤 Account</a>
   </div>
 </nav>
 
-<div class="top-bar">
+<!-- Spinner -->
+<div class="cal-spinner" id="calSpinner"><div class="spin-ring"></div></div>
+
+<!-- Toolbar -->
+<div class="toolbar">
   <div class="month-nav">
     <button class="month-btn" onclick="changeMonth(-1)">‹</button>
-    <span class="month-label" id="monthLabel">November 2026</span>
+    <span class="month-label" id="monthLabel"></span>
     <button class="month-btn" onclick="changeMonth(1)">›</button>
   </div>
-  <button class="add-btn" onclick="openAddModal()">+ Add Post</button>
+  <button class="today-btn" onclick="goToday()">Today</button>
+  <div class="view-tabs">
+    <button class="view-tab active" id="tabMonth" onclick="switchView('month')">📅 Month</button>
+    <button class="view-tab" id="tabList" onclick="switchView('list')">📋 List</button>
+  </div>
+  <button class="add-post-btn" onclick="openNewPost()">+ New Post</button>
 </div>
 
+<!-- Platform Legend -->
 <div class="legend">
-  <div class="leg-item"><div class="leg-dot c-instagram"></div>Instagram</div>
-  <div class="leg-item"><div class="leg-dot c-tiktok"></div>TikTok</div>
-  <div class="leg-item"><div class="leg-dot c-twitter"></div>Twitter</div>
-  <div class="leg-item"><div class="leg-dot c-linkedin"></div>LinkedIn</div>
-  <div class="leg-item"><div class="leg-dot c-facebook"></div>Facebook</div>
-</div>
-
-<div id="premiumGate" style="display:none">
-  <div class="upgrade-box">
-    <h3>📅 Premium Feature</h3>
-    <p>Content Calendar is included with SnapCaption Premium — plan your posts weeks ahead, track ideas, drafts, and scheduled content across every platform.</p>
-    <button class="upgrade-btn" onclick="location.href='pricing.html'">Upgrade to Premium</button>
+  <div class="leg-item"><div class="leg-dot" style="background:var(--ig)"></div>Instagram</div>
+  <div class="leg-item"><div class="leg-dot" style="background:var(--tt)"></div>TikTok</div>
+  <div class="leg-item"><div class="leg-dot" style="background:var(--tw)"></div>Twitter/X</div>
+  <div class="leg-item"><div class="leg-dot" style="background:var(--li)"></div>LinkedIn</div>
+  <div class="leg-item"><div class="leg-dot" style="background:var(--fb)"></div>Facebook</div>
+  <div class="leg-item"><div class="leg-dot" style="background:var(--yt)"></div>YouTube</div>
+  <div class="leg-item">
+    <div class="leg-dot" style="background:rgba(168,85,247,.4);border:1px solid rgba(168,85,247,.6)"></div>
+    <span>Idea</span>
+  </div>
+  <div class="leg-item">
+    <div class="leg-dot" style="background:rgba(56,189,248,.4);border:1px solid rgba(56,189,248,.6)"></div>
+    <span>Draft</span>
+  </div>
+  <div class="leg-item">
+    <div class="leg-dot" style="background:rgba(16,185,129,.4);border:1px solid rgba(16,185,129,.6)"></div>
+    <span>Ready</span>
   </div>
 </div>
 
-<div id="calContainer">
-  <div class="cal-wrap">
-    <div class="cal-grid" id="calGrid"></div>
-  </div>
-  <div class="panel-wrap" id="panelWrap">
-    <div class="panel">
-      <div class="panel-head">
-        <span class="panel-date" id="panelDate"></span>
-        <button class="panel-close" onclick="closePanel()">✕</button>
-      </div>
-      <div class="panel-posts" id="panelPosts"></div>
-    </div>
-  </div>
+<!-- Month view -->
+<div class="cal-wrap" id="calWrap">
+  <div class="cal-grid" id="calGrid"></div>
 </div>
 
-<!-- Add/Edit Modal -->
-<div class="modal-overlay" id="modalOverlay">
-  <div class="modal">
+<!-- List view -->
+<div class="list-view" id="listView"></div>
+
+<!-- ── POST MODAL ── -->
+<div id="postModal" class="modal-overlay" onclick="if(event.target===this)closeModal()">
+  <div class="modal-box">
     <div class="modal-head">
-      <span class="modal-title" id="modalTitle">Add Post</span>
+      <span style="font-size:1.1rem;" id="modalIcon">📝</span>
+      <div class="modal-title" id="modalTitle">New Post</div>
       <button class="modal-close" onclick="closeModal()">✕</button>
     </div>
     <div class="modal-body">
-      <input type="hidden" id="editId" value="">
-      <div class="form-group">
-        <label class="form-label">Title *</label>
-        <input class="form-input" id="fTitle" type="text" placeholder="e.g. Product launch post">
+      <!-- Title -->
+      <div>
+        <div class="form-label">Title / Topic *</div>
+        <input type="text" id="fTitle" class="form-input" placeholder="e.g. Monday motivation post for Instagram">
       </div>
+      <!-- Platform + Status -->
       <div class="form-row">
-        <div class="form-group">
-          <label class="form-label">Platform</label>
-          <select class="form-select" id="fPlatform">
+        <div>
+          <div class="form-label">Platform</div>
+          <select id="fPlatform" class="form-select">
             <option value="instagram">📸 Instagram</option>
             <option value="tiktok">🎵 TikTok</option>
-            <option value="twitter">🐦 Twitter</option>
+            <option value="twitter">🐦 Twitter/X</option>
             <option value="linkedin">💼 LinkedIn</option>
-            <option value="facebook">👍 Facebook</option>
+            <option value="facebook">📘 Facebook</option>
+            <option value="youtube">🎬 YouTube</option>
+            <option value="pinterest">📌 Pinterest</option>
             <option value="other">📱 Other</option>
           </select>
         </div>
-        <div class="form-group">
-          <label class="form-label">Status</label>
-          <select class="form-select" id="fStatus">
-            <option value="idea">💡 Idea</option>
-            <option value="draft">📝 Draft</option>
-            <option value="ready">✅ Ready</option>
-            <option value="posted">🚀 Posted</option>
-          </select>
+        <div>
+          <div class="form-label">Date</div>
+          <input type="date" id="fDate" class="form-input">
         </div>
       </div>
-      <div class="form-row">
-        <div class="form-group">
-          <label class="form-label">Date</label>
-          <input class="form-input" id="fDate" type="date">
-        </div>
-        <div class="form-group">
-          <label class="form-label">Time</label>
-          <input class="form-input" id="fTime" type="time" value="09:00">
+      <!-- Time -->
+      <div>
+        <div class="form-label">Scheduled Time</div>
+        <input type="time" id="fTime" class="form-input" value="09:00">
+      </div>
+      <!-- Status -->
+      <div>
+        <div class="form-label">Status</div>
+        <div class="status-select-wrap" id="statusBtns">
+          <button class="status-btn active-idea" data-status="idea" onclick="_setStatus(this,'idea')">💡 Idea</button>
+          <button class="status-btn" data-status="draft" onclick="_setStatus(this,'draft')">✏️ Draft</button>
+          <button class="status-btn" data-status="ready" onclick="_setStatus(this,'ready')">✅ Ready</button>
+          <button class="status-btn" data-status="posted" onclick="_setStatus(this,'posted')">📤 Posted</button>
         </div>
       </div>
-      <div class="form-group">
-        <label class="form-label">Caption (optional)</label>
-        <textarea class="form-textarea" id="fCaption" rows="3" placeholder="Paste your planned caption here…"></textarea>
+      <!-- Caption -->
+      <div>
+        <div class="form-label">Caption (optional)</div>
+        <textarea id="fCaption" class="form-textarea" placeholder="Paste your caption here…"></textarea>
       </div>
-      <div class="form-group">
-        <label class="form-label">Notes (optional)</label>
-        <input class="form-input" id="fNotes" type="text" placeholder="e.g. Use product photo 3">
+      <!-- Notes -->
+      <div>
+        <div class="form-label">Notes (optional)</div>
+        <input type="text" id="fNotes" class="form-input" placeholder="Visual ideas, links, reminders…">
       </div>
     </div>
-    <div class="modal-foot">
-      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
-      <button class="btn-save"   onclick="savePost()">Save Post</button>
+    <div class="modal-actions">
+      <button class="delete-btn" id="deleteBtn" style="display:none" onclick="deletePost()">🗑️ Delete</button>
+      <button class="save-btn" id="saveBtn" onclick="savePost()">Save Post</button>
     </div>
   </div>
 </div>
 
-<div class="toast" id="toast"></div>
-
 <script>
-const TOKEN = localStorage.getItem('sc_token');
-if (!TOKEN) location.href='login.html';
+// ── Auth ──────────────────────────────────────────────────────────────────
+const token = localStorage.getItem('sc_token');
+if (!token) { window.location.href = 'login.html'; }
 
-const BASE = 'api';
-let viewYear, viewMonth; // 0-indexed month
-let postsCache = {};     // key: "YYYY-MM-DD" => [post,...]
-let selectedDate = null;
-let isPremium = false;
+// ── State ─────────────────────────────────────────────────────────────────
+let currentYear  = new Date().getFullYear();
+let currentMonth = new Date().getMonth(); // 0-indexed
+let postsCache   = {};  // key = "YYYY-MM" → array of posts
+let currentView  = 'month';
+let editingId    = null;
+let selectedStatus = 'idea';
 
-// Set initial month
-const now = new Date();
-viewYear  = now.getFullYear();
-viewMonth = now.getMonth();
+const MONTHS = ['January','February','March','April','May','June',
+                'July','August','September','October','November','December'];
+const DAYS   = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
 
-function platformColor(p) {
-  const m={instagram:'c-instagram',tiktok:'c-tiktok',twitter:'c-twitter',linkedin:'c-linkedin',facebook:'c-facebook'};
-  return m[p]||'c-other';
-}
-function platformIcon(p) {
-  const m={instagram:'📸',tiktok:'🎵',twitter:'🐦',linkedin:'💼',facebook:'👍',other:'📱'};
-  return m[p]||'📱';
-}
-function statusClass(s){return 's-'+s}
-function statusLabel(s){return{idea:'💡 Idea',draft:'📝 Draft',ready:'✅ Ready',posted:'🚀 Posted'}[s]||s}
+const PLAT_ICONS = {
+  instagram:'📸',tiktok:'🎵',twitter:'🐦',linkedin:'💼',
+  facebook:'📘',youtube:'🎬',pinterest:'📌',other:'📱'
+};
 
-async function apiFetch(url,opts={}) {
-  const r=await fetch(url,{...opts,headers:{'Authorization':'Bearer '+TOKEN,'Content-Type':'application/json',...(opts.headers||{})}});
-  return r.json();
-}
+// ── Init ──────────────────────────────────────────────────────────────────
+init();
 
-function toast(msg,ok=true) {
-  const t=document.getElementById('toast');
-  t.textContent=msg;
-  t.style.borderColor=ok?'rgba(74,222,128,.3)':'rgba(248,113,113,.3)';
-  t.style.color=ok?'#4ade80':'#f87171';
-  t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'),2600);
-}
-
-async function checkPremium() {
-  const user = JSON.parse(localStorage.getItem('sc_user')||'{}');
-  isPremium = user.plan === 'premium';
-  if (!isPremium) {
-    document.getElementById('premiumGate').style.display='block';
-    document.getElementById('calContainer').style.display='none';
-    return false;
-  }
-  return true;
-}
-
-async function loadMonth() {
-  const monthStr = `${viewYear}-${String(viewMonth+1).padStart(2,'0')}`;
-  const label    = new Date(viewYear, viewMonth, 1).toLocaleDateString('en-US',{month:'long',year:'numeric'});
-  document.getElementById('monthLabel').textContent = label;
-
-  const d = await apiFetch(`${BASE}/calendar.php?action=list&month=${monthStr}`);
-  if (d.error==='premium_required') {
-    document.getElementById('premiumGate').style.display='block';
-    document.getElementById('calContainer').style.display='none';
-    return;
-  }
-  // Build postsCache by date
-  postsCache = {};
-  (d.posts||[]).forEach(p=>{
-    if(!postsCache[p.scheduled_date]) postsCache[p.scheduled_date]=[];
-    postsCache[p.scheduled_date].push(p);
-  });
+async function init() {
   renderCalendar();
+  await loadMonth();
 }
 
+// ── Month navigation ──────────────────────────────────────────────────────
 function changeMonth(delta) {
-  viewMonth += delta;
-  if (viewMonth>11){viewMonth=0;viewYear++;}
-  if (viewMonth<0) {viewMonth=11;viewYear--;}
-  closePanel();
+  currentMonth += delta;
+  if (currentMonth > 11) { currentMonth = 0; currentYear++; }
+  if (currentMonth < 0)  { currentMonth = 11; currentYear--; }
+  renderCalendar();
   loadMonth();
 }
 
-function renderCalendar() {
-  const grid  = document.getElementById('calGrid');
-  const days  = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-  const today = new Date();
-  const firstDay = new Date(viewYear, viewMonth, 1).getDay();
-  const totalDays = new Date(viewYear, viewMonth+1, 0).getDate();
-  const prevTotal = new Date(viewYear, viewMonth, 0).getDate();
-
-  let html = days.map(d=>`<div class="cal-header">${d}</div>`).join('');
-
-  // prev month fill
-  for(let i=0;i<firstDay;i++){
-    const d = prevTotal - firstDay + i + 1;
-    html += `<div class="cal-day other-month"><div class="day-num">${d}</div></div>`;
-  }
-  // current month
-  for(let d=1;d<=totalDays;d++){
-    const dateStr = `${viewYear}-${String(viewMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-    const isToday = today.getFullYear()===viewYear && today.getMonth()===viewMonth && today.getDate()===d;
-    const isSel   = selectedDate===dateStr;
-    const posts   = postsCache[dateStr]||[];
-    const dots    = posts.slice(0,6).map(p=>`<div class="day-dot ${platformColor(p.platform)}"></div>`).join('');
-    html += `<div class="cal-day ${isToday?'today':''} ${isSel?'selected':''}" onclick="selectDay('${dateStr}')">
-      <div class="day-num">${d}</div>
-      <div class="day-dots">${dots}</div>
-    </div>`;
-  }
-  // next month fill
-  const remaining = 42 - firstDay - totalDays;
-  for(let d=1;d<=remaining;d++){
-    html += `<div class="cal-day other-month"><div class="day-num">${d}</div></div>`;
-  }
-  grid.innerHTML = html;
-
-  // Re-open panel if a date was selected
-  if (selectedDate && postsCache[selectedDate]) renderPanel(selectedDate);
-}
-
-function selectDay(dateStr) {
-  selectedDate = dateStr;
+function goToday() {
+  const now = new Date();
+  currentYear  = now.getFullYear();
+  currentMonth = now.getMonth();
   renderCalendar();
-  renderPanel(dateStr);
+  loadMonth();
 }
 
-function renderPanel(dateStr) {
-  const wrap  = document.getElementById('panelWrap');
-  const pDate = document.getElementById('panelDate');
-  const pPosts= document.getElementById('panelPosts');
-  const posts = postsCache[dateStr]||[];
+function switchView(view) {
+  currentView = view;
+  document.getElementById('tabMonth').classList.toggle('active', view === 'month');
+  document.getElementById('tabList').classList.toggle('active', view === 'list');
+  document.getElementById('calWrap').style.display  = view === 'month' ? '' : 'none';
+  document.getElementById('listView').classList.toggle('active', view === 'list');
+  if (view === 'list') renderList();
+}
 
-  const dObj  = new Date(dateStr+'T12:00:00');
-  pDate.textContent = dObj.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'});
+// ── Load posts for month ──────────────────────────────────────────────────
+async function loadMonth() {
+  const monthKey = `${currentYear}-${String(currentMonth + 1).padStart(2,'0')}`;
+  showSpinner(true);
+  try {
+    const res = await fetch(`/api/calendar.php?action=list&month=${monthKey}`, {
+      headers: { 'Authorization': 'Bearer ' + token },
+    });
+    const data = await res.json();
+    if (data.error === 'premium_required') {
+      showSpinner(false);
+      showUpgradeNotice();
+      return;
+    }
+    postsCache[monthKey] = data.posts || [];
+    renderCalendar();
+    if (currentView === 'list') renderList();
+  } catch(e) {
+    console.error('loadMonth error', e);
+  } finally {
+    showSpinner(false);
+  }
+}
+
+// ── Render calendar grid ──────────────────────────────────────────────────
+function renderCalendar() {
+  const label = document.getElementById('monthLabel');
+  label.textContent = `${MONTHS[currentMonth]} ${currentYear}`;
+
+  const grid  = document.getElementById('calGrid');
+  grid.innerHTML = '';
+
+  // Day headers
+  DAYS.forEach(d => {
+    const h = document.createElement('div');
+    h.className = 'cal-header-cell';
+    h.textContent = d;
+    grid.appendChild(h);
+  });
+
+  const firstDay    = new Date(currentYear, currentMonth, 1).getDay();
+  const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+  const today       = new Date();
+  const monthKey    = `${currentYear}-${String(currentMonth + 1).padStart(2,'0')}`;
+  const posts       = postsCache[monthKey] || [];
+
+  // Build a lookup: day number → posts[]
+  const dayMap = {};
+  posts.forEach(p => {
+    const d = parseInt(p.scheduled_date.split('-')[2]);
+    if (!dayMap[d]) dayMap[d] = [];
+    dayMap[d].push(p);
+  });
+
+  // Fill leading blank days (previous month)
+  const prevDays = new Date(currentYear, currentMonth, 0).getDate();
+  for (let i = firstDay - 1; i >= 0; i--) {
+    const cell = _makeCell(prevDays - i, true, false, null, []);
+    grid.appendChild(cell);
+  }
+
+  // Current month days
+  for (let d = 1; d <= daysInMonth; d++) {
+    const isToday = (d === today.getDate() && currentMonth === today.getMonth() && currentYear === today.getFullYear());
+    const dateStr = `${currentYear}-${String(currentMonth + 1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const cell = _makeCell(d, false, isToday, dateStr, dayMap[d] || []);
+    grid.appendChild(cell);
+  }
+
+  // Trailing blank days
+  const totalCells = firstDay + daysInMonth;
+  const trailing = (7 - (totalCells % 7)) % 7;
+  for (let i = 1; i <= trailing; i++) {
+    const cell = _makeCell(i, true, false, null, []);
+    grid.appendChild(cell);
+  }
+}
+
+function _makeCell(day, otherMonth, isToday, dateStr, posts) {
+  const cell = document.createElement('div');
+  cell.className = 'cal-day' + (otherMonth ? ' other-month' : '') + (isToday ? ' today' : '');
+  if (dateStr) {
+    cell.onclick = (e) => { if (e.target.closest('.day-post-pill') || e.target.closest('.day-more')) return; openNewPost(dateStr); };
+  }
+
+  const num = document.createElement('div');
+  num.className = 'day-num';
+  num.textContent = day;
+  cell.appendChild(num);
+
+  if (!otherMonth && posts.length > 0) {
+    const postsWrap = document.createElement('div');
+    postsWrap.className = 'day-posts';
+    const maxShow = 3;
+    posts.slice(0, maxShow).forEach(p => {
+      const pill = _makePostPill(p);
+      postsWrap.appendChild(pill);
+    });
+    if (posts.length > maxShow) {
+      const more = document.createElement('div');
+      more.className = 'day-more';
+      more.textContent = `+${posts.length - maxShow} more`;
+      more.onclick = (e) => { e.stopPropagation(); openDayPosts(dateStr, posts); };
+      postsWrap.appendChild(more);
+    }
+    cell.appendChild(postsWrap);
+  }
+
+  return cell;
+}
+
+function _makePostPill(post) {
+  const platKey = post.platform.toLowerCase();
+  const pill = document.createElement('div');
+  pill.className = `day-post-pill status-${post.status}`;
+  pill.onclick = (e) => { e.stopPropagation(); openEditPost(post); };
+
+  const dot = document.createElement('div');
+  dot.className = `pill-dot pc-${platKey}`;
+  pill.appendChild(dot);
+
+  const title = document.createElement('div');
+  title.className = 'pill-title';
+  title.textContent = (PLAT_ICONS[platKey] || '📱') + ' ' + (post.title || '');
+  pill.appendChild(title);
+
+  return pill;
+}
+
+// ── List view ─────────────────────────────────────────────────────────────
+function renderList() {
+  const monthKey = `${currentYear}-${String(currentMonth + 1).padStart(2,'0')}`;
+  const posts    = (postsCache[monthKey] || []).slice().sort((a, b) => {
+    return (a.scheduled_date + a.scheduled_time).localeCompare(b.scheduled_date + b.scheduled_time);
+  });
+  const container = document.getElementById('listView');
+  container.innerHTML = '';
 
   if (!posts.length) {
-    pPosts.innerHTML = `<div class="empty-day">No posts planned.<br><span style="color:#a855f7;cursor:pointer" onclick="openAddModal('${dateStr}')">+ Add a post for this day</span></div>`;
-  } else {
-    pPosts.innerHTML = posts.map(p=>`
-      <div class="post-item" id="pi-${p.id}">
-        <div class="post-dot-col"><div class="day-dot ${platformColor(p.platform)}" style="width:10px;height:10px"></div></div>
-        <div class="post-info">
-          <div class="post-title">${escHtml(p.title)}</div>
-          <div class="post-meta">
-            <span class="post-time">${platformIcon(p.platform)} ${p.scheduled_time?p.scheduled_time.substring(0,5):''}</span>
-            <span class="post-status ${statusClass(p.status)}">${statusLabel(p.status)}</span>
-          </div>
-          ${p.caption?`<div style="font-size:.75rem;color:#78788a;margin-top:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:260px">${escHtml(p.caption.substring(0,80))}…</div>`:''}
-          <div class="post-actions">
-            <button class="post-action-btn" onclick="openEditModal(${JSON.stringify(p).replace(/"/g,'&quot;')})">✏️ Edit</button>
-            <select class="post-action-btn" onchange="quickStatus(${p.id},this.value,this)" style="width:auto">
-              <option value="">Status…</option>
-              <option value="idea">💡 Idea</option>
-              <option value="draft">📝 Draft</option>
-              <option value="ready">✅ Ready</option>
-              <option value="posted">🚀 Posted</option>
-            </select>
-            <button class="post-action-btn del" onclick="deletePost(${p.id},'${dateStr}')">🗑</button>
-          </div>
-        </div>
-      </div>`).join('') +
-      `<div style="padding:8px 0;text-align:center"><span style="font-size:.8rem;color:#a855f7;cursor:pointer" onclick="openAddModal('${dateStr}')">+ Add another post</span></div>`;
+    container.innerHTML = '<div style="text-align:center;padding:60px;color:#78788a;font-size:.9rem;">No posts scheduled this month. <a href="#" onclick="openNewPost()" style="color:#a855f7">Add one →</a></div>';
+    return;
   }
-  wrap.style.display='block';
+
+  // Group by date
+  const groups = {};
+  posts.forEach(p => {
+    if (!groups[p.scheduled_date]) groups[p.scheduled_date] = [];
+    groups[p.scheduled_date].push(p);
+  });
+
+  Object.entries(groups).forEach(([date, dayPosts]) => {
+    const d = new Date(date + 'T12:00:00');
+    const label = document.createElement('div');
+    label.className = 'list-date-label';
+    label.textContent = d.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+    container.appendChild(label);
+
+    dayPosts.forEach(p => {
+      const platKey = p.platform.toLowerCase();
+      const card = document.createElement('div');
+      card.className = 'list-post-card';
+      card.onclick = () => openEditPost(p);
+      card.innerHTML = `
+        <div style="width:4px;height:40px;border-radius:4px;background:var(--${platKey === 'twitter' ? 'tw' : platKey === 'instagram' ? 'ig' : platKey === 'tiktok' ? 'tt' : platKey === 'linkedin' ? 'li' : platKey === 'facebook' ? 'fb' : platKey === 'youtube' ? 'yt' : 'ot'});flex-shrink:0;"></div>
+        <div class="lpc-time">${p.scheduled_time ? p.scheduled_time.substring(0,5) : ''}</div>
+        <div class="lpc-title">${escHtml(p.title)}</div>
+        <div class="lpc-plat-badge">${PLAT_ICONS[platKey] || '📱'} ${platKey.charAt(0).toUpperCase() + platKey.slice(1)}</div>
+        <div class="lpc-status status-${p.status}" style="border:1px solid;border-radius:50px;padding:3px 8px;">${_statusLabel(p.status)}</div>
+      `;
+      container.appendChild(card);
+    });
+  });
 }
 
-function closePanel() {
-  selectedDate=null;
-  document.getElementById('panelWrap').style.display='none';
-  renderCalendar();
+function _statusLabel(s) {
+  return { idea:'💡 Idea', draft:'✏️ Draft', ready:'✅ Ready', posted:'📤 Posted' }[s] || s;
 }
 
-function openAddModal(dateStr) {
-  document.getElementById('editId').value = '';
-  document.getElementById('modalTitle').textContent = 'Add Post';
-  document.getElementById('fTitle').value   = '';
-  document.getElementById('fPlatform').value= 'instagram';
-  document.getElementById('fStatus').value  = 'idea';
-  document.getElementById('fDate').value    = dateStr||selectedDate||new Date().toISOString().slice(0,10);
-  document.getElementById('fTime').value    = '09:00';
+// ── Modal ─────────────────────────────────────────────────────────────────
+function openNewPost(dateStr) {
+  editingId = null;
+  document.getElementById('modalTitle').textContent = 'New Post';
+  document.getElementById('modalIcon').textContent = '📝';
+  document.getElementById('deleteBtn').style.display = 'none';
+  document.getElementById('fTitle').value = '';
+  document.getElementById('fPlatform').value = 'instagram';
+  document.getElementById('fDate').value = dateStr || new Date().toISOString().split('T')[0];
+  document.getElementById('fTime').value = '09:00';
   document.getElementById('fCaption').value = '';
-  document.getElementById('fNotes').value   = '';
-  document.getElementById('modalOverlay').classList.add('open');
+  document.getElementById('fNotes').value = '';
+  _setStatus(document.querySelector('[data-status="idea"]'), 'idea');
+  document.getElementById('postModal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+  setTimeout(() => document.getElementById('fTitle').focus(), 100);
 }
 
-function openEditModal(p) {
-  document.getElementById('editId').value   = p.id;
+function openEditPost(post) {
+  editingId = post.id;
   document.getElementById('modalTitle').textContent = 'Edit Post';
-  document.getElementById('fTitle').value   = p.title;
-  document.getElementById('fPlatform').value= p.platform;
-  document.getElementById('fStatus').value  = p.status;
-  document.getElementById('fDate').value    = p.scheduled_date;
-  document.getElementById('fTime').value    = p.scheduled_time?p.scheduled_time.substring(0,5):'09:00';
-  document.getElementById('fCaption').value = p.caption||'';
-  document.getElementById('fNotes').value   = p.notes||'';
-  document.getElementById('modalOverlay').classList.add('open');
+  document.getElementById('modalIcon').textContent = PLAT_ICONS[post.platform.toLowerCase()] || '📱';
+  document.getElementById('deleteBtn').style.display = '';
+  document.getElementById('fTitle').value    = post.title || '';
+  document.getElementById('fPlatform').value = post.platform.toLowerCase();
+  document.getElementById('fDate').value     = post.scheduled_date || '';
+  document.getElementById('fTime').value     = (post.scheduled_time || '09:00:00').substring(0,5);
+  document.getElementById('fCaption').value  = post.caption || '';
+  document.getElementById('fNotes').value    = post.notes || '';
+  _setStatus(document.querySelector(`[data-status="${post.status}"]`), post.status);
+  document.getElementById('postModal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function openDayPosts(dateStr, posts) {
+  // For now — just open new post for that date; can expand to a day detail view later
+  openNewPost(dateStr);
 }
 
 function closeModal() {
-  document.getElementById('modalOverlay').classList.remove('open');
+  document.getElementById('postModal').classList.remove('open');
+  document.body.style.overflow = '';
+  editingId = null;
 }
 
+function _setStatus(btn, status) {
+  selectedStatus = status;
+  document.querySelectorAll('.status-btn').forEach(b => {
+    b.className = 'status-btn';
+    if (b.dataset.status === status) b.classList.add(`active-${status}`);
+  });
+}
+
+// ── Save / Delete ─────────────────────────────────────────────────────────
 async function savePost() {
-  const id      = document.getElementById('editId').value;
   const title   = document.getElementById('fTitle').value.trim();
-  if (!title) { toast('Title is required',false); return; }
-  const payload = {
-    action:           id ? 'update' : 'create',
-    id:               id ? parseInt(id) : undefined,
-    title,
-    platform:         document.getElementById('fPlatform').value,
-    status:           document.getElementById('fStatus').value,
-    scheduled_date:   document.getElementById('fDate').value,
-    scheduled_time:   document.getElementById('fTime').value+':00',
-    caption:          document.getElementById('fCaption').value||null,
-    notes:            document.getElementById('fNotes').value||null,
+  const platform= document.getElementById('fPlatform').value;
+  const date    = document.getElementById('fDate').value;
+  const time    = document.getElementById('fTime').value || '09:00';
+  const caption = document.getElementById('fCaption').value.trim();
+  const notes   = document.getElementById('fNotes').value.trim();
+
+  if (!title) { _toast('Please enter a title'); return; }
+  if (!date)  { _toast('Please pick a date'); return; }
+
+  const btn = document.getElementById('saveBtn');
+  btn.disabled = true;
+  btn.textContent = 'Saving…';
+
+  const body = {
+    action: editingId ? 'update' : 'create',
+    title, platform, scheduled_date: date, scheduled_time: time + ':00',
+    status: selectedStatus, caption: caption || null, notes: notes || null,
   };
-  const d = await apiFetch(`${BASE}/calendar.php`, {method:'POST', body:JSON.stringify(payload)});
-  if (d.ok) {
-    toast(id?'Post updated!':'Post added!');
-    closeModal();
-    await loadMonth();
-    if (selectedDate) renderPanel(selectedDate);
-  } else {
-    toast(d.error||'Save failed',false);
+  if (editingId) body.id = editingId;
+
+  try {
+    const res  = await fetch('/api/calendar.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+      body: JSON.stringify(body),
+    });
+    const data = await res.json();
+    if (data.ok || data.error === undefined) {
+      closeModal();
+      await loadMonth();
+      _toast(editingId ? '✅ Post updated' : '✅ Post added to calendar');
+    } else {
+      _toast(data.error || 'Save failed');
+    }
+  } catch(e) {
+    _toast('Network error');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Save Post';
   }
 }
 
-async function quickStatus(id, status, el) {
-  if (!status) return;
-  const d = await apiFetch(`${BASE}/calendar.php`,{method:'POST',body:JSON.stringify({action:'update',id,status})});
-  if (d.ok) { toast('Status updated!'); el.value=''; await loadMonth(); if(selectedDate) renderPanel(selectedDate); }
-  else       { toast('Update failed',false); el.value=''; }
+async function deletePost() {
+  if (!editingId) return;
+  if (!confirm('Delete this post from calendar?')) return;
+  try {
+    const res  = await fetch('/api/calendar.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+      body: JSON.stringify({ action: 'delete', id: editingId }),
+    });
+    const data = await res.json();
+    closeModal();
+    await loadMonth();
+    _toast('🗑️ Post deleted');
+  } catch(e) {
+    _toast('Delete failed');
+  }
 }
 
-async function deletePost(id, dateStr) {
-  if (!confirm('Delete this post?')) return;
-  const d = await apiFetch(`${BASE}/calendar.php`,{method:'POST',body:JSON.stringify({action:'delete',id})});
-  if (d.ok) { toast('Post deleted'); await loadMonth(); if(selectedDate) renderPanel(selectedDate); }
-  else      { toast('Delete failed',false); }
+// ── Premium gate notice ───────────────────────────────────────────────────
+function showUpgradeNotice() {
+  document.getElementById('calGrid').innerHTML = `
+    <div class="empty-month" style="display:flex;flex-direction:column;align-items:center;gap:14px;">
+      <div style="font-size:2.5rem;">📅</div>
+      <div style="font-size:1.1rem;font-weight:700;">Content Calendar — Premium Feature</div>
+      <div style="font-size:.88rem;color:#78788a;max-width:360px;text-align:center;">
+        Plan your content weeks ahead, track post status, and never miss a schedule.
+      </div>
+      <a href="pricing.html" style="margin-top:4px;padding:11px 28px;background:linear-gradient(135deg,#a855f7,#38bdf8);border-radius:50px;color:#fff;font-weight:700;text-decoration:none;">Upgrade to Premium →</a>
+    </div>
+  `;
 }
 
-function escHtml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+// ── Helpers ───────────────────────────────────────────────────────────────
+function showSpinner(on) {
+  document.getElementById('calSpinner').classList.toggle('active', on);
+}
 
-// Init
-(async()=>{
-  const ok = await checkPremium();
-  if (ok) await loadMonth();
+function _toast(msg) {
+  const t = document.createElement('div');
+  t.className = 'snap-toast';
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 2700);
+}
+
+function escHtml(s) {
+  if (!s) return '';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// Pre-fill date from URL param if any (from "schedule" button in app.html)
+(function() {
+  const params = new URLSearchParams(window.location.search);
+  const d = params.get('date');
+  const p = params.get('platform');
+  const c = params.get('caption');
+  if (d) {
+    // Trigger open after init
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        openNewPost(d);
+        if (p) document.getElementById('fPlatform').value = p.toLowerCase();
+        if (c) document.getElementById('fCaption').value = decodeURIComponent(c);
+      }, 400);
+    });
+  }
 })();
 </script>
 </body>
