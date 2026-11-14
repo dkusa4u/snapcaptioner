@@ -53,26 +53,25 @@ if (!$user) {
     exit;
 }
 
-// Determine daily limit: free users get FREE_DAILY_LIMIT, premium get PREMIUM_AI_DAILY
-$aiDailyLimit = $isPremium
-    ? PREMIUM_AI_DAILY
-    : (defined('FREE_DAILY_LIMIT') ? FREE_DAILY_LIMIT : 3);
+// Determine daily limit: free users get FREE_DAILY_LIMIT, premium = unlimited
+$freeLimit    = defined('FREE_DAILY_LIMIT') ? FREE_DAILY_LIMIT : 3;
+$aiDailyLimit = $isPremium ? PHP_INT_MAX : $freeLimit;
 
-// Enforce daily AI caption limit for all logged-in users
-$db        = getDB();
-$stmt      = $db->prepare(
+// Count today's AI caption usage
+$db   = getDB();
+$stmt = $db->prepare(
     "SELECT COUNT(*) FROM usage_log
       WHERE user_id = ? AND action = 'generate' AND DATE(created_at) = CURDATE()"
 );
 $stmt->execute([$user['id']]);
 $usedToday = (int) $stmt->fetchColumn();
 
-if ($usedToday >= $aiDailyLimit) {
-    $upgradeHint = $isPremium ? '' : ' Upgrade to Premium for more.';
+// Enforce limit only for free users (premium is unlimited)
+if (!$isPremium && $usedToday >= $aiDailyLimit) {
     http_response_code(429);
     echo json_encode([
         'error'       => 'daily_limit_reached',
-        'message'     => 'You\'ve used all ' . $aiDailyLimit . ' AI captions for today.' . $upgradeHint . ' Resets at midnight.',
+        'message'     => 'You\'ve used all ' . $aiDailyLimit . ' AI captions for today. Upgrade to Premium for unlimited captions. Resets at midnight.',
         'used'        => $usedToday,
         'limit'       => $aiDailyLimit,
         'resets_at'   => date('Y-m-d', strtotime('+1 day')) . ' 00:00:00',
@@ -344,8 +343,8 @@ if ($user) {
 
     $result['usage'] = [
         'used'       => $usedNow,
-        'limit'      => $aiDailyLimit,
-        'remaining'  => max(0, $aiDailyLimit - $usedNow),
+        'limit'      => $isPremium ? null : $aiDailyLimit,
+        'remaining'  => $isPremium ? null : max(0, $aiDailyLimit - $usedNow),
         'is_premium' => $isPremium,
     ];
 }

@@ -79,9 +79,9 @@ try {
         $txLimit    = 0;              // AI transforms are premium-only
         $txRemain   = 0;
     } else {
-        // Premium or teams
-        $aiLimit    = PREMIUM_AI_DAILY;
-        $aiRemain   = max(0, PREMIUM_AI_DAILY - $aiUsed);
+        // Premium or teams — unlimited AI captions
+        $aiLimit    = null;
+        $aiRemain   = null;
         $enhLimit   = null;           // unlimited
         $enhRemain  = null;
         $txLimit    = $txDailyLimit;

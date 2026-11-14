@@ -492,6 +492,31 @@
     background: none; border-color: rgba(255,255,255,.08); color: var(--muted);
   }
   .filter-btn.f-reset:hover { border-color: var(--red); color: var(--red); }
+  .filter-btn.f-rmbg {
+    background: rgba(168,85,247,.12); border-color: rgba(168,85,247,.28); color: #c084fc;
+    flex: none; min-width: 90px;
+  }
+  .filter-btn.f-rmbg:hover { background: rgba(168,85,247,.22); border-color: #c084fc; }
+  .filter-btn.f-rmbg:disabled { opacity: .5; cursor: wait; }
+
+  /* ── Platform Resize Strip ─────────────────────────────── */
+  .resize-strip {
+    display: flex; flex-wrap: wrap; gap: 6px;
+    margin-top: 10px; padding-top: 10px;
+    border-top: 1px solid rgba(255,255,255,.07);
+  }
+  .resize-strip-label {
+    width: 100%; font-size: .68rem; font-weight: 700; letter-spacing: .06em;
+    color: var(--muted); text-transform: uppercase; margin-bottom: 2px;
+  }
+  .resize-btn {
+    padding: 5px 10px; border-radius: 7px;
+    border: 1px solid rgba(255,255,255,.1);
+    background: rgba(255,255,255,.04); color: #ccc;
+    font-size: .72rem; cursor: pointer; transition: all .15s; white-space: nowrap;
+  }
+  .resize-btn:hover { background: rgba(99,179,237,.14); border-color: rgba(99,179,237,.35); color: #93c5fd; }
+  .resize-btn.active { background: rgba(99,179,237,.2); border-color: #93c5fd; color: #93c5fd; font-weight: 700; }
 
   /* ── Next Step Nudge (after edit) ──────────────────────── */
   .caption-nudge {
@@ -813,7 +838,18 @@
           <button class="filter-btn" id="fb-vivid" onclick="doEnhance('vivid')">🌈 Vivid</button>
           <button class="filter-btn" id="fb-warm"  onclick="doEnhance('warm')">🌅 Warm</button>
           <button class="filter-btn" id="fb-cool"  onclick="doEnhance('cool')">❄️ Cool</button>
+          <button class="filter-btn f-rmbg" id="fb-rmbg" onclick="doRemoveBg()">🪄 Remove BG</button>
           <button class="filter-btn f-reset" id="fb-reset" onclick="resetPhoto()" style="display:none;">↺ Reset</button>
+        </div>
+        <!-- Platform Resize Strip -->
+        <div class="resize-strip" id="resizeStrip">
+          <div class="resize-strip-label">📐 Resize for Platform</div>
+          <button class="resize-btn" onclick="resizePhoto(1,1,'square',this)">📸 1:1 Square</button>
+          <button class="resize-btn" onclick="resizePhoto(9,16,'story',this)">📱 9:16 Story</button>
+          <button class="resize-btn" onclick="resizePhoto(4,5,'portrait',this)">🖼 4:5 Portrait</button>
+          <button class="resize-btn" onclick="resizePhoto(16,9,'wide',this)">🖥 16:9 Wide</button>
+          <button class="resize-btn" onclick="resizePhoto(1.91,1,'feed',this)">🔲 1.91:1 Feed</button>
+          <button class="resize-btn f-reset" id="rb-reset" onclick="resetPhoto()" style="display:none;">↺ Original size</button>
         </div>
         <!-- Nudge: shown after first edit, scrolls to caption section -->
         <div class="caption-nudge" id="captionNudge" onclick="scrollToCaption()">
@@ -1056,14 +1092,14 @@
       <div class="gen-locked" id="genLocked">
         <div class="lock-info">✨</div>
         <div class="lock-label">Sign in for Free AI Captions</div>
-        <div class="lock-sub">Free account: 3 AI captions/day · Premium: 5/day</div>
+        <div class="lock-sub">Free account: 3 AI captions/day · Premium: Unlimited</div>
         <a href="login.html">Sign in / Create Free Account →</a>
       </div>
     </div>
 
     <!-- Free limit info -->
     <div id="planInfoText" style="padding:10px 4px;font-size:.72rem;color:var(--muted);text-align:center;line-height:1.6;">
-      Free plan: 3 AI captions/day · 3 photo edits/day · <a href="pricing.html" style="color:var(--grad2);font-weight:600;">Upgrade for unlimited edits</a>
+      Free plan: 3 AI captions/day · 3 photo edits/day · <a href="pricing.html" style="color:var(--grad2);font-weight:600;">Upgrade for unlimited captions &amp; edits</a>
     </div>
   </div>
 
@@ -1677,7 +1713,89 @@
       document.getElementById('fb-' + f)?.classList.remove('active');
     });
     document.getElementById('fb-reset').style.display = 'none';
+    // Clear resize button states
+    document.querySelectorAll('.resize-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('rb-reset').style.display = 'none';
+    // Reset Remove BG button text
+    const rmbgBtn = document.getElementById('fb-rmbg');
+    if (rmbgBtn) rmbgBtn.textContent = '🪄 Remove BG';
     updateEnhanceCtr();
+  }
+
+  // ── Background Removal ────────────────────────────────
+  async function doRemoveBg() {
+    if (!currentImageBase64) return;
+    const btn = document.getElementById('fb-rmbg');
+    btn.textContent = '⏳ Processing…';
+    btn.disabled = true;
+    try {
+      if (!window._bgRemoval) {
+        btn.textContent = '⏳ Loading model…';
+        const { removeBackground } = await import('https://cdn.jsdelivr.net/npm/@imgly/background-removal@1.4.5/dist/browser.mjs');
+        window._bgRemoval = removeBackground;
+      }
+      const byteStr = atob(currentImageBase64);
+      const ab = new ArrayBuffer(byteStr.length);
+      const ia = new Uint8Array(ab);
+      for (let i = 0; i < byteStr.length; i++) ia[i] = byteStr.charCodeAt(i);
+      const blob = new Blob([ab], { type: 'image/jpeg' });
+      btn.textContent = '⏳ Removing BG…';
+      const resultBlob = await window._bgRemoval(blob);
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const dataUrl = e.target.result;
+        if (!originalImageBase64) originalImageBase64 = currentImageBase64;
+        currentImageBase64 = dataUrl.split(',')[1];
+        document.getElementById('photoPreview').src = dataUrl;
+        document.getElementById('fb-reset').style.display = '';
+        document.getElementById('rb-reset').style.display = '';
+        btn.textContent = '✅ BG Removed';
+        btn.disabled = false;
+        document.getElementById('captionNudge')?.classList.add('visible');
+      };
+      reader.readAsDataURL(resultBlob);
+    } catch (err) {
+      console.error('BG removal error:', err);
+      btn.textContent = '❌ Failed — retry';
+      btn.disabled = false;
+      setTimeout(() => { btn.textContent = '🪄 Remove BG'; }, 3000);
+    }
+  }
+
+  // ── Platform Resize ────────────────────────────────
+  function resizePhoto(ratioW, ratioH, name, btn) {
+    if (!currentImageBase64) return;
+    document.querySelectorAll('.resize-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('rb-reset').style.display = '';
+    document.getElementById('fb-reset').style.display = '';
+    const img = new Image();
+    img.onload = function() {
+      const srcW = img.naturalWidth, srcH = img.naturalHeight;
+      const targetRatio = ratioW / ratioH;
+      const srcRatio = srcW / srcH;
+      let cropW, cropH;
+      if (srcRatio > targetRatio) {
+        cropH = srcH;
+        cropW = Math.round(srcH * targetRatio);
+      } else {
+        cropW = srcW;
+        cropH = Math.round(srcW / targetRatio);
+      }
+      const offsetX = Math.round((srcW - cropW) / 2);
+      const offsetY = Math.round((srcH - cropH) / 2);
+      const canvas = document.createElement('canvas');
+      canvas.width = cropW;
+      canvas.height = cropH;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, offsetX, offsetY, cropW, cropH, 0, 0, cropW, cropH);
+      const dataUrl = canvas.toDataURL('image/jpeg', 0.92);
+      if (!originalImageBase64) originalImageBase64 = currentImageBase64;
+      currentImageBase64 = dataUrl.split(',')[1];
+      document.getElementById('photoPreview').src = dataUrl;
+      document.getElementById('captionNudge')?.classList.add('visible');
+    };
+    img.src = 'data:image/jpeg;base64,' + currentImageBase64;
   }
 
   // ── AI Photo Transforms ────────────────────────────────
@@ -1896,10 +2014,11 @@
     }
     // Free logged-in: show captions + edits; Guest: show edits only
     if (currentUser) {
-      const capsLeft  = Math.max(0, aiLimit - aiUsed);
-      const editsLeft = Math.max(0, enhanceLimit - enhanceUsed);
+      const capsLeft  = aiLimit === null ? '∞' : Math.max(0, aiLimit - aiUsed);
+      const capsLabel = aiLimit === null ? 'captions' : `caption${capsLeft !== 1 ? 's' : ''}`;
+      const editsLeft = enhanceLimit === null ? '∞' : Math.max(0, enhanceLimit - enhanceUsed);
       document.getElementById('usageText').textContent =
-        `${capsLeft} caption${capsLeft !== 1 ? 's' : ''} · ${editsLeft} edits left`;
+        `${capsLeft} ${capsLabel} · ${editsLeft} edits left`;
     } else {
       const left = Math.max(0, enhanceLimit - enhanceUsed);
       document.getElementById('usageText').textContent = `${left} edits left`;
