@@ -623,6 +623,81 @@
     transition: opacity .18s;
   }
   .gen-locked a:hover { opacity: .88; }
+
+  /* ── Before/After AI Transform Teaser ───────────────────── */
+  .teaser-wrap {
+    width: 100%; padding: 10px 0 6px;
+    display: flex; flex-direction: column; align-items: center; gap: 10px;
+  }
+  .teaser-header { text-align: center; }
+  .teaser-badge {
+    display: inline-block;
+    background: linear-gradient(135deg, var(--grad1), var(--grad3));
+    color: #fff; font-size: .68rem; font-weight: 700; letter-spacing: .05em;
+    padding: 3px 10px; border-radius: 20px; margin-bottom: 5px;
+  }
+  .teaser-sub { font-size: .75rem; color: var(--muted2); }
+  .ba-container {
+    position: relative; width: 100%; max-width: 360px;
+    aspect-ratio: 4/3; border-radius: 12px; overflow: hidden;
+    cursor: col-resize; user-select: none; touch-action: none;
+    box-shadow: 0 8px 28px rgba(0,0,0,.55);
+  }
+  .ba-before, .ba-after { position: absolute; inset: 0; }
+  .ba-img {
+    width: 100%; height: 100%; object-fit: cover; display: block;
+    pointer-events: none; border-radius: 0;
+  }
+  .ba-after { clip-path: inset(0 50% 0 0); }
+  .ba-label {
+    position: absolute; bottom: 8px;
+    padding: 2px 7px; background: rgba(0,0,0,.55);
+    color: #fff; font-size: .6rem; font-weight: 700;
+    letter-spacing: .08em; border-radius: 4px;
+  }
+  .ba-label-left  { left: 8px; }
+  .ba-label-right { right: 8px; }
+  .ba-handle {
+    position: absolute; top: 0; bottom: 0; left: 50%;
+    transform: translateX(-50%);
+    display: flex; flex-direction: column; align-items: center;
+    pointer-events: none; width: 36px;
+  }
+  .ba-handle-line { flex: 1; width: 2px; background: rgba(255,255,255,.85); }
+  .ba-handle-btn {
+    width: 34px; height: 34px; border-radius: 50%;
+    background: white; display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 2px 10px rgba(0,0,0,.45); flex-shrink: 0;
+  }
+  .ba-handle-btn svg path {
+    stroke: var(--grad1); stroke-width: 2.5;
+    fill: none; stroke-linecap: round; stroke-linejoin: round;
+  }
+  .ba-tabs {
+    display: flex; gap: 5px; flex-wrap: wrap;
+    justify-content: center; max-width: 360px; width: 100%;
+  }
+  .ba-tab {
+    background: var(--bg3); border: 1px solid var(--border2);
+    color: var(--muted2); font-size: .68rem; font-weight: 600;
+    padding: 4px 9px; border-radius: 20px; cursor: pointer;
+    transition: all .15s; white-space: nowrap;
+  }
+  .ba-tab:hover { border-color: var(--grad2); color: var(--grad2); }
+  .ba-tab.active {
+    background: linear-gradient(135deg, var(--grad1), var(--grad2));
+    border-color: transparent; color: #fff;
+  }
+  .ba-cta {
+    display: block; width: 100%; max-width: 300px;
+    background: linear-gradient(135deg, var(--grad1), var(--grad3));
+    color: #fff; text-align: center; text-decoration: none;
+    padding: 10px 18px; border-radius: 10px;
+    font-size: .78rem; font-weight: 700; letter-spacing: .01em;
+    transition: opacity .18s; box-shadow: 0 4px 16px rgba(124,58,237,.35);
+  }
+  .ba-cta:hover { opacity: .88; }
+  .ba-hint { font-size: .65rem; color: var(--muted); text-align: center; }
 </style>
 </head>
 <body>
@@ -994,11 +1069,48 @@
 
   <!-- RIGHT: RESULTS -->
   <div class="results-panel" id="resultsPanel">
-    <!-- Empty state -->
+    <!-- Empty state — AI Transform Teaser -->
     <div class="empty-state" id="emptyState">
-      <div class="icon">✨</div>
-      <strong style="font-size:.9rem;">Results appear here</strong>
-      <p>Upload a photo and click Generate — AI will read it and write 5 platform-ready captions.</p>
+      <div class="teaser-wrap">
+        <div class="teaser-header">
+          <div class="teaser-badge">✨ AI Transforms Preview</div>
+          <p class="teaser-sub">Drag the slider · see what Premium unlocks</p>
+        </div>
+
+        <!-- Before/After slider -->
+        <div class="ba-container" id="baContainer">
+          <div class="ba-before">
+            <img src="https://images.unsplash.com/photo-1529665253569-6d01c0eaf7b6?w=600&q=80&fit=crop&crop=faces" class="ba-img" alt="Before" crossorigin="anonymous">
+            <span class="ba-label ba-label-left">BEFORE</span>
+          </div>
+          <div class="ba-after" id="baAfter">
+            <img src="https://images.unsplash.com/photo-1529665253569-6d01c0eaf7b6?w=600&q=80&fit=crop&crop=faces" class="ba-img" id="baAfterImg" alt="After AI" crossorigin="anonymous">
+            <span class="ba-label ba-label-right">AFTER AI ✦</span>
+          </div>
+          <div class="ba-handle" id="baHandle">
+            <div class="ba-handle-line"></div>
+            <div class="ba-handle-btn">
+              <svg width="18" height="18" viewBox="0 0 24 24">
+                <path d="M8 5l-5 7 5 7M16 5l5 7-5 7"/>
+              </svg>
+            </div>
+            <div class="ba-handle-line"></div>
+          </div>
+        </div>
+
+        <!-- Transform style tabs -->
+        <div class="ba-tabs" id="baTabs">
+          <button class="ba-tab active" data-filter="sepia(0.5) saturate(1.6) hue-rotate(-12deg) brightness(0.9)">🗼 Eiffel</button>
+          <button class="ba-tab" data-filter="sepia(0.18) saturate(2.4) brightness(1.2) hue-rotate(-18deg)">🌅 Golden Hour</button>
+          <button class="ba-tab" data-filter="contrast(1.65) saturate(0.35) brightness(0.76)">🎬 Cinematic</button>
+          <button class="ba-tab" data-filter="brightness(1.65) saturate(0.12) contrast(0.82)">⬜ Studio</button>
+          <button class="ba-tab" data-filter="saturate(0.18) hue-rotate(188deg) brightness(1.18) contrast(1.12)">❄️ Winter</button>
+          <button class="ba-tab" data-filter="brightness(0.5) contrast(1.55) saturate(1.5) hue-rotate(228deg)">🌙 Moody</button>
+        </div>
+
+        <a href="pricing.html" class="ba-cta" id="baCta">🔓 Unlock All 20 AI Transforms · $7/mo →</a>
+        <p class="ba-hint">Upload your own photo above, then try these on it</p>
+      </div>
     </div>
   </div>
 </div>
@@ -1056,6 +1168,7 @@
         showGenLocked(false);
         updateUsageUI();
       }
+      updateBaCta(d.plan);
     } catch(e) {
       // Network error — stay with cached state; default to locked
       if (!stored || stored.plan === 'free' || !stored.plan) {
@@ -1088,6 +1201,7 @@
       // Free user — show gen button (API enforces daily caption limit)
       showGenLocked(false);
     }
+    updateBaCta(user.plan);
   }
 
   function clearAuth() {
@@ -1931,6 +2045,74 @@
       alt_text: 'A scenic outdoor photograph showing warm golden light. The composition features natural landscape elements with soft, diffused lighting creating a peaceful, contemplative atmosphere.',
       engagement_tip: 'Ask a question at the end to boost comments by 2–3×'
     };
+  }
+
+  // ── Before/After AI Transform Teaser ─────────────────────
+  (function initBaSlider() {
+    const container = document.getElementById('baContainer');
+    const afterDiv  = document.getElementById('baAfter');
+    const handle    = document.getElementById('baHandle');
+    const afterImg  = document.getElementById('baAfterImg');
+    const tabs      = document.querySelectorAll('.ba-tab');
+    if (!container) return;
+
+    let pos = 50, isDragging = false;
+
+    function setPos(p) {
+      pos = Math.min(95, Math.max(5, p));
+      afterDiv.style.clipPath = `inset(0 ${(100 - pos).toFixed(2)}% 0 0)`;
+      handle.style.left = pos.toFixed(2) + '%';
+    }
+
+    function getPct(e) {
+      const r = container.getBoundingClientRect();
+      const cx = e.touches ? e.touches[0].clientX : e.clientX;
+      return ((cx - r.left) / r.width) * 100;
+    }
+
+    container.addEventListener('mousedown',  e => { isDragging = true; setPos(getPct(e)); });
+    container.addEventListener('touchstart', e => { isDragging = true; setPos(getPct(e)); }, { passive: true });
+    window.addEventListener('mousemove',  e => { if (isDragging) setPos(getPct(e)); });
+    window.addEventListener('touchmove',  e => { if (isDragging) setPos(getPct(e)); }, { passive: true });
+    window.addEventListener('mouseup',  () => isDragging = false);
+    window.addEventListener('touchend', () => isDragging = false);
+
+    // Tab switching → update CSS filter on after image
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        tabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        afterImg.style.filter = tab.dataset.filter || '';
+      });
+    });
+    // Apply first tab's filter on load
+    if (tabs[0]) afterImg.style.filter = tabs[0].dataset.filter || '';
+
+    // Auto-animate: sweep 50→15→85→50 over ~2.4s then stop
+    setTimeout(() => {
+      const kf = [50, 15, 85, 50];
+      let ki = 0, t0 = null;
+      const segDur = 800; // ms per segment
+      function ease(x) { return x < 0.5 ? 2*x*x : 1 - Math.pow(-2*x+2,2)/2; }
+      function anim(ts) {
+        if (isDragging) return; // stop if user grabbed it
+        if (!t0) t0 = ts;
+        const pct = Math.min((ts - t0) / segDur, 1);
+        setPos(kf[ki] + (kf[ki+1] - kf[ki]) * ease(pct));
+        if (pct < 1) {
+          requestAnimationFrame(anim);
+        } else if (ki + 2 < kf.length) {
+          ki++; t0 = null;
+          requestAnimationFrame(anim);
+        }
+      }
+      requestAnimationFrame(anim);
+    }, 900);
+  })();
+
+  function updateBaCta(plan) {
+    const cta = document.getElementById('baCta');
+    if (cta) cta.style.display = (plan === 'premium' || plan === 'teams') ? 'none' : '';
   }
 </script>
 
