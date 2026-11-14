@@ -98,6 +98,23 @@ $prompts = [
     'remove_clutter' => 'Clean up and declutter the background of this photo. Remove any distracting objects, clutter, rubbish, or unwanted items in the background. Keep the main subject and foreground completely unchanged. Make the background look clean and natural.',
     'erase_people'   => 'Remove any people visible in the background of this photo, keeping only the main foreground subject. Fill the empty background naturally and seamlessly. Keep the main subject completely unchanged.',
     'skin_retouch'   => 'Subtly and naturally retouch the portrait. Smooth skin texture and tone, reduce visible blemishes, soften under-eye shadows. Keep the person looking completely natural and realistic — avoid over-editing or plastic appearance. Preserve all facial features and identity.',
+
+    // 😎 Style & Accessories (NEW)
+    'add_sunglasses'    => 'Add a pair of stylish, fashionable sunglasses to the person\'s face in this photo. Choose sunglasses that naturally complement their face shape and the lighting. The sunglasses should look naturally worn, with realistic reflections and shadows. Keep everything else in the photo completely unchanged.',
+    'add_cap'           => 'Add a stylish baseball cap or snapback hat to the person\'s head. Choose a color that complements their outfit. The cap should sit naturally on their head with realistic shadows and lighting. Keep everything else in the photo completely unchanged.',
+    'casual_outfit'     => 'Change the person\'s clothing to a stylish casual outfit — think clean fitted jeans, a relaxed t-shirt or hoodie, fresh sneakers. The outfit should suit their body type and the lighting of the scene. Keep their face, hair, pose, and background completely unchanged. Photorealistic.',
+    'formal_outfit'     => 'Change the person\'s clothing to a sharp, professional formal outfit — a well-fitted suit, blazer, or business attire appropriate for their apparent gender. Keep their face, hair, pose, and background completely unchanged. Photorealistic, high-quality fabric details.',
+    'streetwear_style'  => 'Change the person\'s clothing to a trendy streetwear outfit — oversized hoodie, cargo pants or joggers, fresh sneakers, possibly a cap. Urban and fashion-forward. Keep their face, hair, pose, and background completely unchanged. Photorealistic.',
+
+    // 💼 Professional Headshots (NEW)
+    'linkedin_headshot' => 'Transform this into a professional LinkedIn-style headshot. Apply clean studio lighting — soft key light, gentle fill. Replace the background with a smooth neutral grey or soft blurred office environment. Lightly retouch the skin for a polished look without looking artificial. Keep the person\'s face, expression, and identity completely unchanged. Professional business portrait quality.',
+    'dating_profile'    => 'Transform this into an attractive, natural-looking dating profile photo. Apply warm, flattering portrait lighting with a soft bokeh background blur. Enhance the natural glow of the skin subtly. Keep the person\'s face and expression completely authentic — no dramatic changes. Warm, inviting, and genuine feeling.',
+    'author_headshot'   => 'Transform this into an authoritative author or speaker headshot. Apply dramatic studio-style Rembrandt lighting with a dark, moody background. Give it a confident, intellectual feel. Lightly retouch the skin. Keep all facial features and identity completely unchanged. Editorial quality portrait.',
+
+    // ✨ Portrait Enhancement (NEW)
+    'glow_up'           => 'Apply a full portrait enhancement: smooth and even out skin tone, brighten the eyes, enhance facial definition, add flattering soft lighting. The result should look like a professional magazine portrait — polished, vibrant, and confident. Keep all facial features and identity completely unchanged. Natural, not plastic.',
+    'retro_portrait'    => 'Apply a warm vintage 1970s portrait photography look: warm amber and golden tones, slightly elevated blacks, gentle soft focus, beautiful film-like quality. Keep the person and composition completely unchanged.',
+    'editorial_bw'      => 'Convert this portrait into a striking high-contrast black and white editorial photograph. Deep rich blacks, clean bright highlights, sharp detail on the face and eyes. Professional fashion editorial or magazine cover quality. Keep all composition unchanged.',
 ];
 
 if (!isset($prompts[$transform])) {
