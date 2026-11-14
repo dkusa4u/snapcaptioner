@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bulk Caption Generator — SnapCaption AI</title>
+<style>
+:root {
+  --bg:    #0f0f1a;
+  --card:  #1a1a2e;
+  --card2: #16213e;
+  --grad1: #7c3aed;
+  --grad2: #a855f7;
+  --grad3: #ec4899;
+  --text:  #f1f5f9;
+  --muted: #94a3b8;
+  --border:#2d2d4e;
+  --green: #22c55e;
+  --red:   #ef4444;
+  --amber: #f59e0b;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;min-height:100vh}
+
+/* ── TOP NAV ── */
+.topnav{display:flex;align-items:center;justify-content:space-between;padding:14px 24px;background:var(--card);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100}
+.topnav-brand{font-size:1.1rem;font-weight:700;background:linear-gradient(135deg,var(--grad1),var(--grad3));-webkit-background-clip:text;-webkit-text-fill-color:transparent;text-decoration:none}
+.topnav-links{display:flex;gap:16px;align-items:center}
+.topnav-links a{color:var(--muted);text-decoration:none;font-size:.85rem;transition:color .2s}
+.topnav-links a:hover{color:var(--text)}
+.nav-back{display:inline-flex;align-items:center;gap:6px;color:var(--muted);text-decoration:none;font-size:.85rem}
+.nav-back:hover{color:var(--text)}
+
+/* ── LAYOUT ── */
+.container{max-width:1100px;margin:0 auto;padding:32px 20px}
+.page-header{margin-bottom:32px}
+.page-header h1{font-size:1.8rem;font-weight:700;background:linear-gradient(135deg,var(--grad2),var(--grad3));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:8px}
+.page-header p{color:var(--muted);font-size:.95rem}
+.badge-pro{display:inline-flex;align-items:center;gap:5px;background:linear-gradient(135deg,var(--grad1),var(--grad3));border-radius:20px;padding:3px 10px;font-size:.75rem;font-weight:600;color:#fff;margin-left:10px;vertical-align:middle}
+
+/* ── PLAN GATE ── */
+#planGate{display:none;text-align:center;padding:60px 20px}
+.gate-card{background:var(--card);border:1px solid var(--border);border-radius:16px;max-width:480px;margin:0 auto;padding:40px 32px}
+.gate-icon{font-size:3rem;margin-bottom:16px}
+.gate-card h2{font-size:1.4rem;font-weight:700;margin-bottom:10px}
+.gate-card p{color:var(--muted);font-size:.95rem;margin-bottom:24px;line-height:1.6}
+.btn-upgrade{display:inline-block;padding:12px 32px;border-radius:10px;background:linear-gradient(135deg,var(--grad1),var(--grad3));color:#fff;font-weight:600;text-decoration:none;font-size:.95rem;transition:opacity .2s}
+.btn-upgrade:hover{opacity:.9}
+
+/* ── SETTINGS PANEL ── */
+.settings-row{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:24px}
+.settings-row .field{flex:1;min-width:140px}
+.field label{display:block;font-size:.8rem;font-weight:600;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:.04em}
+.field select,.field input{width:100%;background:var(--card);border:1px solid var(--border);color:var(--text);padding:10px 14px;border-radius:8px;font-size:.9rem;outline:none;transition:border-color .2s}
+.field select:focus,.field input:focus{border-color:var(--grad2)}
+
+/* ── DROP ZONE ── */
+.drop-zone{border:2px dashed var(--border);border-radius:16px;padding:48px 24px;text-align:center;cursor:pointer;transition:border-color .2s,background .2s;margin-bottom:24px;position:relative}
+.drop-zone:hover,.drop-zone.drag-over{border-color:var(--grad2);background:rgba(168,85,247,.05)}
+.drop-zone-icon{font-size:2.5rem;margin-bottom:12px}
+.drop-zone p{color:var(--muted);font-size:.95rem}
+.drop-zone strong{color:var(--grad2)}
+.drop-zone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.count-badge{display:inline-block;margin-top:8px;background:var(--card2);border:1px solid var(--border);border-radius:20px;padding:4px 14px;font-size:.8rem;color:var(--muted)}
+
+/* ── IMAGE GRID ── */
+#imageGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px;margin-bottom:24px}
+.img-card{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;position:relative;transition:border-color .2s}
+.img-card.state-processing{border-color:var(--amber)}
+.img-card.state-done{border-color:var(--green)}
+.img-card.state-error{border-color:var(--red)}
+.img-thumb{width:100%;height:140px;object-fit:cover;display:block}
+.img-body{padding:12px}
+.img-name{font-size:.8rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:6px}
+.img-context{width:100%;background:var(--card2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:.8rem;padding:7px 10px;resize:none;outline:none;height:48px;transition:border-color .2s}
+.img-context:focus{border-color:var(--grad2)}
+.img-status{display:flex;align-items:center;gap:6px;font-size:.78rem;padding:8px 12px;border-top:1px solid var(--border);min-height:34px}
+.status-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.dot-queued{background:var(--border)}
+.dot-processing{background:var(--amber);animation:pulse .8s infinite}
+.dot-done{background:var(--green)}
+.dot-error{background:var(--red)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.img-remove{position:absolute;top:8px;right:8px;width:24px;height:24px;border-radius:50%;background:rgba(0,0,0,.7);border:none;color:#fff;cursor:pointer;font-size:.9rem;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .2s}
+.img-card:hover .img-remove{opacity:1}
+
+/* ── RESULTS ── */
+.result-box{margin-top:8px;display:none;background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:12px;font-size:.82rem}
+.result-caption{color:var(--text);line-height:1.5;margin-bottom:8px}
+.result-tags{color:var(--grad2);font-size:.78rem;line-height:1.6;margin-bottom:8px;word-break:break-word}
+.result-actions{display:flex;gap:8px;flex-wrap:wrap}
+.btn-sm{padding:5px 12px;border-radius:6px;font-size:.75rem;border:1px solid var(--border);background:transparent;color:var(--text);cursor:pointer;transition:all .2s;white-space:nowrap}
+.btn-sm:hover{background:var(--border)}
+.expand-link{color:var(--grad2);font-size:.75rem;cursor:pointer;border:none;background:none;padding:0;text-decoration:underline;margin-top:6px;display:block}
+.extra-captions{display:none;margin-top:8px;border-top:1px solid var(--border);padding-top:8px}
+.extra-cap{padding:6px 0;border-bottom:1px solid var(--border);font-size:.8rem;color:var(--text);line-height:1.5;display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+.extra-cap:last-child{border-bottom:none}
+
+/* ── ACTION BAR ── */
+.action-bar{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:24px}
+.btn-primary{padding:12px 28px;border-radius:10px;background:linear-gradient(135deg,var(--grad1),var(--grad3));color:#fff;font-weight:600;font-size:.95rem;border:none;cursor:pointer;transition:opacity .2s}
+.btn-primary:hover:not(:disabled){opacity:.9}
+.btn-primary:disabled{opacity:.5;cursor:not-allowed}
+.btn-secondary{padding:12px 24px;border-radius:10px;background:transparent;color:var(--text);font-weight:500;font-size:.9rem;border:1px solid var(--border);cursor:pointer;transition:all .2s}
+.btn-secondary:hover:not(:disabled){background:var(--border)}
+.btn-secondary:disabled{opacity:.4;cursor:not-allowed}
+.progress-info{color:var(--muted);font-size:.88rem}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 20px;font-size:.88rem;box-shadow:0 8px 32px rgba(0,0,0,.4);z-index:999;transition:transform .3s;pointer-events:none;white-space:nowrap}
+.toast.show{transform:translateX(-50%) translateY(0)}
+
+/* ── PROGRESS BAR ── */
+.progress-bar-wrap{background:var(--card2);border-radius:20px;height:6px;overflow:hidden;flex:1;min-width:120px}
+.progress-bar-fill{height:100%;background:linear-gradient(90deg,var(--grad1),var(--grad3));border-radius:20px;transition:width .3s}
+
+/* ── RESPONSIVE ── */
+@media(max-width:600px){
+  .settings-row{flex-direction:column}
+  .action-bar{flex-direction:column;align-items:stretch}
+  .btn-primary,.btn-secondary{text-align:center}
+}
+</style>
+</head>
+<body>
+
+<!-- TOP NAV -->
+<nav class="topnav">
+  <a href="app.html" class="topnav-brand">📸 SnapCaption AI</a>
+  <div class="topnav-links">
+    <a href="app.html" class="nav-back">← Back to App</a>
+  </div>
+</nav>
+
+<!-- PLAN GATE (hidden by default, shown for non-Pro) -->
+<div id="planGate">
+  <div class="gate-card">
+    <div class="gate-icon">⚡</div>
+    <h2>Pro Plan Feature</h2>
+    <p>Bulk Caption Generation lets you process up to 20 images at once — a Pro plan exclusive. Upgrade to unlock batch processing, plus hashtag research, multi-brand profiles, and more.</p>
+    <a href="pricing.html?upgrade=pro" class="btn-upgrade">Upgrade to Pro</a>
+    <div style="margin-top:16px"><a href="app.html" style="color:var(--muted);font-size:.85rem">← Back to single-image mode</a></div>
+  </div>
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="container" id="mainContent" style="display:none">
+  <div class="page-header">
+    <h1>Bulk Caption Generator <span class="badge-pro">⚡ Pro</span></h1>
+    <p>Upload up to 20 images and generate captions for all of them at once.</p>
+  </div>
+
+  <!-- SHARED SETTINGS -->
+  <div class="settings-row">
+    <div class="field">
+      <label>Platform</label>
+      <select id="platform">
+        <option value="Instagram">Instagram</option>
+        <option value="TikTok">TikTok</option>
+        <option value="LinkedIn">LinkedIn</option>
+        <option value="X">X (Twitter)</option>
+        <option value="Facebook">Facebook</option>
+        <option value="Pinterest">Pinterest</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Language</label>
+      <select id="language">
+        <option>English</option><option>Spanish</option><option>French</option>
+        <option>German</option><option>Italian</option><option>Portuguese</option>
+        <option>Dutch</option><option>Japanese</option><option>Korean</option>
+        <option>Chinese (Simplified)</option><option>Arabic</option><option>Hindi</option>
+        <option>Russian</option><option>Swedish</option><option>Norwegian</option>
+        <option>Danish</option><option>Finnish</option><option>Polish</option>
+        <option>Turkish</option><option>Thai</option><option>Indonesian</option>
+        <option>Malay</option><option>Vietnamese</option><option>Hebrew</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Tone</label>
+      <select id="tone">
+        <option value="engaging">Engaging</option>
+        <option value="funny">Funny</option>
+        <option value="inspirational">Inspirational</option>
+        <option value="professional">Professional</option>
+        <option value="storytelling">Storytelling</option>
+        <option value="minimal">Minimal</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- DROP ZONE -->
+  <div class="drop-zone" id="dropZone">
+    <input type="file" id="fileInput" multiple accept="image/*">
+    <div class="drop-zone-icon">🖼️</div>
+    <p>Drag &amp; drop images here, or <strong>click to browse</strong></p>
+    <p style="font-size:.8rem;color:var(--muted);margin-top:6px">JPEG, PNG, WebP • Max 10 MB per image</p>
+    <span class="count-badge" id="countBadge">0 / 20 images</span>
+  </div>
+
+  <!-- IMAGE GRID -->
+  <div id="imageGrid"></div>
+
+  <!-- ACTION BAR -->
+  <div class="action-bar" id="actionBar" style="display:none">
+    <button class="btn-primary" id="btnGenerate">✨ Generate All Captions</button>
+    <button class="btn-secondary" id="btnClear">🗑 Clear All</button>
+    <button class="btn-secondary" id="btnDownload" disabled>⬇ Download CSV</button>
+    <div class="progress-bar-wrap" id="progressBarWrap" style="display:none">
+      <div class="progress-bar-fill" id="progressBarFill" style="width:0%"></div>
+    </div>
+    <span class="progress-info" id="progressInfo"></span>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ─── State ───────────────────────────────────────────────────────────────────
+const MAX_IMAGES = 20;
+const MAX_MB     = 10;
+
+let items  = [];          // { id, file, name, base64, context, status, result }
+let jobId  = crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36);
+let running = false;
+let doneCount = 0;
+
+// ─── Auth & plan check ───────────────────────────────────────────────────────
+const currentToken = localStorage.getItem('sc_token');
+const currentUser  = (() => { try { return JSON.parse(localStorage.getItem('sc_user') || '{}'); } catch { return {}; } })();
+
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function isPro(plan) {
+  return ['pro','teams'].includes(plan);
+}
+
+function showGate() {
+  document.getElementById('planGate').style.display = 'block';
+  document.getElementById('mainContent').style.display = 'none';
+}
+function showMain() {
+  document.getElementById('planGate').style.display = 'none';
+  document.getElementById('mainContent').style.display = 'block';
+}
+
+function checkAccess() {
+  if (!currentToken) { showGate(); return; }
+  const plan = currentUser.plan || 'free';
+  if (!isPro(plan)) { showGate(); return; }
+  showMain();
+}
+
+// ─── Toast ───────────────────────────────────────────────────────────────────
+let toastTimer;
+function _showToast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('show'), 3000);
+}
+
+// ─── File handling ────────────────────────────────────────────────────────────
+document.getElementById('fileInput').addEventListener('change', e => handleFiles(e.target.files));
+
+const dz = document.getElementById('dropZone');
+dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('drag-over'); });
+dz.addEventListener('dragleave', () => dz.classList.remove('drag-over'));
+dz.addEventListener('drop', e => {
+  e.preventDefault();
+  dz.classList.remove('drag-over');
+  handleFiles(e.dataTransfer.files);
+});
+
+function handleFiles(files) {
+  const arr = Array.from(files).filter(f => f.type.startsWith('image/'));
+  const slots = MAX_IMAGES - items.length;
+  if (slots <= 0) { _showToast('Maximum 20 images reached.'); return; }
+  const toAdd = arr.slice(0, slots);
+  if (arr.length > slots) _showToast(`Only ${slots} more image${slots===1?'':'s'} allowed. Added first ${toAdd.length}.`);
+
+  toAdd.forEach(file => {
+    if (file.size > MAX_MB * 1024 * 1024) {
+      _showToast(`${file.name} exceeds ${MAX_MB} MB — skipped.`);
+      return;
+    }
+    const id = crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).slice(2);
+    const reader = new FileReader();
+    reader.onload = ev => {
+      const b64full = ev.target.result; // data:image/...;base64,...
+      const b64 = b64full.split(',')[1];
+      items.push({ id, file, name: file.name, base64: b64, context: '', status: 'queued', result: null });
+      renderGrid();
+    };
+    reader.readAsDataURL(file);
+  });
+
+  // reset file input so same file can be re-added after removal
+  document.getElementById('fileInput').value = '';
+}
+
+// ─── Render ──────────────────────────────────────────────────────────────────
+function renderGrid() {
+  const grid = document.getElementById('imageGrid');
+  const bar  = document.getElementById('actionBar');
+  const badge = document.getElementById('countBadge');
+
+  badge.textContent = `${items.length} / ${MAX_IMAGES} images`;
+  bar.style.display = items.length ? 'flex' : 'none';
+
+  // Build HTML
+  grid.innerHTML = items.map(item => `
+    <div class="img-card state-${item.status}" id="card-${item.id}">
+      <img class="img-thumb" src="${URL.createObjectURL(item.file)}" alt="${escHtml(item.name)}">
+      <button class="img-remove" onclick="removeItem('${item.id}')" title="Remove">✕</button>
+      <div class="img-body">
+        <div class="img-name" title="${escHtml(item.name)}">${escHtml(item.name)}</div>
+        <textarea class="img-context" placeholder="Optional context…" id="ctx-${item.id}"
+          onchange="updateContext('${item.id}',this.value)"
+          ${item.status !== 'queued' ? 'disabled' : ''}>${escHtml(item.context)}</textarea>
+      </div>
+      <div class="img-status" id="status-${item.id}">
+        ${renderStatus(item)}
+      </div>
+      ${item.result ? renderResult(item) : ''}
+    </div>
+  `).join('');
+
+  // Update CSV button
+  const anyDone = items.some(i => i.status === 'done');
+  document.getElementById('btnDownload').disabled = !anyDone;
+}
+
+function renderStatus(item) {
+  const dots = { queued: 'dot-queued', processing: 'dot-processing', done: 'dot-done', error: 'dot-error' };
+  const labels = { queued: 'Queued', processing: 'Processing…', done: 'Done ✓', error: 'Error' };
+  return `<span class="status-dot ${dots[item.status] || 'dot-queued'}"></span>
+          <span style="color:${item.status==='error'?'var(--red)':item.status==='done'?'var(--green)':'var(--muted)'}">${labels[item.status] || 'Queued'}</span>
+          ${item.error ? `<span style="color:var(--red);font-size:.74rem;margin-left:4px">${escHtml(item.error)}</span>` : ''}`;
+}
+
+function renderResult(item) {
+  if (!item.result) return '';
+  const r = item.result;
+  const tags = (r.hashtags || []).map(t => '#'+t).join(' ');
+  const others = (r.all_captions || []).slice(1);
+  return `
+    <div class="result-box" id="res-${item.id}" style="display:block">
+      <div class="result-caption">${escHtml(r.caption)}</div>
+      <div class="result-tags">${escHtml(tags)}</div>
+      <div class="result-actions">
+        <button class="btn-sm" onclick="copyCaption('${item.id}')">📋 Copy Caption</button>
+        <button class="btn-sm" onclick="copyAll('${item.id}')">📋 Copy with Tags</button>
+      </div>
+      ${others.length ? `<button class="expand-link" onclick="toggleExtra('${item.id}')">Show all 3 captions ▾</button>
+      <div class="extra-captions" id="extra-${item.id}">
+        ${others.map((c,i) => `<div class="extra-cap">
+          <span>${escHtml(c)}</span>
+          <button class="btn-sm" style="flex-shrink:0" onclick="copyText('${escHtml(c).replace(/'/g,"\\'")}')">Copy</button>
+        </div>`).join('')}
+      </div>` : ''}
+    </div>`;
+}
+
+function toggleExtra(id) {
+  const el = document.getElementById(`extra-${id}`);
+  const btn = el.previousElementSibling;
+  if (el.style.display === 'block') {
+    el.style.display = 'none';
+    btn.textContent = 'Show all 3 captions ▾';
+  } else {
+    el.style.display = 'block';
+    btn.textContent = 'Hide extra captions ▴';
+  }
+}
+
+function updateContext(id, val) {
+  const item = items.find(i => i.id === id);
+  if (item) item.context = val;
+}
+
+function removeItem(id) {
+  if (running) { _showToast('Cannot remove while generating.'); return; }
+  items = items.filter(i => i.id !== id);
+  renderGrid();
+}
+
+// ─── Generate ────────────────────────────────────────────────────────────────
+document.getElementById('btnGenerate').addEventListener('click', startGenerate);
+document.getElementById('btnClear').addEventListener('click', () => {
+  if (running) { _showToast('Stop the current run first.'); return; }
+  items = [];
+  doneCount = 0;
+  jobId = crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36);
+  renderGrid();
+});
+document.getElementById('btnDownload').addEventListener('click', downloadCSV);
+
+async function startGenerate() {
+  if (running) return;
+  if (!items.length) { _showToast('Add at least one image first.'); return; }
+
+  const queued = items.filter(i => i.status === 'queued');
+  if (!queued.length) { _showToast('All images are already processed.'); return; }
+
+  running = true;
+  document.getElementById('btnGenerate').disabled = true;
+  document.getElementById('btnClear').disabled = true;
+  document.getElementById('progressBarWrap').style.display = 'block';
+
+  const platform = document.getElementById('platform').value;
+  const language = document.getElementById('language').value;
+  const tone     = document.getElementById('tone').value;
+
+  const total = queued.length;
+  let done = 0;
+
+  for (const item of queued) {
+    // Update context from textarea in case it wasn't blurred
+    const ctxEl = document.getElementById(`ctx-${item.id}`);
+    if (ctxEl) item.context = ctxEl.value;
+
+    item.status = 'processing';
+    updateCardStatus(item);
+
+    document.getElementById('progressInfo').textContent = `Processing ${done + 1} of ${total}…`;
+    setProgress(done / total);
+
+    try {
+      const res = await fetch('/api/bulk-generate.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${currentToken}` },
+        body: JSON.stringify({
+          image:    item.base64,
+          platform, language, tone,
+          context:  item.context,
+          job_id:   jobId
+        })
+      });
+      const data = await res.json();
+
+      if (!res.ok || !data.success) {
+        const msg = data.message || data.error || 'Unknown error';
+        if (data.error === 'pro_required') {
+          running = false;
+          showGate();
+          return;
+        }
+        item.status = 'error';
+        item.error  = msg;
+      } else {
+        item.status = 'done';
+        item.result = data;
+        doneCount++;
+      }
+    } catch (err) {
+      item.status = 'error';
+      item.error  = 'Network error';
+    }
+
+    done++;
+    updateCardStatus(item);
+    setProgress(done / total);
+
+    // Small delay between requests to be kind to the API
+    if (done < total) await sleep(400);
+  }
+
+  running = false;
+  document.getElementById('btnGenerate').disabled = false;
+  document.getElementById('btnClear').disabled = false;
+  document.getElementById('progressInfo').textContent = `Done — ${doneCount} caption${doneCount===1?'':'s'} generated.`;
+
+  const anyDone = items.some(i => i.status === 'done');
+  document.getElementById('btnDownload').disabled = !anyDone;
+
+  const errors = items.filter(i => i.status === 'error').length;
+  if (errors) {
+    _showToast(`⚠️ ${errors} image${errors===1?' failed':'s failed'}. Rest done!`);
+  } else {
+    _showToast('✅ All captions generated!');
+  }
+
+  // Re-render to show results properly
+  renderGrid();
+}
+
+function updateCardStatus(item) {
+  const card = document.getElementById(`card-${item.id}`);
+  const statusEl = document.getElementById(`status-${item.id}`);
+  if (!card || !statusEl) return;
+
+  card.className = `img-card state-${item.status}`;
+  statusEl.innerHTML = renderStatus(item);
+
+  if (item.result) {
+    // Inject result box if not present
+    let resEl = document.getElementById(`res-${item.id}`);
+    if (!resEl) {
+      card.insertAdjacentHTML('beforeend', renderResult(item));
+    }
+  }
+}
+
+function setProgress(frac) {
+  document.getElementById('progressBarFill').style.width = `${Math.round(frac * 100)}%`;
+}
+
+// ─── Copy helpers ─────────────────────────────────────────────────────────────
+function copyCaption(id) {
+  const item = items.find(i => i.id === id);
+  if (!item?.result) return;
+  navigator.clipboard.writeText(item.result.caption).then(() => _showToast('Caption copied!'));
+}
+function copyAll(id) {
+  const item = items.find(i => i.id === id);
+  if (!item?.result) return;
+  const tags = (item.result.hashtags || []).map(t => '#'+t).join(' ');
+  navigator.clipboard.writeText(item.result.caption + '\n\n' + tags).then(() => _showToast('Caption + hashtags copied!'));
+}
+function copyText(txt) {
+  navigator.clipboard.writeText(txt).then(() => _showToast('Copied!'));
+}
+
+// ─── CSV Export ──────────────────────────────────────────────────────────────
+function downloadCSV() {
+  const platform = document.getElementById('platform').value;
+  const rows = [['Image Name', 'Caption 1', 'Caption 2', 'Caption 3', 'Hashtags', 'Alt Text', 'Platform', 'Generated At']];
+
+  items.filter(i => i.status === 'done' && i.result).forEach(item => {
+    const r = item.result;
+    const caps = r.all_captions || [r.caption];
+    const tags = (r.hashtags || []).map(t => '#'+t).join(' ');
+    rows.push([
+      item.name,
+      caps[0] || '',
+      caps[1] || '',
+      caps[2] || '',
+      tags,
+      r.alt_text || '',
+      platform,
+      new Date().toISOString().slice(0,19).replace('T',' ')
+    ]);
+  });
+
+  const csv = rows.map(row =>
+    row.map(cell => '"' + String(cell).replace(/"/g,'""') + '"').join(',')
+  ).join('\n');
+
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href = url;
+  a.download = `snapcaption-bulk-${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+  _showToast('CSV downloaded!');
+}
+
+// ─── Utility ─────────────────────────────────────────────────────────────────
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+// ─── Init ────────────────────────────────────────────────────────────────────
+checkAccess();
+renderGrid();
+</script>
+</body>
+</html>
