@@ -286,6 +286,27 @@
   }
   .hook-bar { height: 4px; border-radius: 2px; background: var(--border); flex: 1; max-width: 48px; overflow: hidden; }
   .hook-fill { height: 100%; border-radius: 2px; background: linear-gradient(90deg,var(--grad1),var(--grad3)); }
+  /* Engagement Score Meter */
+  .eng-meter {
+    display: flex; align-items: center; gap: 7px;
+    margin-top: 9px; padding: 7px 10px;
+    background: rgba(255,255,255,.03);
+    border: 1px solid rgba(255,255,255,.06);
+    border-radius: 8px;
+  }
+  .eng-label { font-size: .72rem; font-weight: 700; color: var(--muted); white-space: nowrap; min-width: 70px; }
+  .eng-bar-wrap { flex: 1; height: 5px; border-radius: 3px; background: var(--border); overflow: hidden; }
+  .eng-bar-fill { height: 100%; border-radius: 3px; transition: width .6s cubic-bezier(.4,0,.2,1); }
+  .eng-num { font-size: .82rem; font-weight: 800; min-width: 32px; text-align: right; }
+  .eng-grade {
+    font-size: .68rem; font-weight: 700; padding: 2px 6px; border-radius: 4px;
+    white-space: nowrap;
+  }
+  .eng-grade.weak   { background: rgba(239,68,68,.15);  color: #f87171; }
+  .eng-grade.fair   { background: rgba(249,115,22,.15); color: #fb923c; }
+  .eng-grade.good   { background: rgba(234,179,8,.15);  color: #fbbf24; }
+  .eng-grade.strong { background: rgba(34,197,94,.15);  color: #4ade80; }
+  .eng-grade.viral  { background: rgba(139,92,246,.2);  color: #c084fc; }
   .cap-btn {
     padding: 5px 11px; border-radius: 6px;
     border: 1px solid var(--border); background: none;
@@ -1824,6 +1845,7 @@
     let captionHTML = data.captions.map((cap, i) => {
       const isBlurred = !isPremium && i >= 3;
       const hookW = Math.round((cap.hook_score / 10) * 100);
+      const engScore = calcEngagementScore(cap.text, cap.hook_score, platform);
       return `
       <div class="caption-item ${isBlurred ? 'blurred-row' : ''}">
         <div class="caption-top">
@@ -1839,6 +1861,7 @@
           <button class="tts-btn" onclick="speak(this,'${escAttr(cap.text)}')" title="Read aloud">🔊</button>
           <button class="cap-btn" onclick="copyCaption(this,'${escAttr(cap.text)}')">Copy</button>
         </div>
+        ${engMeterHTML(engScore)}
       </div>`;
     }).join('');
 
@@ -1925,6 +1948,64 @@
         </div>
       </div>`}
     `;
+  }
+
+  // ── Engagement Score ───────────────────────────────────
+  function calcEngagementScore(text, hookScore, platform) {
+    let score = 0;
+    const lower = text.toLowerCase();
+    const isLinkedIn = platform === 'LinkedIn';
+
+    // 1. Emoji density (0–2 pts)
+    const emojis = [...text].filter(c => /\p{Emoji_Presentation}/u.test(c)).length;
+    if (isLinkedIn) {
+      score += emojis === 0 ? 2 : emojis <= 2 ? 1.6 : 0.6;
+    } else {
+      score += emojis === 0 ? 0.4 : emojis <= 6 ? 2 : emojis <= 10 ? 1.2 : 0.6;
+    }
+
+    // 2. Length vs platform ideal (0–2 pts)
+    const len = text.length;
+    const ranges = { Instagram:[100,220], TikTok:[80,180], LinkedIn:[150,300], X:[60,240], Facebook:[100,260], Pinterest:[80,200] };
+    const [lo, hi] = ranges[platform] || [100, 220];
+    score += (len >= lo && len <= hi) ? 2 : (len >= lo * 0.7 && len <= hi * 1.4) ? 1.2 : 0.4;
+
+    // 3. CTA + Question (0–2 pts)
+    const ctas = ['comment','share','tag','save','follow','click','swipe','drop a','tell me','let me know','dm','check out','link in bio','shop','grab','join'];
+    const hasCTA = ctas.some(p => lower.includes(p));
+    const hasQ   = text.includes('?');
+    score += (hasCTA && hasQ) ? 2 : (hasCTA || hasQ) ? 1.5 : 0.4;
+
+    // 4. Hook quality from backend (0–2 pts)
+    score += (hookScore / 10) * 2;
+
+    // 5. Opening punch — emoji or number or cap (0–1 pt)
+    const first = text.trim()[0] || '';
+    score += (/\p{Emoji_Presentation}/u.test(first) || /[0-9A-Z]/.test(first)) ? 1 : 0.3;
+
+    // 6. Readability — line breaks (0–1 pt)
+    score += text.includes('\n') ? 1 : 0.3;
+
+    return Math.min(10, Math.round(score * 10) / 10);
+  }
+
+  function engMeterHTML(score) {
+    const pct = score * 10;
+    let color, gradeClass, gradeLabel;
+    if (score < 4)      { color='#f87171'; gradeClass='weak';   gradeLabel='Weak'; }
+    else if (score < 6) { color='#fb923c'; gradeClass='fair';   gradeLabel='Fair'; }
+    else if (score < 7.5){ color='#fbbf24'; gradeClass='good',  gradeLabel='Good'; }
+    else if (score < 8.8){ color='#4ade80'; gradeClass='strong';gradeLabel='Strong'; }
+    else                { color='#c084fc'; gradeClass='viral';  gradeLabel='Viral ✨'; }
+    return `
+      <div class="eng-meter">
+        <span class="eng-label">📊 Engagement</span>
+        <div class="eng-bar-wrap">
+          <div class="eng-bar-fill" style="width:${pct}%;background:${color}"></div>
+        </div>
+        <span class="eng-num" style="color:${color}">${score}</span>
+        <span class="eng-grade ${gradeClass}">${gradeLabel}</span>
+      </div>`;
   }
 
   // ── TTS ────────────────────────────────────────────────
