@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Post Preview — SnapCaption AI</title>
+<style>
+:root {
+  --bg:    #0f0f1a;
+  --card:  #1a1a2e;
+  --grad1: #7c3aed;
+  --grad2: #a855f7;
+  --grad3: #ec4899;
+  --text:  #f1f5f9;
+  --muted: #94a3b8;
+  --border:#2d2d4e;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;min-height:100vh}
+
+/* ── TOP NAV ── */
+.topnav{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;background:var(--card);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100}
+.topnav-brand{font-size:1rem;font-weight:700;background:linear-gradient(135deg,var(--grad1),var(--grad3));-webkit-background-clip:text;-webkit-text-fill-color:transparent;text-decoration:none}
+.nav-back{display:inline-flex;align-items:center;gap:5px;color:var(--muted);text-decoration:none;font-size:.85rem;transition:color .2s}
+.nav-back:hover{color:var(--text)}
+
+/* ── LAYOUT ── */
+.page{display:flex;gap:24px;padding:24px 20px;max-width:1100px;margin:0 auto;align-items:flex-start}
+@media(max-width:768px){.page{flex-direction:column;padding:16px}}
+
+/* ── CONTROLS PANEL ── */
+.controls{flex:0 0 300px;background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px;position:sticky;top:76px}
+@media(max-width:768px){.controls{flex:none;width:100%;position:static}}
+
+.ctrl-title{font-size:.95rem;font-weight:700;margin-bottom:16px;color:var(--text)}
+.tab-row{display:flex;background:rgba(255,255,255,.05);border-radius:10px;padding:3px;gap:3px;margin-bottom:16px}
+.tab-btn{flex:1;padding:7px 4px;border-radius:7px;border:none;cursor:pointer;font-size:.78rem;font-weight:600;color:var(--muted);background:transparent;transition:all .2s;white-space:nowrap}
+.tab-btn.active{background:linear-gradient(135deg,var(--grad1),var(--grad3));color:#fff}
+
+.theme-row{display:flex;gap:8px;margin-bottom:16px}
+.theme-btn{flex:1;padding:8px;border-radius:8px;border:1px solid var(--border);cursor:pointer;font-size:.8rem;font-weight:600;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:5px}
+.theme-btn.light{background:#f0f0f0;color:#1a1a1a;border-color:#ddd}
+.theme-btn.dark{background:#1a1a1a;color:#f0f0f0}
+.theme-btn.active{border-color:var(--grad2);box-shadow:0 0 0 2px rgba(168,85,247,.3)}
+
+.ratio-row{display:flex;gap:8px;margin-bottom:20px}
+.ratio-btn{flex:1;padding:7px;border-radius:8px;border:1px solid var(--border);cursor:pointer;font-size:.75rem;font-weight:600;color:var(--muted);background:transparent;transition:all .2s;text-align:center}
+.ratio-btn.active{border-color:var(--grad2);color:var(--grad2);background:rgba(168,85,247,.1)}
+
+.ctrl-label{font-size:.75rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px}
+.caption-edit{width:100%;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:8px;color:var(--text);padding:10px 12px;font-size:.82rem;line-height:1.5;resize:vertical;outline:none;min-height:100px;transition:border-color .2s;margin-bottom:12px}
+.caption-edit:focus{border-color:var(--grad2)}
+
+.username-input{width:100%;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:8px;color:var(--text);padding:8px 12px;font-size:.82rem;outline:none;transition:border-color .2s;margin-bottom:16px}
+.username-input:focus{border-color:var(--grad2)}
+
+.btn-row{display:flex;flex-direction:column;gap:8px}
+.btn-dl{padding:11px;border-radius:9px;background:linear-gradient(135deg,var(--grad1),var(--grad3));color:#fff;font-weight:600;font-size:.85rem;border:none;cursor:pointer;transition:opacity .2s;text-align:center}
+.btn-dl:hover{opacity:.9}
+.btn-copy{padding:11px;border-radius:9px;background:transparent;color:var(--text);font-weight:500;font-size:.85rem;border:1px solid var(--border);cursor:pointer;transition:all .2s;text-align:center}
+.btn-copy:hover{background:var(--border)}
+.btn-back{padding:11px;border-radius:9px;background:transparent;color:var(--muted);font-weight:500;font-size:.85rem;border:1px solid var(--border);cursor:pointer;transition:all .2s;text-align:center;text-decoration:none;display:block}
+.btn-back:hover{color:var(--text);background:var(--border)}
+
+/* ── MOCKUP AREA ── */
+.mockup-area{flex:1;display:flex;justify-content:center;align-items:flex-start;padding:8px 0}
+
+/* Phone frame */
+.phone-frame{background:#1c1c1c;border-radius:52px;padding:14px;box-shadow:0 0 0 2px #333,0 0 0 4px #222,0 24px 60px rgba(0,0,0,.7);position:relative;width:385px;flex-shrink:0}
+.phone-screen{background:#fff;border-radius:40px;overflow:hidden;position:relative}
+.phone-screen.dark-mode{background:#000}
+
+/* Notch */
+.phone-notch{position:absolute;top:0;left:50%;transform:translateX(-50%);width:120px;height:34px;background:#1c1c1c;border-radius:0 0 24px 24px;z-index:10}
+
+/* Feed view */
+.ig-feed{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;padding-top:34px}
+.ig-topbar{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-bottom:1px solid #e0e0e0}
+.dark-mode .ig-topbar{border-bottom-color:#2a2a2a}
+.ig-topbar-logo{font-size:1.1rem;font-weight:700;color:#1a1a1a;font-family:Georgia,serif;letter-spacing:-0.5px}
+.dark-mode .ig-topbar-logo{color:#f0f0f0}
+.ig-topbar-icons{display:flex;gap:14px;align-items:center}
+.ig-topbar-icons span{font-size:1.1rem;cursor:pointer}
+
+/* Stories */
+.ig-stories{display:flex;gap:10px;padding:10px 14px;overflow-x:auto;border-bottom:1px solid #f0f0f0;scrollbar-width:none}
+.ig-stories::-webkit-scrollbar{display:none}
+.dark-mode .ig-stories{border-bottom-color:#1a1a1a}
+.story-item{display:flex;flex-direction:column;align-items:center;gap:4px;flex-shrink:0}
+.story-ring{width:52px;height:52px;border-radius:50%;background:linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);padding:2px}
+.story-avatar{width:100%;height:100%;border-radius:50%;background:#ddd;border:2.5px solid #fff;display:flex;align-items:center;justify-content:center;font-size:1.1rem}
+.dark-mode .story-avatar{border-color:#1a1a1a;background:#2a2a2a}
+.story-name{font-size:.6rem;color:#333;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;width:52px;text-align:center}
+.dark-mode .story-name{color:#aaa}
+.story-add{background:rgba(0,120,255,.1);color:#0078ff;font-size:1.3rem;width:100%;height:100%;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:300}
+
+/* Post */
+.ig-post{}
+.post-header{display:flex;align-items:center;padding:10px 14px;gap:10px}
+.post-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--grad1),var(--grad3));flex-shrink:0;display:flex;align-items:center;justify-content:center;color:#fff;font-size:.85rem;font-weight:700}
+.post-meta{flex:1}
+.post-username{font-size:.82rem;font-weight:700;color:#1a1a1a;line-height:1.2}
+.dark-mode .post-username{color:#f0f0f0}
+.post-location{font-size:.68rem;color:#666}
+.dark-mode .post-location{color:#888}
+.post-more{font-size:1.1rem;color:#666;cursor:pointer;padding:0 4px}
+.post-follow{font-size:.8rem;font-weight:700;color:#0095f6;padding:4px 10px;border-radius:8px;cursor:pointer}
+
+.post-image-wrap{position:relative;width:100%;background:#f0f0f0;overflow:hidden}
+.post-image-wrap.ratio-1-1{aspect-ratio:1/1}
+.post-image-wrap.ratio-4-5{aspect-ratio:4/5}
+.post-image-wrap img{width:100%;height:100%;object-fit:cover;display:block}
+.post-image-placeholder{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:3rem;background:linear-gradient(135deg,rgba(124,58,237,.1),rgba(236,72,153,.1))}
+
+/* Dot indicators */
+.post-dots{display:flex;justify-content:center;gap:4px;padding:8px 0 4px}
+.post-dot{width:6px;height:6px;border-radius:50%;background:#ddd}
+.post-dot.active{background:#0095f6}
+
+/* Action bar */
+.post-actions{display:flex;align-items:center;padding:4px 14px 0;gap:12px}
+.action-icon{font-size:1.3rem;cursor:pointer;padding:4px 0}
+.action-save{margin-left:auto}
+.post-likes{padding:4px 14px;font-size:.78rem;font-weight:700;color:#1a1a1a}
+.dark-mode .post-likes{color:#f0f0f0}
+
+/* Caption in post */
+.post-caption{padding:2px 14px 4px;font-size:.78rem;line-height:1.5;color:#1a1a1a;word-break:break-word}
+.dark-mode .post-caption{color:#f0f0f0}
+.post-caption .cap-user{font-weight:700}
+.post-caption .cap-tags{color:#0095f6;margin-top:4px;display:block;font-size:.72rem}
+.post-comments{padding:0 14px;font-size:.74rem;color:#8e8e8e;cursor:pointer;margin-bottom:4px}
+.post-add-comment{display:flex;align-items:center;gap:8px;padding:8px 14px;border-top:1px solid #f0f0f0}
+.dark-mode .post-add-comment{border-top-color:#1a1a1a}
+.comment-avatar{width:24px;height:24px;border-radius:50%;background:linear-gradient(135deg,var(--grad1),var(--grad3));flex-shrink:0}
+.comment-input{font-size:.74rem;color:#8e8e8e}
+
+/* ── STORY VIEW ── */
+.ig-story-wrap{position:relative;width:100%;aspect-ratio:9/16;overflow:hidden;background:#000}
+.story-img{width:100%;height:100%;object-fit:cover}
+.story-placeholder{width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--grad1),var(--grad3));font-size:4rem}
+.story-top{position:absolute;top:0;left:0;right:0;padding:50px 12px 12px;background:linear-gradient(to bottom,rgba(0,0,0,.5),transparent)}
+.story-progress{display:flex;gap:3px;margin-bottom:10px}
+.story-seg{flex:1;height:2px;background:rgba(255,255,255,.4);border-radius:2px}
+.story-seg.active{background:#fff}
+.story-header{display:flex;align-items:center;gap:8px}
+.story-av{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--grad1),var(--grad3));border:1.5px solid #fff}
+.story-uname{font-size:.8rem;font-weight:600;color:#fff}
+.story-time{font-size:.7rem;color:rgba(255,255,255,.7);margin-left:4px}
+.story-close{margin-left:auto;color:#fff;font-size:1.2rem}
+.story-bottom{position:absolute;bottom:0;left:0;right:0;padding:16px 12px 24px;background:linear-gradient(to top,rgba(0,0,0,.7),transparent)}
+.story-caption-text{color:#fff;font-size:.78rem;line-height:1.5;margin-bottom:12px;text-shadow:0 1px 3px rgba(0,0,0,.5)}
+.story-reply-bar{display:flex;gap:8px;align-items:center}
+.story-reply-input{flex:1;border:1.5px solid rgba(255,255,255,.5);border-radius:20px;padding:7px 14px;font-size:.74rem;color:rgba(255,255,255,.8);background:transparent}
+.story-reply-icons{display:flex;gap:10px;font-size:1.1rem;color:#fff}
+
+/* ── REEL VIEW ── */
+.ig-reel-wrap{position:relative;width:100%;aspect-ratio:9/16;overflow:hidden;background:#000}
+.reel-img{width:100%;height:100%;object-fit:cover}
+.reel-placeholder{width:100%;height:100%;background:linear-gradient(160deg,#1a1a2e,#0d0d1a);display:flex;align-items:center;justify-content:center;font-size:4rem}
+.reel-right{position:absolute;right:12px;bottom:100px;display:flex;flex-direction:column;align-items:center;gap:18px}
+.reel-action{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer}
+.reel-action-icon{font-size:1.4rem;color:#fff;filter:drop-shadow(0 1px 3px rgba(0,0,0,.5))}
+.reel-action-count{font-size:.62rem;color:#fff;font-weight:600}
+.reel-audio-disc{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#2a2a2a,#555);border:3px solid #fff;display:flex;align-items:center;justify-content:center;font-size:.9rem;animation:spin 4s linear infinite}
+@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+.reel-bottom{position:absolute;bottom:0;left:0;right:80px;padding:12px;background:linear-gradient(to top,rgba(0,0,0,.8),transparent)}
+.reel-username{font-size:.82rem;font-weight:700;color:#fff;margin-bottom:4px}
+.reel-caption-text{font-size:.74rem;color:rgba(255,255,255,.9);line-height:1.4;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;margin-bottom:8px}
+.reel-audio{font-size:.7rem;color:#fff;display:flex;align-items:center;gap:5px;opacity:.8}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 20px;font-size:.88rem;box-shadow:0 8px 32px rgba(0,0,0,.4);z-index:999;transition:transform .3s;pointer-events:none;white-space:nowrap}
+.toast.show{transform:translateX(-50%) translateY(0)}
+
+/* ── NO DATA STATE ── */
+.no-data{text-align:center;padding:60px 20px;flex:1}
+.no-data h2{font-size:1.3rem;margin-bottom:10px}
+.no-data p{color:var(--muted);margin-bottom:20px;font-size:.9rem}
+.btn-goback{display:inline-block;padding:12px 28px;border-radius:10px;background:linear-gradient(135deg,var(--grad1),var(--grad3));color:#fff;font-weight:600;text-decoration:none}
+
+/* ── RESPONSIVE PHONE ── */
+@media(max-width:480px){
+  .phone-frame{width:100%;max-width:360px;padding:10px;border-radius:40px}
+}
+</style>
+</head>
+<body>
+
+<!-- TOP NAV -->
+<nav class="topnav">
+  <a href="app.html" class="topnav-brand">📸 SnapCaption AI</a>
+  <a href="app.html" class="nav-back">← Back to App</a>
+</nav>
+
+<!-- NO DATA STATE -->
+<div class="no-data" id="noDataState" style="display:none">
+  <div style="font-size:3rem;margin-bottom:16px">🖼️</div>
+  <h2>No Preview Data</h2>
+  <p>Generate a caption in the app first, then click "Preview Post" to see it here.</p>
+  <a href="app.html" class="btn-goback">← Go Generate a Caption</a>
+</div>
+
+<!-- MAIN LAYOUT -->
+<div class="page" id="mainLayout" style="display:none">
+
+  <!-- MOCKUP -->
+  <div class="mockup-area">
+    <div class="phone-frame" id="phoneFrame">
+      <div class="phone-notch"></div>
+      <div class="phone-screen" id="phoneScreen">
+        <!-- Dynamically rendered -->
+      </div>
+    </div>
+  </div>
+
+  <!-- CONTROLS -->
+  <div class="controls">
+    <div class="ctrl-title">🎨 Post Preview</div>
+
+    <!-- View tabs -->
+    <div class="tab-row">
+      <button class="tab-btn active" data-view="feed" onclick="switchView('feed',this)">📱 Feed</button>
+      <button class="tab-btn" data-view="story" onclick="switchView('story',this)">📖 Story</button>
+      <button class="tab-btn" data-view="reel" onclick="switchView('reel',this)">🎬 Reel</button>
+    </div>
+
+    <!-- Theme toggle -->
+    <div class="theme-row">
+      <button class="theme-btn light active" id="themeLight" onclick="setTheme('light')">☀️ Light</button>
+      <button class="theme-btn dark" id="themeDark" onclick="setTheme('dark')">🌙 Dark</button>
+    </div>
+
+    <!-- Ratio (feed only) -->
+    <div class="ratio-row" id="ratioRow">
+      <button class="ratio-btn active" id="ratio11" onclick="setRatio('1-1',this)">1:1 Square</button>
+      <button class="ratio-btn" id="ratio45" onclick="setRatio('4-5',this)">4:5 Portrait</button>
+    </div>
+
+    <!-- Edit caption -->
+    <div class="ctrl-label">Caption</div>
+    <textarea class="caption-edit" id="captionEdit" placeholder="Your caption…" oninput="updatePreview()"></textarea>
+
+    <!-- Username -->
+    <div class="ctrl-label">Username</div>
+    <input class="username-input" id="usernameInput" type="text" placeholder="your_username" oninput="updatePreview()">
+
+    <!-- Actions -->
+    <div class="btn-row">
+      <button class="btn-dl" onclick="downloadMockup()">⬇ Download Preview PNG</button>
+      <button class="btn-copy" onclick="copyCaption()">📋 Copy Caption + Tags</button>
+      <a href="app.html" class="btn-back">← Back to App</a>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ─── Load data ────────────────────────────────────────────────────────────────
+let previewData = {};
+try {
+  previewData = JSON.parse(localStorage.getItem('sc_preview') || '{}');
+} catch {}
+
+const hasData = previewData.imageDataUrl || previewData.caption;
+
+// ─── State ────────────────────────────────────────────────────────────────────
+let currentView  = 'feed';
+let currentTheme = 'light';
+let currentRatio = '1-1';
+
+// Get username from stored user
+const storedUser = (() => { try { return JSON.parse(localStorage.getItem('sc_user')||'{}'); } catch { return {}; } })();
+const defaultUsername = storedUser.email ? storedUser.email.split('@')[0].replace(/[^a-z0-9_.]/gi,'').toLowerCase() : 'your_username';
+
+// ─── Init ─────────────────────────────────────────────────────────────────────
+if (!hasData) {
+  document.getElementById('noDataState').style.display = 'block';
+} else {
+  document.getElementById('mainLayout').style.display = 'flex';
+  document.getElementById('captionEdit').value = previewData.caption || '';
+  document.getElementById('usernameInput').value = defaultUsername;
+  renderMockup();
+}
+
+// ─── View switching ───────────────────────────────────────────────────────────
+function switchView(view, btn) {
+  currentView = view;
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('ratioRow').style.display = view === 'feed' ? 'flex' : 'none';
+  renderMockup();
+}
+
+function setTheme(theme) {
+  currentTheme = theme;
+  document.getElementById('themeLight').classList.toggle('active', theme === 'light');
+  document.getElementById('themeDark').classList.toggle('active', theme === 'dark');
+  renderMockup();
+}
+
+function setRatio(ratio, btn) {
+  currentRatio = ratio;
+  document.querySelectorAll('.ratio-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderMockup();
+}
+
+function updatePreview() {
+  renderMockup();
+}
+
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function formatCaption(text) {
+  // Truncate long captions for the mockup display
+  if (!text) return '';
+  return text.length > 200 ? text.slice(0, 197) + '…' : text;
+}
+
+function getHashtagStr() {
+  const tags = previewData.hashtags || [];
+  if (!tags.length) return '';
+  return tags.slice(0, 5).map(t => typeof t === 'string' ? '#' + t : '#' + (t.tag || '')).join(' ');
+}
+
+function getInitial(uname) {
+  return (uname || 'Y')[0].toUpperCase();
+}
+
+function fakeNum(seed, min, max) {
+  // Deterministic fake number based on username seed
+  const hash = [...(seed||'abc')].reduce((a,c)=>a+c.charCodeAt(0),0);
+  return min + (hash % (max - min));
+}
+
+function formatCount(n) {
+  if (n >= 1000) return (n/1000).toFixed(1) + 'K';
+  return String(n);
+}
+
+// ─── Main render ──────────────────────────────────────────────────────────────
+function renderMockup() {
+  const screen   = document.getElementById('phoneScreen');
+  const caption  = document.getElementById('captionEdit').value;
+  const uname    = document.getElementById('usernameInput').value || 'your_username';
+  const imgSrc   = previewData.imageDataUrl || '';
+  const dark     = currentTheme === 'dark';
+  const tagStr   = getHashtagStr();
+  const likeCount = formatCount(fakeNum(uname, 234, 8900));
+  const commentCount = formatCount(fakeNum(uname + '2', 12, 340));
+  const initial  = getInitial(uname);
+
+  screen.className = 'phone-screen' + (dark ? ' dark-mode' : '');
+
+  if (currentView === 'feed') renderFeed(screen, { caption, uname, imgSrc, dark, tagStr, likeCount, commentCount, initial });
+  else if (currentView === 'story') renderStory(screen, { caption, uname, imgSrc, dark, tagStr });
+  else if (currentView === 'reel') renderReel(screen, { caption, uname, imgSrc, dark, tagStr, likeCount, commentCount, initial });
+}
+
+function imageTag(src, cls) {
+  if (!src) return `<div class="${cls || 'post-image-placeholder'}">🌅</div>`;
+  return `<img src="${src}" alt="Preview" class="${cls || ''}" onerror="this.style.display='none'">`;
+}
+
+function renderFeed(screen, { caption, uname, imgSrc, dark, tagStr, likeCount, commentCount, initial }) {
+  const captionShort = formatCaption(caption);
+  const dimStyle = dark ? 'background:#111;border-bottom-color:#2a2a2a' : '';
+  const topStyle = dark ? 'background:#000;border-bottom-color:#1a1a1a' : '';
+  const avatarStyle = '';
+
+  screen.innerHTML = `
+  <div class="ig-feed">
+    <!-- Top bar -->
+    <div class="ig-topbar" style="${topStyle}">
+      <span class="ig-topbar-logo">Instagram</span>
+      <div class="ig-topbar-icons">
+        <span title="Notifications">♡</span>
+        <span title="Messages">✈️</span>
+      </div>
+    </div>
+
+    <!-- Stories -->
+    <div class="ig-stories">
+      <div class="story-item">
+        <div class="story-ring">
+          <div class="story-avatar" style="font-size:.7rem;font-weight:700;background:linear-gradient(135deg,#7c3aed,#ec4899);color:#fff">${initial}</div>
+        </div>
+        <div class="story-name" style="${dark?'color:#aaa':''}">${escHtml(uname.slice(0,8))}</div>
+      </div>
+      ${['🌊','🏔️','🌸','🎨','🍜'].map((e,i) => `
+      <div class="story-item">
+        <div class="story-ring">
+          <div class="story-avatar">${e}</div>
+        </div>
+        <div class="story-name" style="${dark?'color:#aaa':''}">user_${i+1}</div>
+      </div>`).join('')}
+    </div>
+
+    <!-- Post -->
+    <div class="ig-post">
+      <div class="post-header">
+        <div class="post-avatar">${initial}</div>
+        <div class="post-meta">
+          <div class="post-username">${escHtml(uname)}</div>
+          <div class="post-location" style="${dark?'color:#666':''}">SnapCaption AI</div>
+        </div>
+        <span class="post-more" style="${dark?'color:#666':''}">···</span>
+        <span class="post-follow">Follow</span>
+      </div>
+
+      <!-- Image -->
+      <div class="post-image-wrap ratio-${currentRatio}">
+        ${imgSrc
+          ? `<img src="${imgSrc}" alt="Post image" style="width:100%;height:100%;object-fit:cover;display:block">`
+          : `<div class="post-image-placeholder">🌅</div>`}
+      </div>
+
+      <!-- Dot indicator -->
+      <div class="post-dots">
+        <div class="post-dot active"></div>
+        <div class="post-dot"></div>
+        <div class="post-dot"></div>
+      </div>
+
+      <!-- Action bar -->
+      <div class="post-actions">
+        <span class="action-icon">♡</span>
+        <span class="action-icon">💬</span>
+        <span class="action-icon">✈️</span>
+        <span class="action-icon action-save">🔖</span>
+      </div>
+
+      <!-- Likes -->
+      <div class="post-likes">${likeCount} likes</div>
+
+      <!-- Caption -->
+      <div class="post-caption">
+        <span class="cap-user">${escHtml(uname)}</span>
+        ${captionShort ? ' ' + escHtml(captionShort) : ''}
+        ${tagStr ? `<br><span class="cap-tags">${escHtml(tagStr)}</span>` : ''}
+      </div>
+
+      <!-- Comments -->
+      <div class="post-comments" style="${dark?'color:#555':''}">View all ${commentCount} comments</div>
+
+      <!-- Add comment -->
+      <div class="post-add-comment">
+        <div class="comment-avatar"></div>
+        <span class="comment-input">Add a comment…</span>
+      </div>
+    </div>
+  </div>`;
+}
+
+function renderStory(screen, { caption, uname, imgSrc, dark, tagStr }) {
+  const captionFull = caption + (tagStr ? '\n' + tagStr : '');
+  screen.innerHTML = `
+  <div class="ig-story-wrap">
+    ${imgSrc
+      ? `<img src="${imgSrc}" alt="Story" class="story-img">`
+      : `<div class="story-placeholder">🌅</div>`}
+    <!-- Top overlay -->
+    <div class="story-top">
+      <div class="story-progress">
+        <div class="story-seg" style="background:rgba(255,255,255,.4)"></div>
+        <div class="story-seg active"></div>
+        <div class="story-seg" style="background:rgba(255,255,255,.25)"></div>
+        <div class="story-seg" style="background:rgba(255,255,255,.25)"></div>
+        <div class="story-seg" style="background:rgba(255,255,255,.25)"></div>
+      </div>
+      <div class="story-header">
+        <div class="story-av"></div>
+        <span class="story-uname">${escHtml(uname)}</span>
+        <span class="story-time">Just now</span>
+        <span class="story-close">✕</span>
+      </div>
+    </div>
+    <!-- Bottom overlay -->
+    <div class="story-bottom">
+      ${captionFull ? `<div class="story-caption-text">${escHtml(captionFull)}</div>` : ''}
+      <div class="story-reply-bar">
+        <div class="story-reply-input">Send message</div>
+        <div class="story-reply-icons">
+          <span>♡</span>
+          <span>✈️</span>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function renderReel(screen, { caption, uname, imgSrc, dark, tagStr, likeCount, commentCount, initial }) {
+  const captionShort = caption ? (caption.length > 90 ? caption.slice(0,87)+'…' : caption) : '';
+  screen.innerHTML = `
+  <div class="ig-reel-wrap">
+    ${imgSrc
+      ? `<img src="${imgSrc}" alt="Reel" class="reel-img">`
+      : `<div class="reel-placeholder">🎬</div>`}
+
+    <!-- Right actions -->
+    <div class="reel-right">
+      <div class="reel-action">
+        <span class="reel-action-icon">♡</span>
+        <span class="reel-action-count">${likeCount}</span>
+      </div>
+      <div class="reel-action">
+        <span class="reel-action-icon">💬</span>
+        <span class="reel-action-count">${commentCount}</span>
+      </div>
+      <div class="reel-action">
+        <span class="reel-action-icon">✈️</span>
+        <span class="reel-action-count">Share</span>
+      </div>
+      <div class="reel-action">
+        <span class="reel-action-icon">⋯</span>
+      </div>
+      <div class="reel-audio-disc" style="margin-top:4px">🎵</div>
+    </div>
+
+    <!-- Bottom info -->
+    <div class="reel-bottom">
+      <div class="reel-username">${escHtml(uname)}</div>
+      ${captionShort ? `<div class="reel-caption-text">${escHtml(captionShort)}</div>` : ''}
+      ${tagStr ? `<div class="reel-caption-text" style="color:#9fd3ff;font-size:.7rem">${escHtml(tagStr)}</div>` : ''}
+      <div class="reel-audio">
+        <span>🎵</span>
+        <span>Original audio · ${escHtml(uname)}</span>
+      </div>
+    </div>
+  </div>`;
+}
+
+// ─── Download PNG ─────────────────────────────────────────────────────────────
+async function downloadMockup() {
+  const caption  = document.getElementById('captionEdit').value;
+  const uname    = document.getElementById('usernameInput').value || 'your_username';
+  const imgSrc   = previewData.imageDataUrl || '';
+  const tagStr   = getHashtagStr();
+  const isStory  = currentView === 'story' || currentView === 'reel';
+
+  const W = 1080;
+  const H = isStory ? 1920 : (currentRatio === '4-5' ? 1350 : 1080);
+
+  const canvas = document.createElement('canvas');
+  canvas.width  = W;
+  canvas.height = H;
+  const ctx = canvas.getContext('2d');
+
+  const dark = currentTheme === 'dark';
+
+  // Background
+  ctx.fillStyle = dark ? '#000' : '#fff';
+  ctx.fillRect(0, 0, W, H);
+
+  // Draw image if available
+  if (imgSrc) {
+    await new Promise((resolve) => {
+      const img = new Image();
+      img.onload = () => {
+        // Cover-fit the image
+        const iw = img.width, ih = img.height;
+        const scale = Math.max(W / iw, H / ih);
+        const dw = iw * scale, dh = ih * scale;
+        const dx = (W - dw) / 2, dy = (H - dh) / 2;
+        ctx.drawImage(img, dx, dy, dw, dh);
+        resolve();
+      };
+      img.onerror = resolve;
+      img.src = imgSrc;
+    });
+  } else {
+    // Gradient placeholder
+    const grd = ctx.createLinearGradient(0, 0, W, H);
+    grd.addColorStop(0, '#7c3aed22');
+    grd.addColorStop(1, '#ec489922');
+    ctx.fillStyle = grd;
+    ctx.fillRect(0, 0, W, H);
+  }
+
+  if (isStory) {
+    // Dark gradient overlay at bottom
+    const grad = ctx.createLinearGradient(0, H * 0.5, 0, H);
+    grad.addColorStop(0, 'rgba(0,0,0,0)');
+    grad.addColorStop(1, 'rgba(0,0,0,0.75)');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, W, H);
+
+    // Caption text
+    ctx.fillStyle = '#fff';
+    ctx.font = '500 42px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
+    ctx.textAlign = 'left';
+    const lines = wrapText(ctx, caption, W - 120, 42);
+    let y = H - 200 - lines.length * 56;
+    lines.forEach(line => { ctx.fillText(line, 60, y); y += 56; });
+
+    // Hashtags
+    if (tagStr) {
+      ctx.fillStyle = 'rgba(255,255,255,0.75)';
+      ctx.font = '400 32px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
+      ctx.fillText(tagStr.slice(0, 60) + (tagStr.length > 60 ? '…' : ''), 60, H - 160);
+    }
+  } else {
+    // Feed: caption bar at bottom
+    const barH = Math.min(220, H * 0.2);
+    ctx.fillStyle = dark ? 'rgba(0,0,0,0.85)' : 'rgba(255,255,255,0.92)';
+    ctx.fillRect(0, H - barH, W, barH);
+
+    ctx.fillStyle = dark ? '#f0f0f0' : '#1a1a1a';
+    ctx.font = `700 36px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif`;
+    ctx.textAlign = 'left';
+    ctx.fillText(uname, 44, H - barH + 48);
+
+    ctx.font = `400 30px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif`;
+    const short = caption.length > 100 ? caption.slice(0, 97) + '…' : caption;
+    const lines = wrapText(ctx, short, W - 90, 30);
+    let y = H - barH + 90;
+    lines.slice(0,2).forEach(line => { ctx.fillText(line, 44, y); y += 44; });
+
+    if (tagStr) {
+      ctx.fillStyle = '#0095f6';
+      ctx.font = `400 26px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif`;
+      ctx.fillText(tagStr.slice(0, 70) + (tagStr.length > 70 ? '…' : ''), 44, H - 36);
+    }
+  }
+
+  // Watermark
+  ctx.fillStyle = 'rgba(255,255,255,0.35)';
+  ctx.font = '400 24px -apple-system, BlinkMacSystemFont, sans-serif';
+  ctx.textAlign = 'right';
+  ctx.fillText('Made with SnapCaption AI', W - 40, H - 24);
+
+  // Download
+  const a = document.createElement('a');
+  a.download = `snapcaption-preview-${currentView}-${Date.now()}.png`;
+  a.href = canvas.toDataURL('image/png');
+  a.click();
+  _showToast('Preview downloaded!');
+}
+
+// Text wrap helper
+function wrapText(ctx, text, maxWidth, fontSize) {
+  const words = (text || '').split(' ');
+  const lines = [];
+  let line = '';
+  for (const word of words) {
+    const test = line ? line + ' ' + word : word;
+    if (ctx.measureText(test).width > maxWidth && line) {
+      lines.push(line);
+      line = word;
+    } else {
+      line = test;
+    }
+  }
+  if (line) lines.push(line);
+  return lines;
+}
+
+// ─── Copy caption ─────────────────────────────────────────────────────────────
+function copyCaption() {
+  const caption = document.getElementById('captionEdit').value;
+  const tags    = getHashtagStr();
+  const full    = caption + (tags ? '\n\n' + tags : '');
+  navigator.clipboard.writeText(full).then(() => _showToast('Caption + hashtags copied!'));
+}
+
+// ─── Toast ────────────────────────────────────────────────────────────────────
+let _toastTimer;
+function _showToast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(_toastTimer);
+  _toastTimer = setTimeout(() => el.classList.remove('show'), 3000);
+}
+</script>
+</body>
+</html>

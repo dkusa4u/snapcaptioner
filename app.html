@@ -2781,6 +2781,7 @@
           </div>
           <button class="tts-btn" onclick="speak(this,'${escAttr(cap.text)}')" title="Read aloud">🔊</button>
           <button class="cap-btn" onclick="copyCaption(this,'${escAttr(cap.text)}')">Copy</button>
+          <button class="cap-btn" onclick="openPreview('${escAttr(cap.text)}')" title="Preview as Instagram post">🖼 Preview</button>
           <button class="schedule-btn" onclick="scheduleCaption('${escAttr(cap.text)}')">📅 Schedule</button>
         </div>
         ${engMeterHTML(engScore)}
@@ -3000,6 +3001,26 @@
     const plat = platEl ? platEl.value : 'instagram';
     const url = `calendar.html?date=${today}&platform=${encodeURIComponent(plat)}&caption=${encodeURIComponent(captionText)}`;
     window.location.href = url;
+  }
+
+  // ── Open Instagram post preview ───────────────────────
+  function openPreview(captionText) {
+    if (!currentImageBase64) {
+      _showToast('Upload an image first to preview your post.');
+      return;
+    }
+    const tags = (_lastHashtags || []).map(h => typeof h === 'string' ? h : (h.tag || ''));
+    const username = currentUser?.email
+      ? currentUser.email.split('@')[0].replace(/[^a-z0-9_.]/gi, '').toLowerCase()
+      : 'your_username';
+    localStorage.setItem('sc_preview', JSON.stringify({
+      imageDataUrl: 'data:image/jpeg;base64,' + currentImageBase64,
+      caption: captionText,
+      hashtags: tags,
+      platform: _lastPlatform || 'Instagram',
+      username: username
+    }));
+    window.open('preview.html', '_blank');
   }
 
   // ── Copy helpers ───────────────────────────────────────
