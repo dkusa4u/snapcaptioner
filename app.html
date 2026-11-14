@@ -663,19 +663,19 @@
   }
   .teaser-sub { font-size: .75rem; color: var(--muted2); }
   .ba-container {
-    position: relative; width: 100%; max-width: 360px;
-    aspect-ratio: 4/3; border-radius: 12px; overflow: hidden;
+    position: relative; width: 100%; max-width: 320px;
+    aspect-ratio: 3/4; border-radius: 12px; overflow: hidden;
     cursor: col-resize; user-select: none; touch-action: none;
     box-shadow: 0 8px 28px rgba(0,0,0,.55);
   }
   .ba-before, .ba-after { position: absolute; inset: 0; }
   .ba-img {
-    width: 100%; height: 100%; object-fit: cover; display: block;
-    pointer-events: none; border-radius: 0;
+    width: 100%; height: 100%; object-fit: cover; object-position: center top;
+    display: block; pointer-events: none; border-radius: 0;
   }
   .ba-after {
     clip-path: inset(0 50% 0 0);
-    background-size: cover; background-position: center;
+    background-size: cover; background-position: center top;
   }
   /* Subtle "AI" glow on the AFTER side */
   .ba-after::after {
@@ -1373,11 +1373,11 @@
         <!-- Before/After slider -->
         <div class="ba-container" id="baContainer">
           <div class="ba-before">
-            <img src="https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=600&q=90&fit=crop&crop=faces" class="ba-img" alt="Before">
+            <img src="https://images.unsplash.com/photo-sUYWjWWCx68?w=600&h=900&q=90&fit=crop&crop=top" class="ba-img" alt="Before">
             <span class="ba-label ba-label-left">YOUR PHOTO</span>
           </div>
           <!-- After: AI-transformed background scene (always clearly visible) -->
-          <div class="ba-after" id="baAfter" style="background-image:url('https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=600&q=90&fit=crop&crop=center')">
+          <div class="ba-after" id="baAfter" style="background-image:url('https://images.unsplash.com/photo-Q5YmoshplRk?w=600&h=900&q=90&fit=crop&crop=center')">
             <span class="ba-label ba-label-right">AI TRANSFORM ✦</span>
           </div>
           <div class="ba-handle" id="baHandle">
@@ -1393,7 +1393,7 @@
 
         <!-- Transform style tabs -->
         <div class="ba-tabs" id="baTabs">
-          <button class="ba-tab active" data-bg="https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=600&q=90&fit=crop&crop=center">🗼 Paris</button>
+          <button class="ba-tab active" data-bg="https://images.unsplash.com/photo-Q5YmoshplRk?w=600&h=900&q=90&fit=crop&crop=center">🗼 Paris</button>
           <button class="ba-tab" data-bg="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=600&q=90&fit=crop&crop=center">🌅 Beach</button>
           <button class="ba-tab" data-bg="https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=600&q=90&fit=crop&crop=center">🏯 Tokyo</button>
           <button class="ba-tab" data-bg="https://images.unsplash.com/photo-1534430480872-3498386e7856?w=600&q=90&fit=crop&crop=center">🌴 Maldives</button>
