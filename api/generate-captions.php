@@ -39,8 +39,7 @@ require_once $configPath;
 session_start();
 $today = date('Y-m-d');
 
-$user      = tokenAuth();                               // null = unauthenticated guest
-$isPremium = $user && $user['plan'] !== 'free';
+$user = tokenAuth();   // null = unauthenticated guest
 
 // Block guests (must be signed in to use AI captions)
 if (!$user) {
@@ -53,9 +52,9 @@ if (!$user) {
     exit;
 }
 
-// Determine daily limit: free users get FREE_DAILY_LIMIT, premium = unlimited
-$freeLimit    = defined('FREE_DAILY_LIMIT') ? FREE_DAILY_LIMIT : 3;
-$aiDailyLimit = $isPremium ? PHP_INT_MAX : $freeLimit;
+$plan      = $user['plan'] ?? 'free';
+$isPremium = planIsPaid($plan);               // any paid plan
+$dailyLimit = planCaptionLimit($plan);        // null = unlimited
 
 // Count today's AI caption usage
 $db   = getDB();
@@ -66,14 +65,17 @@ $stmt = $db->prepare(
 $stmt->execute([$user['id']]);
 $usedToday = (int) $stmt->fetchColumn();
 
-// Enforce limit only for free users (premium is unlimited)
-if (!$isPremium && $usedToday >= $aiDailyLimit) {
+// Enforce daily limit when not unlimited
+if ($dailyLimit !== null && $usedToday >= $dailyLimit) {
+    $upgradeMsg = $plan === 'free'
+        ? 'Upgrade to Starter ($4.99/mo) for 15 captions/day, or Premium for unlimited.'
+        : 'You\'ve used all ' . $dailyLimit . ' captions for today. Upgrade to Premium for unlimited. Resets at midnight.';
     http_response_code(429);
     echo json_encode([
         'error'       => 'daily_limit_reached',
-        'message'     => 'You\'ve used all ' . $aiDailyLimit . ' AI captions for today. Upgrade to Premium for unlimited captions. Resets at midnight.',
+        'message'     => 'You\'ve used all ' . $dailyLimit . ' AI captions for today. ' . $upgradeMsg,
         'used'        => $usedToday,
-        'limit'       => $aiDailyLimit,
+        'limit'       => $dailyLimit,
         'resets_at'   => date('Y-m-d', strtotime('+1 day')) . ' 00:00:00',
     ]);
     exit;

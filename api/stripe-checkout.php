@@ -40,17 +40,29 @@ if (!defined('STRIPE_SECRET_KEY') || !STRIPE_SECRET_KEY) {
 $body = json_decode(file_get_contents('php://input'), true) ?? [];
 $plan = $body['plan'] ?? 'premium';
 
-if ($plan === 'teams') {
-    if (!defined('STRIPE_TEAMS_PRICE') || !STRIPE_TEAMS_PRICE) {
-        json_out(['success' => false, 'message' => 'Teams plan is not configured yet.'], 503);
-    }
-    $priceId = STRIPE_TEAMS_PRICE;
-} else {
+$validPlans = ['starter', 'premium', 'pro', 'teams'];
+if (!in_array($plan, $validPlans, true)) {
     $plan = 'premium';
+}
+
+// Map plan to its Stripe price constant
+$priceConst = match($plan) {
+    'starter' => 'STRIPE_STARTER_PRICE',
+    'premium' => 'STRIPE_PREMIUM_PRICE',
+    'pro'     => 'STRIPE_PRO_PRICE',
+    'teams'   => 'STRIPE_TEAMS_PRICE',
+    default   => 'STRIPE_PREMIUM_PRICE',
+};
+
+if (!defined($priceConst) || !constant($priceConst)) {
+    // Fallback to STRIPE_PREMIUM_PRICE for unconfigured new plans
     if (!defined('STRIPE_PREMIUM_PRICE') || !STRIPE_PREMIUM_PRICE) {
-        json_out(['success' => false, 'message' => 'Premium plan is not configured yet.'], 503);
+        json_out(['success' => false, 'message' => ucfirst($plan) . ' plan is not configured yet.'], 503);
     }
     $priceId = STRIPE_PREMIUM_PRICE;
+    $plan    = 'premium';
+} else {
+    $priceId = constant($priceConst);
 }
 
 // ── Create Stripe Checkout Session via cURL ───────────────────────────────────

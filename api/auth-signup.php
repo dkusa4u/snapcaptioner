@@ -24,7 +24,7 @@ $firstName = trim($body['first_name'] ?? '');
 $lastName  = trim($body['last_name']  ?? '');
 $email     = strtolower(trim($body['email']    ?? ''));
 $password  = $body['password'] ?? '';
-$plan      = in_array($body['plan'] ?? '', ['free','premium','teams']) ? $body['plan'] : 'free';
+$plan      = in_array($body['plan'] ?? '', ['free','starter','premium','pro','teams']) ? $body['plan'] : 'free';
 
 // Validation
 if (!$firstName)                        json_out(['success'=>false,'message'=>'First name is required.'], 400);
@@ -56,8 +56,7 @@ try {
     // Redirect logic — send paid-plan signups to pricing page for Stripe checkout.
     // checkout.html does not exist; pricing.html shows the upgrade CTA.
     $redirect = null;
-    if ($plan === 'premium') $redirect = 'pricing.html?upgrade=premium';
-    if ($plan === 'teams')   $redirect = 'pricing.html?upgrade=teams';
+    if (planIsPaid($plan)) $redirect = 'pricing.html?upgrade=' . $plan;
 
     json_out([
         'success'  => true,

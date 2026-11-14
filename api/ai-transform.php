@@ -26,17 +26,18 @@ if (!$user) {
     ], 401);
 }
 
-$isPremium = in_array($user['plan'] ?? '', ['premium', 'teams']);
-if (!$isPremium) {
+$plan = $user['plan'] ?? 'free';
+
+if (!planHasTools($plan)) {
     json_out([
         'error'       => 'premium_required',
-        'message'     => 'AI Photo Transforms are a Premium feature.',
+        'message'     => 'AI Photo Transforms require a Premium or Pro plan.',
         'upgrade_url' => '/pricing.html',
     ], 403);
 }
 
-// ── Rate limit ───────────────────────────────────────────
-$dailyLimit = defined('AI_TRANSFORM_DAILY') ? AI_TRANSFORM_DAILY : 5;
+// ── Rate limit (per-plan) ────────────────────────────────
+$dailyLimit = planTransformLimit($plan);  // 10 for premium, 25 for pro/teams
 
 try {
     $db   = getDB();

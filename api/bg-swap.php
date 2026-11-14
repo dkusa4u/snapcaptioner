@@ -53,7 +53,7 @@ if (!$user) {
     exit;
 }
 
-$isPrem  = in_array($user['plan'], ['premium', 'teams']);
+$isPrem  = planIsPaid($user['plan'] ?? 'free');
 $limit   = $isPrem ? 5 : 1;
 $today   = date('Y-m-d');
 

@@ -70,23 +70,23 @@ try {
 
     $txDailyLimit = defined('AI_TRANSFORM_DAILY') ? AI_TRANSFORM_DAILY : 5;
 
+    // Per-plan limits using helper functions from db.php
+    $capLimit = planCaptionLimit($plan);   // null = unlimited
+    $txLimit2 = planTransformLimit($plan); // 0 for free/starter, int for premium/pro
+
+    $aiLimit  = $capLimit;
+    $aiRemain = $capLimit !== null ? max(0, $capLimit - $aiUsed) : null;
+
     if ($plan === 'free') {
-        $freeCaptionLimit = defined('FREE_DAILY_LIMIT') ? FREE_DAILY_LIMIT : 3;
-        $aiLimit    = $freeCaptionLimit;
-        $aiRemain   = max(0, $freeCaptionLimit - $aiUsed);
-        $enhLimit   = FREE_ENHANCE_DAILY;
-        $enhRemain  = max(0, FREE_ENHANCE_DAILY - $enhUsed);
-        $txLimit    = 0;              // AI transforms are premium-only
-        $txRemain   = 0;
+        $enhLimit  = FREE_ENHANCE_DAILY;
+        $enhRemain = max(0, FREE_ENHANCE_DAILY - $enhUsed);
     } else {
-        // Premium or teams — unlimited AI captions
-        $aiLimit    = null;
-        $aiRemain   = null;
-        $enhLimit   = null;           // unlimited
-        $enhRemain  = null;
-        $txLimit    = $txDailyLimit;
-        $txRemain   = max(0, $txDailyLimit - $txUsed);
+        $enhLimit  = null;  // unlimited for all paid plans
+        $enhRemain = null;
     }
+
+    $txLimit  = $txLimit2;
+    $txRemain = $txLimit2 > 0 ? max(0, $txLimit2 - $txUsed) : 0;
 
     json_out([
         'plan'               => $plan,

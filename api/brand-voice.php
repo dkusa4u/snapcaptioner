@@ -19,8 +19,8 @@ if ($method === 'GET') {
 }
 
 if ($method === 'POST') {
-    if ($user['plan'] === 'free') {
-        json_out(['success'=>false,'message'=>'Brand Voice Saver requires a Premium plan.'], 403);
+    if (!planHasTools($user['plan'] ?? 'free')) {
+        json_out(['success'=>false,'message'=>'Brand Voice Saver requires a Premium or Pro plan.'], 403);
     }
 
     $body  = json_decode(file_get_contents('php://input'), true) ?? [];

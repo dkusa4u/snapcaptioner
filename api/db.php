@@ -49,7 +49,7 @@ function initDB(): void {
             last_name    VARCHAR(80)  NOT NULL DEFAULT '',
             email        VARCHAR(255) NOT NULL UNIQUE,
             password     VARCHAR(255) NOT NULL,
-            plan         ENUM('free','premium','teams') NOT NULL DEFAULT 'free',
+            plan         ENUM('free','starter','premium','pro','teams') NOT NULL DEFAULT 'free',
             verified     TINYINT(1)   NOT NULL DEFAULT 0,
             brand_voice  TEXT         NULL,
             created_at   DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -95,6 +95,75 @@ function initDB(): void {
             FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
     ");
+
+    // Migrate ENUM to include new plans (safe no-op if already migrated)
+    migratePlansEnum($db);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   PLAN HELPER FUNCTIONS
+   Single source of truth for all plan limits & feature gates.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/**
+ * Returns the daily caption generation limit for a plan.
+ * null = unlimited
+ */
+function planCaptionLimit(string $plan): ?int {
+    return match($plan) {
+        'free'              => 3,
+        'starter'           => 15,
+        'premium','pro','teams' => null,  // unlimited
+        default             => 3,
+    };
+}
+
+/**
+ * Returns the daily AI transform limit for a plan.
+ * 0 = not available, null = unlimited
+ */
+function planTransformLimit(string $plan): ?int {
+    return match($plan) {
+        'free','starter'    => 0,
+        'premium'           => 10,
+        'pro','teams'       => 25,
+        default             => 0,
+    };
+}
+
+/**
+ * True if the plan has access to paid tools:
+ * Brand Voice, Calendar, Repurpose, Reel Script, Tracker.
+ */
+function planHasTools(string $plan): bool {
+    return in_array($plan, ['premium', 'pro', 'teams'], true);
+}
+
+/**
+ * True if the plan has access to Pro-only features:
+ * Bulk, Chrome Extension, Hashtag Research, Multi-brand.
+ */
+function planIsPro(string $plan): bool {
+    return in_array($plan, ['pro', 'teams'], true);
+}
+
+/**
+ * True if the plan is any paid plan (not free).
+ */
+function planIsPaid(string $plan): bool {
+    return in_array($plan, ['starter', 'premium', 'pro', 'teams'], true);
+}
+
+/**
+ * Migrate the users table ENUM to include new plans.
+ * Safe to call repeatedly — ALTER TABLE is wrapped in try/catch.
+ */
+function migratePlansEnum(PDO $db): void {
+    try {
+        $db->exec("ALTER TABLE users MODIFY COLUMN plan ENUM('free','starter','premium','pro','teams') NOT NULL DEFAULT 'free'");
+    } catch (PDOException $e) {
+        // Already migrated or already correct — ignore
+    }
 }
 
 function tokenAuth(): ?array {

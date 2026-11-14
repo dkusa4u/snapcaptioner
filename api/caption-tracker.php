@@ -19,7 +19,7 @@ $user = $stmt->fetch(PDO::FETCH_ASSOC);
 if (!$user) { http_response_code(401); echo json_encode(['error'=>'Invalid token']); exit; }
 
 $userId    = $user['id'];
-$isPremium = ($user['plan'] === 'premium');
+$isPremium = planHasTools($user['plan'] ?? 'free');
 
 // Auto-create table
 $pdo->exec("
