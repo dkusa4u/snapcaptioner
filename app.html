@@ -1100,12 +1100,12 @@
 
         <!-- Transform style tabs -->
         <div class="ba-tabs" id="baTabs">
-          <button class="ba-tab active" data-filter="sepia(0.5) saturate(1.6) hue-rotate(-12deg) brightness(0.9)">🗼 Eiffel</button>
-          <button class="ba-tab" data-filter="sepia(0.18) saturate(2.4) brightness(1.2) hue-rotate(-18deg)">🌅 Golden Hour</button>
+          <button class="ba-tab active" data-filter="" data-after-src="https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=600&q=80&fit=crop&crop=center">🗼 Eiffel</button>
+          <button class="ba-tab" data-filter="sepia(0.2) saturate(1.8) brightness(1.1)" data-after-src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=600&q=80&fit=crop&crop=center">🌅 Golden Hour</button>
           <button class="ba-tab" data-filter="contrast(1.65) saturate(0.35) brightness(0.76)">🎬 Cinematic</button>
           <button class="ba-tab" data-filter="brightness(1.65) saturate(0.12) contrast(0.82)">⬜ Studio</button>
-          <button class="ba-tab" data-filter="saturate(0.18) hue-rotate(188deg) brightness(1.18) contrast(1.12)">❄️ Winter</button>
-          <button class="ba-tab" data-filter="brightness(0.5) contrast(1.55) saturate(1.5) hue-rotate(228deg)">🌙 Moody</button>
+          <button class="ba-tab" data-filter="saturate(0.3) hue-rotate(185deg) brightness(1.1) contrast(1.1)" data-after-src="https://images.unsplash.com/photo-1491156855053-9cdff72c7f85?w=600&q=80&fit=crop&crop=center">❄️ Winter</button>
+          <button class="ba-tab" data-filter="brightness(0.6) contrast(1.5) saturate(1.4) hue-rotate(220deg)" data-after-src="https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=600&q=80&fit=crop&crop=center">🌙 Moody</button>
         </div>
 
         <a href="pricing.html" class="ba-cta" id="baCta">🔓 Unlock All 20 AI Transforms · $7/mo →</a>
@@ -2077,16 +2077,21 @@
     window.addEventListener('mouseup',  () => isDragging = false);
     window.addEventListener('touchend', () => isDragging = false);
 
-    // Tab switching → update CSS filter on after image
+    // Tab switching → swap after image src and/or CSS filter
+    const baseSrc = afterImg.src;
     tabs.forEach(tab => {
       tab.addEventListener('click', () => {
         tabs.forEach(t => t.classList.remove('active'));
         tab.classList.add('active');
+        afterImg.src = tab.dataset.afterSrc || baseSrc;
         afterImg.style.filter = tab.dataset.filter || '';
       });
     });
-    // Apply first tab's filter on load
-    if (tabs[0]) afterImg.style.filter = tabs[0].dataset.filter || '';
+    // Apply first tab on load
+    if (tabs[0]) {
+      afterImg.src = tabs[0].dataset.afterSrc || baseSrc;
+      afterImg.style.filter = tabs[0].dataset.filter || '';
+    }
 
     // Auto-animate: sweep 50→15→85→50 over ~2.4s then stop
     setTimeout(() => {
