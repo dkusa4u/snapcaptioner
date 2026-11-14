@@ -18,13 +18,9 @@ cors();
 // ── Kick off OAuth ────────────────────────────────────────────────────────
 if (!isset($_GET['code'])) {
     if (!defined('GOOGLE_CLIENT_ID') || GOOGLE_CLIENT_ID === 'your-google-client-id.apps.googleusercontent.com') {
-        // Not configured — show friendly setup message
-        header('Content-Type: text/html');
-        echo '<!DOCTYPE html><html><body style="font-family:sans-serif;padding:40px;background:#09090f;color:#e8e8f0">
-              <h2>Google Sign-In not configured</h2>
-              <p>Add GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET to <code>api/config.php</code></p>
-              <p><a href="https://console.cloud.google.com" style="color:#a855f7">Set up Google OAuth →</a></p>
-              </body></html>';
+        // Not configured — redirect back to login with inline error
+        $back = strpos($_SERVER['HTTP_REFERER'] ?? '', 'signup') !== false ? 'signup.html' : 'login.html';
+        header('Location: /' . $back . '?error=google_not_configured');
         exit;
     }
 

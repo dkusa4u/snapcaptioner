@@ -673,7 +673,12 @@
     width: 100%; height: 100%; object-fit: cover; display: block;
     pointer-events: none; border-radius: 0;
   }
-  .ba-after { clip-path: inset(0 50% 0 0); }
+  .ba-after {
+    clip-path: inset(0 50% 0 0);
+    background-size: cover; background-position: center;
+  }
+  /* Person layer sits on top of background via multiply blend */
+  .ba-person-layer { mix-blend-mode: multiply; }
   .ba-label {
     position: absolute; bottom: 8px;
     padding: 2px 7px; background: rgba(0,0,0,.55);
@@ -1116,11 +1121,12 @@
         <!-- Before/After slider -->
         <div class="ba-container" id="baContainer">
           <div class="ba-before">
-            <img src="https://images.unsplash.com/photo-1529665253569-6d01c0eaf7b6?w=600&q=80&fit=crop&crop=faces" class="ba-img" alt="Before">
+            <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=600&q=80&fit=crop&crop=faces" class="ba-img" alt="Before">
             <span class="ba-label ba-label-left">BEFORE</span>
           </div>
-          <div class="ba-after" id="baAfter">
-            <img src="https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=600&q=80&fit=crop&crop=center" class="ba-img" id="baAfterImg" alt="After AI">
+          <!-- After: same person photo with mix-blend-mode:multiply over new background -->
+          <div class="ba-after" id="baAfter" style="background-image:url('https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=600&q=80&fit=crop&crop=center')">
+            <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=600&q=80&fit=crop&crop=faces" class="ba-img ba-person-layer" id="baAfterImg" alt="After AI">
             <span class="ba-label ba-label-right">AFTER AI ✦</span>
           </div>
           <div class="ba-handle" id="baHandle">
@@ -1136,12 +1142,12 @@
 
         <!-- Transform style tabs -->
         <div class="ba-tabs" id="baTabs">
-          <button class="ba-tab active" data-filter="" data-after-src="https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=600&q=80&fit=crop&crop=center">🗼 Eiffel</button>
-          <button class="ba-tab" data-filter="sepia(0.2) saturate(1.8) brightness(1.1)" data-after-src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=600&q=80&fit=crop&crop=center">🌅 Golden Hour</button>
-          <button class="ba-tab" data-filter="contrast(1.65) saturate(0.35) brightness(0.76)">🎬 Cinematic</button>
-          <button class="ba-tab" data-filter="brightness(1.65) saturate(0.12) contrast(0.82)">⬜ Studio</button>
-          <button class="ba-tab" data-filter="saturate(0.3) hue-rotate(185deg) brightness(1.1) contrast(1.1)" data-after-src="https://images.unsplash.com/photo-1491156855053-9cdff72c7f85?w=600&q=80&fit=crop&crop=center">❄️ Winter</button>
-          <button class="ba-tab" data-filter="brightness(0.6) contrast(1.5) saturate(1.4) hue-rotate(220deg)" data-after-src="https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=600&q=80&fit=crop&crop=center">🌙 Moody</button>
+          <button class="ba-tab active" data-bg="https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=600&q=80&fit=crop&crop=center">🗼 Eiffel</button>
+          <button class="ba-tab" data-filter="sepia(0.18) saturate(1.6) brightness(1.08)" data-bg="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=600&q=80&fit=crop&crop=center">🌅 Golden Hour</button>
+          <button class="ba-tab" data-filter="contrast(1.5) saturate(0.4) brightness(0.82)" data-bg="https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=600&q=80&fit=crop&crop=center">🎬 Cinematic</button>
+          <button class="ba-tab" data-filter="brightness(1.5) saturate(0.1) contrast(0.9)" data-bg="https://images.unsplash.com/photo-1497366216548-37526070297c?w=600&q=80&fit=crop&crop=center">⬜ Studio</button>
+          <button class="ba-tab" data-filter="saturate(0.25) hue-rotate(185deg) brightness(1.1)" data-bg="https://images.unsplash.com/photo-1491156855053-9cdff72c7f85?w=600&q=80&fit=crop&crop=center">❄️ Winter</button>
+          <button class="ba-tab" data-filter="brightness(0.65) contrast(1.4) saturate(1.3) hue-rotate(220deg)" data-bg="https://images.unsplash.com/photo-1519501025264-65ba15a82390?w=600&q=80&fit=crop&crop=center">🌙 Moody</button>
         </div>
 
         <a href="pricing.html" class="ba-cta" id="baCta">🔓 Unlock All 20 AI Transforms · $7/mo →</a>
@@ -2197,23 +2203,25 @@
     window.addEventListener('mouseup',  () => isDragging = false);
     window.addEventListener('touchend', () => isDragging = false);
 
-    // Tab switching → swap after image src and/or CSS filter
-    // personSrc = the before image (used for filter-only tabs like Cinematic/Studio)
-    const personSrc = document.querySelector('.ba-before .ba-img')?.src
-      || 'https://images.unsplash.com/photo-1529665253569-6d01c0eaf7b6?w=600&q=80&fit=crop&crop=faces';
+    // Tab switching → swap background scene and/or CSS filter on person layer
+    // afterDiv background = new scene (Eiffel Tower, beach, etc.)
+    // afterImg (person layer) stays the same photo — mix-blend-mode:multiply
+    // makes the light background transparent so the scene shows through
+    const defaultBg = "url('https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=600&q=80&fit=crop&crop=center')";
+    function applyTab(tab) {
+      const bg = tab.dataset.bg;
+      afterDiv.style.backgroundImage = bg ? `url('${bg}')` : defaultBg;
+      afterImg.style.filter = tab.dataset.filter || '';
+    }
     tabs.forEach(tab => {
       tab.addEventListener('click', () => {
         tabs.forEach(t => t.classList.remove('active'));
         tab.classList.add('active');
-        afterImg.src = tab.dataset.afterSrc || personSrc;
-        afterImg.style.filter = tab.dataset.filter || '';
+        applyTab(tab);
       });
     });
-    // Apply first tab on load — Eiffel is default active tab
-    if (tabs[0]) {
-      afterImg.src = tabs[0].dataset.afterSrc || personSrc;
-      afterImg.style.filter = tabs[0].dataset.filter || '';
-    }
+    // Apply first tab on load
+    if (tabs[0]) applyTab(tabs[0]);
 
     // Auto-animate: sweep 50→15→85→50 over ~2.4s then stop
     setTimeout(() => {

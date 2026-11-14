@@ -362,6 +362,18 @@
     badge.querySelector('strong').textContent = plan.charAt(0).toUpperCase() + plan.slice(1);
   }
 
+  // Show OAuth error if redirected back from auth-google / auth-apple
+  const oauthErr = urlParams.get('error');
+  if (oauthErr) {
+    const msgMap = {
+      google_not_configured: 'Google Sign-In isn\'t enabled yet. Please sign in with email & password below.',
+    };
+    const msg = msgMap[oauthErr] || decodeURIComponent(oauthErr);
+    const errBox = document.getElementById('error-msg');
+    document.getElementById('error-text').textContent = msg;
+    if (errBox) errBox.classList.add('show');
+  }
+
   function togglePw(inputId, btn) {
     const input = document.getElementById(inputId);
     if (input.type === 'password') {
