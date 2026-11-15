@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SnapCaption AI</title>
+<link rel="stylesheet" href="popup.css">
+</head>
+<body>
+
+<!-- ── Header ─────────────────────────────────────────────────── -->
+<div class="header">
+  <div class="logo">
+    <img src="icons/icon-32.png" alt="" class="logo-img">
+    <span class="logo-text">SnapCaption <span class="logo-ai">AI</span></span>
+  </div>
+  <div class="header-right" id="headerRight">
+    <!-- filled by JS: plan badge + sign-out -->
+  </div>
+</div>
+
+<!-- ── Auth gate ──────────────────────────────────────────────── -->
+<div id="authView" class="view" style="display:none">
+  <div class="auth-hero">
+    <div class="auth-icon">✨</div>
+    <div class="auth-title">Sign in to generate captions</div>
+    <div class="auth-sub">Use your SnapCaption AI account</div>
+  </div>
+  <div class="form-row">
+    <input type="email" id="authEmail" class="inp" placeholder="Email address" autocomplete="email">
+  </div>
+  <div class="form-row">
+    <input type="password" id="authPass" class="inp" placeholder="Password" autocomplete="current-password">
+  </div>
+  <div id="authErr" class="err-msg" style="display:none"></div>
+  <button class="btn-primary" id="authBtn" onclick="doLogin()">Sign In</button>
+  <a href="https://snapcaptionai.com/signup.html" target="_blank" class="auth-link">No account? Sign up free →</a>
+</div>
+
+<!-- ── Main view ──────────────────────────────────────────────── -->
+<div id="mainView" class="view" style="display:none">
+
+  <!-- Platform detected badge -->
+  <div class="platform-row" id="platformRow" style="display:none">
+    <span class="platform-badge" id="platformBadge"></span>
+    <span class="platform-label" id="platformLabel"></span>
+  </div>
+
+  <!-- Context image preview (from right-click) -->
+  <div id="ctxImageWrap" style="display:none">
+    <img id="ctxImagePreview" class="ctx-img" alt="Selected image">
+    <button class="ctx-clear" onclick="clearContextImage()" title="Clear">✕</button>
+  </div>
+
+  <!-- Topic / context input -->
+  <div class="form-row">
+    <label class="label">What's this post about?</label>
+    <textarea id="topicInput" class="inp textarea" rows="2"
+      placeholder="e.g. Morning coffee vibes, product launch, travel photo…"></textarea>
+  </div>
+
+  <!-- Options row -->
+  <div class="opts-row">
+    <div class="opt-group">
+      <label class="label-sm">Platform</label>
+      <select id="platformSel" class="sel">
+        <option>Instagram</option>
+        <option>TikTok</option>
+        <option>YouTube</option>
+        <option>Facebook</option>
+        <option>LinkedIn</option>
+        <option>X (Twitter)</option>
+        <option>Pinterest</option>
+      </select>
+    </div>
+    <div class="opt-group">
+      <label class="label-sm">Tone</label>
+      <select id="toneSel" class="sel">
+        <option>Casual</option>
+        <option>Professional</option>
+        <option>Funny</option>
+        <option>Inspirational</option>
+        <option>Educational</option>
+        <option>Promotional</option>
+        <option>Storytelling</option>
+        <option>Minimalist</option>
+        <option>Bold</option>
+      </select>
+    </div>
+    <div class="opt-group">
+      <label class="label-sm">Count</label>
+      <select id="countSel" class="sel">
+        <option value="3">3</option>
+        <option value="5" selected>5</option>
+        <option value="7">7</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Language -->
+  <div class="form-row" style="margin-top:4px">
+    <select id="langSel" class="sel full-sel">
+      <option value="English">🌐 English</option>
+      <option value="Spanish">🇪🇸 Spanish</option>
+      <option value="French">🇫🇷 French</option>
+      <option value="German">🇩🇪 German</option>
+      <option value="Portuguese">🇧🇷 Portuguese</option>
+      <option value="Italian">🇮🇹 Italian</option>
+      <option value="Dutch">🇳🇱 Dutch</option>
+      <option value="Japanese">🇯🇵 Japanese</option>
+      <option value="Korean">🇰🇷 Korean</option>
+      <option value="Chinese (Simplified)">🇨🇳 Chinese (Simplified)</option>
+      <option value="Arabic">🇸🇦 Arabic</option>
+      <option value="Hindi">🇮🇳 Hindi</option>
+      <option value="Russian">🇷🇺 Russian</option>
+      <option value="Turkish">🇹🇷 Turkish</option>
+      <option value="Thai">🇹🇭 Thai</option>
+    </select>
+  </div>
+
+  <!-- Generate button -->
+  <button class="btn-primary" id="generateBtn" onclick="doGenerate()">
+    <span id="generateBtnText">✨ Generate Captions</span>
+  </button>
+
+  <!-- Usage bar -->
+  <div class="usage-row" id="usageRow" style="display:none">
+    <span id="usageText"></span>
+    <a href="https://snapcaptionai.com/pricing.html" target="_blank" class="upgrade-link" id="upgradeLink" style="display:none">Upgrade ↗</a>
+  </div>
+
+  <!-- Results -->
+  <div id="resultsWrap" style="display:none">
+    <div class="results-header">
+      <span class="results-title">Generated Captions</span>
+      <button class="btn-ghost-sm" onclick="copyAll()">Copy All</button>
+    </div>
+    <div id="captionsList"></div>
+  </div>
+
+  <!-- Upgrade prompt -->
+  <div id="upgradePrompt" class="upgrade-prompt" style="display:none">
+    <div class="upgrade-icon">🔒</div>
+    <div class="upgrade-title">Pro Feature</div>
+    <div class="upgrade-sub">Upgrade to Pro to use the Chrome Extension</div>
+    <a href="https://snapcaptionai.com/pricing.html" target="_blank" class="btn-primary upgrade-btn">Upgrade to Pro</a>
+  </div>
+</div>
+
+<!-- ── Error state ────────────────────────────────────────────── -->
+<div id="errorView" class="view" style="display:none">
+  <div class="err-state">
+    <div class="err-icon">⚠️</div>
+    <div class="err-title" id="errTitle">Something went wrong</div>
+    <div class="err-msg-body" id="errBody"></div>
+    <button class="btn-ghost" onclick="resetError()">Try Again</button>
+  </div>
+</div>
+
+<!-- ── Loading overlay ────────────────────────────────────────── -->
+<div id="loadingOverlay" class="loading-overlay" style="display:none">
+  <div class="spinner"></div>
+  <div class="loading-label" id="loadingLabel">Generating captions…</div>
+</div>
+
+<script src="popup.js"></script>
+</body>
+</html>

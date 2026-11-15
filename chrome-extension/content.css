@@ -1,0 +1,6 @@
+/* SnapCaption AI content styles — minimal; just the inject highlight */
+.snapcaption-inject-highlight {
+  outline: 2px solid #a855f7 !important;
+  outline-offset: 2px !important;
+  transition: outline .2s ease !important;
+}

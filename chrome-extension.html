@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Chrome Extension — SnapCaption AI</title>
+<link rel="icon" href="icons/icon-32.png">
+<style>
+:root{--bg:#0f0f1a;--card:#1a1a2e;--card2:#1e1e35;--grad1:#7c3aed;--grad2:#a855f7;--grad3:#ec4899;--text:#f1f5f9;--muted:#94a3b8;--border:rgba(255,255,255,.08)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;min-height:100vh}
+
+/* Nav */
+.nav{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--border);background:rgba(124,58,237,.06)}
+.nav-logo{display:flex;align-items:center;gap:9px;text-decoration:none;font-weight:800;font-size:16px;color:var(--text)}
+.nav-logo img{width:28px;height:28px;border-radius:8px}
+.nav-logo span{background:linear-gradient(135deg,var(--grad1),var(--grad3));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.nav-links{display:flex;align-items:center;gap:14px}
+.nav-links a{color:var(--muted);text-decoration:none;font-size:13px;transition:color .15s}
+.nav-links a:hover{color:var(--text)}
+.nav-app-btn{background:linear-gradient(135deg,var(--grad1),var(--grad3));color:#fff!important;padding:7px 16px;border-radius:8px;font-weight:700;font-size:13px}
+
+/* Hero */
+.hero{text-align:center;padding:60px 20px 40px;max-width:680px;margin:0 auto}
+.hero-eyebrow{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--grad2);margin-bottom:14px}
+.hero-title{font-size:clamp(28px,5vw,42px);font-weight:900;line-height:1.15;letter-spacing:-.5px;margin-bottom:16px}
+.hero-title .grad{background:linear-gradient(135deg,var(--grad2),var(--grad3));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hero-sub{color:var(--muted);font-size:15px;line-height:1.65;max-width:520px;margin:0 auto 32px}
+
+/* Pro badge */
+.pro-gate-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(124,58,237,.15);border:1px solid rgba(168,85,247,.3);border-radius:20px;padding:6px 16px;font-size:12px;font-weight:700;color:#a855f7;letter-spacing:.3px;margin-bottom:28px}
+
+/* CTA */
+.cta-wrap{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:12px;margin-bottom:14px}
+.btn-primary{display:inline-flex;align-items:center;gap:8px;padding:13px 28px;background:linear-gradient(135deg,var(--grad1),var(--grad3));border:none;border-radius:12px;color:#fff;font-weight:700;font-size:15px;cursor:pointer;text-decoration:none;transition:opacity .15s,transform .1s}
+.btn-primary:hover{opacity:.9}
+.btn-primary:active{transform:scale(.97)}
+.btn-outline{display:inline-flex;align-items:center;gap:8px;padding:12px 24px;background:transparent;border:1.5px solid rgba(168,85,247,.4);border-radius:12px;color:#a855f7;font-weight:700;font-size:14px;cursor:pointer;text-decoration:none;transition:background .15s}
+.btn-outline:hover{background:rgba(168,85,247,.1)}
+.cta-note{color:var(--muted);font-size:12px;text-align:center}
+
+/* Extension preview mockup */
+.mockup-wrap{max-width:360px;margin:0 auto 50px;border-radius:16px;overflow:hidden;border:1px solid rgba(168,85,247,.25);box-shadow:0 20px 60px rgba(0,0,0,.5)}
+.mockup-bar{background:#1a1a2e;padding:9px 14px;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--border)}
+.mockup-dots{display:flex;gap:5px}
+.mockup-dots span{width:10px;height:10px;border-radius:50%;display:block}
+.dot-r{background:#ff5f57}.dot-y{background:#febc2e}.dot-g{background:#28c840}
+.mockup-title{font-size:11px;color:var(--muted);font-weight:600;margin-left:4px}
+.mockup-body{background:var(--bg);padding:0}
+
+/* How it works */
+.section{max-width:860px;margin:0 auto 60px;padding:0 20px}
+.section-title{font-size:22px;font-weight:800;text-align:center;margin-bottom:30px;letter-spacing:-.3px}
+.steps-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}
+.step-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px}
+.step-num{width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,var(--grad1),var(--grad3));display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#fff;margin-bottom:12px}
+.step-title{font-size:14px;font-weight:700;margin-bottom:6px}
+.step-desc{font-size:12.5px;color:var(--muted);line-height:1.6}
+
+/* Features */
+.features-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}
+.feat-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px}
+.feat-icon{font-size:22px;margin-bottom:8px}
+.feat-title{font-size:13px;font-weight:700;margin-bottom:4px}
+.feat-desc{font-size:12px;color:var(--muted);line-height:1.55}
+
+/* Install guide */
+.install-guide{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:28px;max-width:680px;margin:0 auto 60px}
+.install-title{font-size:17px;font-weight:800;margin-bottom:20px}
+.install-steps{display:flex;flex-direction:column;gap:14px}
+.install-step{display:flex;gap:14px;align-items:flex-start}
+.install-step-num{flex-shrink:0;width:26px;height:26px;border-radius:8px;background:linear-gradient(135deg,var(--grad1),var(--grad3));display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff}
+.install-step-body{}
+.install-step-title{font-size:13px;font-weight:700;margin-bottom:3px}
+.install-step-desc{font-size:12px;color:var(--muted);line-height:1.6}
+code{background:rgba(255,255,255,.07);border:1px solid var(--border);border-radius:5px;padding:1px 6px;font-size:11.5px;font-family:'SF Mono','Fira Code',monospace;color:#e2e8f0}
+
+/* Upgrade CTA */
+.upgrade-cta{background:linear-gradient(135deg,rgba(124,58,237,.2),rgba(236,72,153,.12));border:1px solid rgba(168,85,247,.25);border-radius:16px;padding:32px;text-align:center;max-width:680px;margin:0 auto 60px}
+.upgrade-cta-title{font-size:20px;font-weight:800;margin-bottom:8px}
+.upgrade-cta-sub{color:var(--muted);font-size:14px;margin-bottom:22px;line-height:1.6}
+
+/* Plan check state (shown for logged-in non-Pro) */
+.plan-check{background:var(--card);border:1px solid rgba(236,72,153,.3);border-radius:14px;padding:22px;text-align:center;max-width:480px;margin:0 auto 32px;display:none}
+.plan-check-icon{font-size:28px;margin-bottom:10px}
+.plan-check-title{font-size:15px;font-weight:700;margin-bottom:6px}
+.plan-check-sub{color:var(--muted);font-size:13px;margin-bottom:14px;line-height:1.55}
+
+/* Footer */
+.footer{text-align:center;padding:28px 20px;border-top:1px solid var(--border);color:var(--muted);font-size:12px}
+.footer a{color:var(--muted);text-decoration:none}
+.footer a:hover{color:var(--text)}
+
+@media(max-width:600px){
+  .nav-links{display:none}
+  .hero{padding:40px 16px 30px}
+}
+</style>
+</head>
+<body>
+
+<!-- Nav -->
+<nav class="nav">
+  <a href="app.html" class="nav-logo">
+    <img src="icons/icon-32.png" alt="">
+    <span>SnapCaption AI</span>
+  </a>
+  <div class="nav-links">
+    <a href="app.html">App</a>
+    <a href="analytics.html">Analytics</a>
+    <a href="pricing.html">Pricing</a>
+    <a href="app.html" class="nav-app-btn">Open App</a>
+  </div>
+</nav>
+
+<!-- Hero -->
+<div class="hero">
+  <div class="hero-eyebrow">🧩 Chrome Extension</div>
+  <h1 class="hero-title">Generate captions<br><span class="grad">without leaving the page</span></h1>
+  <p class="hero-sub">Install the SnapCaption AI extension and generate platform-perfect captions right inside Instagram, TikTok, LinkedIn, and more — no tab-switching required.</p>
+  <div class="pro-gate-badge">🔒 Pro Plan Feature</div>
+
+  <!-- Non-pro gate message (shown via JS) -->
+  <div class="plan-check" id="planCheck">
+    <div class="plan-check-icon">⬆️</div>
+    <div class="plan-check-title">Upgrade to Pro to use the extension</div>
+    <div class="plan-check-sub">The Chrome Extension is included with every Pro plan. Upgrade once, use forever.</div>
+    <a href="pricing.html" class="btn-primary" style="max-width:200px;margin:0 auto">Upgrade to Pro</a>
+  </div>
+
+  <div class="cta-wrap" id="ctaWrap">
+    <a href="chrome-extension/snapcaption-ai-extension.zip" download class="btn-primary" id="downloadBtn">
+      ⬇️ Download Extension (.zip)
+    </a>
+    <a href="#install-guide" class="btn-outline">📋 Install Guide</a>
+  </div>
+  <div class="cta-note">Works in Chrome, Brave, Edge, and all Chromium browsers</div>
+</div>
+
+<!-- Mockup preview -->
+<div style="max-width:860px;margin:0 auto 50px;padding:0 20px">
+  <div class="mockup-wrap">
+    <div class="mockup-bar">
+      <div class="mockup-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+      <div class="mockup-title">SnapCaption AI — Chrome Extension</div>
+    </div>
+    <div class="mockup-body" style="padding:16px;background:var(--bg)">
+      <!-- Simulated popup UI -->
+      <div style="display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);padding-bottom:10px;margin-bottom:12px">
+        <div style="display:flex;align-items:center;gap:8px">
+          <img src="icons/icon-32.png" alt="" style="width:18px;height:18px;border-radius:5px">
+          <span style="font-weight:800;font-size:13px">SnapCaption <span style="background:linear-gradient(135deg,#7c3aed,#ec4899);-webkit-background-clip:text;-webkit-text-fill-color:transparent">AI</span></span>
+        </div>
+        <span style="font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;background:rgba(124,58,237,.3);color:#a855f7;border:1px solid rgba(168,85,247,.3);text-transform:uppercase">Pro</span>
+      </div>
+      <div style="background:rgba(168,85,247,.1);border:1px solid rgba(168,85,247,.2);border-radius:8px;padding:5px 10px;margin-bottom:10px;display:flex;align-items:center;gap:7px">
+        <span style="font-size:14px">📸</span>
+        <span style="font-size:11px;color:#a855f7;font-weight:600">You're on Instagram</span>
+      </div>
+      <div style="font-size:10px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.4px;margin-bottom:4px">What's this post about?</div>
+      <div style="background:#1e1e35;border:1px solid var(--border);border-radius:8px;padding:7px 10px;font-size:12px;color:var(--muted);margin-bottom:10px">Morning coffee vibes with my new pour-over setup ☕</div>
+      <div style="display:grid;grid-template-columns:1.5fr 1.5fr .8fr;gap:7px;margin-bottom:8px">
+        <div><div style="font-size:9px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.4px;margin-bottom:3px">Platform</div><div style="background:#1e1e35;border:1px solid var(--border);border-radius:7px;padding:5px 7px;font-size:11px;color:var(--text)">Instagram ▾</div></div>
+        <div><div style="font-size:9px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.4px;margin-bottom:3px">Tone</div><div style="background:#1e1e35;border:1px solid var(--border);border-radius:7px;padding:5px 7px;font-size:11px;color:var(--text)">Casual ▾</div></div>
+        <div><div style="font-size:9px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.4px;margin-bottom:3px">Count</div><div style="background:#1e1e35;border:1px solid var(--border);border-radius:7px;padding:5px 7px;font-size:11px;color:var(--text)">5 ▾</div></div>
+      </div>
+      <div style="display:flex;width:100%;padding:9px;background:linear-gradient(135deg,#7c3aed,#ec4899);border:none;border-radius:9px;color:#fff;font-size:12px;font-weight:700;text-align:center;justify-content:center">✨ Generate Captions</div>
+    </div>
+  </div>
+</div>
+
+<!-- How it works -->
+<div class="section">
+  <div class="section-title">How it works</div>
+  <div class="steps-grid">
+    <div class="step-card">
+      <div class="step-num">1</div>
+      <div class="step-title">Install the extension</div>
+      <div class="step-desc">Download and load it in Chrome's Developer Mode — takes 60 seconds. No account setup needed in the browser.</div>
+    </div>
+    <div class="step-card">
+      <div class="step-num">2</div>
+      <div class="step-title">Browse to any platform</div>
+      <div class="step-desc">Open Instagram, TikTok, LinkedIn, or any supported platform. The extension auto-detects where you are.</div>
+    </div>
+    <div class="step-card">
+      <div class="step-num">3</div>
+      <div class="step-title">Click the extension icon</div>
+      <div class="step-desc">Describe your post, pick tone & platform, then hit Generate. AI writes 5 captions in seconds.</div>
+    </div>
+    <div class="step-card">
+      <div class="step-num">4</div>
+      <div class="step-title">Insert or copy</div>
+      <div class="step-desc">Hit Insert to drop the caption directly into the post composer, or Copy to paste it yourself.</div>
+    </div>
+  </div>
+</div>
+
+<!-- Features -->
+<div class="section">
+  <div class="section-title">What's inside</div>
+  <div class="features-grid">
+    <div class="feat-card">
+      <div class="feat-icon">📸</div>
+      <div class="feat-title">Platform auto-detect</div>
+      <div class="feat-desc">Knows you're on Instagram, TikTok, LinkedIn, YouTube or X and sets platform defaults automatically.</div>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">🖱️</div>
+      <div class="feat-title">Right-click any image</div>
+      <div class="feat-desc">Right-click any image on the page → "Generate caption" — the extension uses that image as context.</div>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">📋</div>
+      <div class="feat-title">One-click insert</div>
+      <div class="feat-desc">Drops your chosen caption directly into Instagram, TikTok, LinkedIn, and YouTube composer fields.</div>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">🌍</div>
+      <div class="feat-title">50+ languages</div>
+      <div class="feat-desc">Generate captions in English, Spanish, Japanese, Arabic, Hindi and 45+ more languages.</div>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">🎨</div>
+      <div class="feat-title">9 tones</div>
+      <div class="feat-desc">Casual, Professional, Funny, Inspirational, Educational, Promotional, Storytelling, Minimalist, Bold.</div>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">🔒</div>
+      <div class="feat-title">Your account, your data</div>
+      <div class="feat-desc">Signs in with your SnapCaption AI account. Captions sync to your history. No separate subscription.</div>
+    </div>
+  </div>
+</div>
+
+<!-- Install guide -->
+<div class="section" id="install-guide">
+  <div class="install-guide">
+    <div class="install-title">📋 Installation Guide (Developer Mode)</div>
+    <div style="color:var(--muted);font-size:13px;margin-bottom:20px;line-height:1.6">The extension is pending Chrome Web Store review. In the meantime, install it in Developer Mode — it's the same extension, just loaded locally. Takes about 60 seconds.</div>
+    <div class="install-steps">
+      <div class="install-step">
+        <div class="install-step-num">1</div>
+        <div class="install-step-body">
+          <div class="install-step-title">Download the extension zip</div>
+          <div class="install-step-desc">Click the Download button above. Save <code>snapcaption-ai-extension.zip</code> anywhere on your computer.</div>
+        </div>
+      </div>
+      <div class="install-step">
+        <div class="install-step-num">2</div>
+        <div class="install-step-body">
+          <div class="install-step-title">Unzip the file</div>
+          <div class="install-step-desc">Extract the zip. You'll get a folder named <code>snapcaption-ai-extension</code> containing <code>manifest.json</code> and other files.</div>
+        </div>
+      </div>
+      <div class="install-step">
+        <div class="install-step-num">3</div>
+        <div class="install-step-body">
+          <div class="install-step-title">Open Chrome Extensions</div>
+          <div class="install-step-desc">In Chrome, go to <code>chrome://extensions</code> (or Menu → More tools → Extensions).</div>
+        </div>
+      </div>
+      <div class="install-step">
+        <div class="install-step-num">4</div>
+        <div class="install-step-body">
+          <div class="install-step-title">Enable Developer Mode</div>
+          <div class="install-step-desc">Toggle "Developer mode" in the top-right corner of the Extensions page.</div>
+        </div>
+      </div>
+      <div class="install-step">
+        <div class="install-step-num">5</div>
+        <div class="install-step-body">
+          <div class="install-step-title">Load the extension folder</div>
+          <div class="install-step-desc">Click "Load unpacked" → select the extracted <code>snapcaption-ai-extension</code> folder. The SnapCaption AI icon appears in your toolbar.</div>
+        </div>
+      </div>
+      <div class="install-step">
+        <div class="install-step-num">6</div>
+        <div class="install-step-body">
+          <div class="install-step-title">Pin it to your toolbar</div>
+          <div class="install-step-desc">Click the puzzle-piece icon in Chrome → pin SnapCaption AI so it's always one click away.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Upgrade CTA (shown if not Pro) -->
+<div class="section">
+  <div class="upgrade-cta" id="upgradeCta">
+    <div style="font-size:36px;margin-bottom:12px">🚀</div>
+    <div class="upgrade-cta-title">Unlock the Chrome Extension</div>
+    <div class="upgrade-cta-sub">The extension is included with every Pro plan — along with multi-brand profiles, hashtag research, unlimited captions, and 50+ languages.</div>
+    <a href="pricing.html" class="btn-primary" style="max-width:220px;margin:0 auto">Upgrade to Pro</a>
+  </div>
+</div>
+
+<div class="footer">
+  <p>© 2026 SnapCaption AI · <a href="privacy.html">Privacy</a> · <a href="terms.html">Terms</a> · <a href="contact.html">Contact</a></p>
+</div>
+
+<script>
+// Show plan-specific UI
+(function(){
+  try {
+    const user = JSON.parse(localStorage.getItem('sc_user') || 'null');
+    if (!user) return;
+    const isPro = user.plan === 'pro';
+    if (!isPro) {
+      document.getElementById('planCheck').style.display = 'block';
+      document.getElementById('ctaWrap').style.opacity   = '.4';
+      document.getElementById('ctaWrap').style.pointerEvents = 'none';
+    } else {
+      document.getElementById('upgradeCta').style.display = 'none';
+    }
+  } catch(e){}
+})();
+</script>
+</body>
+</html>
