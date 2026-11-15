@@ -97,24 +97,47 @@
 </div>
 
 <script>
-  // Update plan in localStorage so app.html shows correct badge immediately
-  const plan = new URLSearchParams(window.location.search).get('plan') || 'premium';
-  const stored = JSON.parse(localStorage.getItem('sc_user') || 'null');
-  if (stored) {
-    stored.plan = plan;
-    localStorage.setItem('sc_user', JSON.stringify(stored));
-  }
+  // ── Plan display helpers ──────────────────────────────────────────────
+  const PLAN_META = {
+    starter: {
+      label: 'Starter',
+      gradient: 'linear-gradient(135deg, #6366f1, #818cf8)',
+      blurb: 'Your Starter plan is active — enjoy 15 captions a day across every platform.',
+      perks: ['15 captions per day', 'All 50 languages', 'All 6 platforms + tones', 'Caption history & favorites'],
+    },
+    premium: {
+      label: 'Premium',
+      gradient: 'linear-gradient(135deg, #7c3aed, #ec4899)',
+      blurb: 'Your Premium plan is active — unlimited captions, powerful transforms, full AI suite.',
+      perks: ['Unlimited captions', 'All 50 languages', '10 AI transforms / day', 'Brand voice memory'],
+    },
+    pro: {
+      label: 'Pro',
+      gradient: 'linear-gradient(135deg, #2563eb, #7c3aed)',
+      blurb: 'Your Pro plan is active — the full power of SnapCaption AI, no limits.',
+      perks: ['Unlimited captions', 'All 50 languages', '25 AI transforms / day', 'Priority support'],
+    },
+    teams: {
+      label: 'Teams',
+      gradient: 'linear-gradient(135deg, #f59e0b, #d97706)',
+      blurb: 'Your Team subscription is active. Every team member gets full access.',
+      perks: ['Unlimited captions', 'All 50 languages', '25 AI transforms / day', 'Team management'],
+    },
+  };
 
-  // Show correct plan chip
-  if (plan === 'teams') {
+  function applyPlanUI(plan) {
+    const meta = PLAN_META[plan] || PLAN_META.premium;
     const chip = document.getElementById('planChip');
-    chip.textContent = 'Teams';
-    chip.style.background = 'linear-gradient(135deg, #f59e0b, #d97706)';
-    document.querySelector('.sub').textContent =
-      'Your team subscription is active. All team members get unlimited access.';
+    chip.textContent = meta.label;
+    chip.style.background = meta.gradient;
+    document.querySelector('.sub').textContent = meta.blurb;
+    const perksEl = document.querySelector('.perks');
+    perksEl.innerHTML = meta.perks
+      .map(p => `<div class="perk"><span class="perk-dot">✓</span> ${p}</div>`)
+      .join('');
   }
 
-  // Countdown redirect
+  // ── Countdown redirect ────────────────────────────────────────────────
   let n = 5;
   const countEl = document.getElementById('countdown');
   const timer = setInterval(() => {
@@ -122,6 +145,47 @@
     countEl.textContent = n;
     if (n <= 0) { clearInterval(timer); window.location.href = 'app.html'; }
   }, 1000);
+
+  // ── Verify payment & refresh localStorage ────────────────────────────
+  (async () => {
+    const params  = new URLSearchParams(window.location.search);
+    const session = params.get('session_id');
+
+    // If no session_id (direct visit), just show generic success
+    if (!session) {
+      const fallbackPlan = params.get('plan') || 'premium';
+      applyPlanUI(fallbackPlan);
+      return;
+    }
+
+    try {
+      const res  = await fetch('/api/checkout-verify.php?session_id=' + encodeURIComponent(session));
+      const data = await res.json();
+
+      if (data.success && data.plan) {
+        // Refresh user object in localStorage with verified plan
+        const stored = JSON.parse(localStorage.getItem('sc_user') || 'null');
+        if (stored) {
+          Object.assign(stored, {
+            plan:          data.plan,
+            first_name:    data.user?.first_name ?? stored.first_name,
+            last_name:     data.user?.last_name  ?? stored.last_name,
+          });
+          localStorage.setItem('sc_user', JSON.stringify(stored));
+        } else if (data.user) {
+          // Edge case: user cleared localStorage; rebuild from API response
+          localStorage.setItem('sc_user', JSON.stringify(data.user));
+        }
+        applyPlanUI(data.plan);
+      } else {
+        // Verification failed — still show success (webhook will sync later)
+        applyPlanUI('premium');
+      }
+    } catch (err) {
+      // Network error — still show success
+      applyPlanUI('premium');
+    }
+  })();
 </script>
 </body>
 </html>

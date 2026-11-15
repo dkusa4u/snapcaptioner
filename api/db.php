@@ -51,7 +51,9 @@ function initDB(): void {
             password     VARCHAR(255) NOT NULL,
             plan         ENUM('free','starter','premium','pro','teams') NOT NULL DEFAULT 'free',
             verified     TINYINT(1)   NOT NULL DEFAULT 0,
-            brand_voice  TEXT         NULL,
+            brand_voice         TEXT         NULL,
+            stripe_customer_id  VARCHAR(64)  NULL,
+            stripe_sub_id       VARCHAR(64)  NULL,
             created_at   DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
             updated_at   DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -98,6 +100,8 @@ function initDB(): void {
 
     // Migrate ENUM to include new plans (safe no-op if already migrated)
     migratePlansEnum($db);
+    // Migrate users table to add Stripe columns (safe no-op if already present)
+    migrateStripeColumns($db);
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -163,6 +167,16 @@ function migratePlansEnum(PDO $db): void {
         $db->exec("ALTER TABLE users MODIFY COLUMN plan ENUM('free','starter','premium','pro','teams') NOT NULL DEFAULT 'free'");
     } catch (PDOException $e) {
         // Already migrated or already correct — ignore
+    }
+}
+
+function migrateStripeColumns(PDO $db): void {
+    try {
+        $db->exec("ALTER TABLE users
+            ADD COLUMN IF NOT EXISTS stripe_customer_id VARCHAR(64) NULL,
+            ADD COLUMN IF NOT EXISTS stripe_sub_id      VARCHAR(64) NULL");
+    } catch (PDOException $e) {
+        // Already present — ignore
     }
 }
 

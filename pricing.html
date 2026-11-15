@@ -580,30 +580,42 @@
   }
 
   /* ── Checkout ── */
-  function startCheckout(plan) {
-    // Check if user is logged in
+  async function startCheckout(plan) {
     const token = localStorage.getItem('sc_token');
     if (!token) {
       sessionStorage.setItem('upgrade_intent', plan);
       window.location.href = 'login.html?redirect=pricing.html';
       return;
     }
-    // Map plan → Stripe price IDs (placeholder — replace with real IDs on Hostinger)
-    const stripeLinks = {
-      starter: 'https://buy.stripe.com/PLACEHOLDER_STARTER',
-      premium: 'https://buy.stripe.com/PLACEHOLDER_PREMIUM',
-      pro:     'https://buy.stripe.com/PLACEHOLDER_PRO',
-    };
-    const link = stripeLinks[plan];
-    if (link && !link.includes('PLACEHOLDER')) {
-      window.location.href = link;
-    } else {
-      // Fallback: show a "coming soon" toast style alert
-      const btn = event.currentTarget;
-      const orig = btn.textContent;
-      btn.textContent = '⏳ Payment coming soon…';
-      btn.disabled = true;
-      setTimeout(() => { btn.textContent = orig; btn.disabled = false; }, 3000);
+
+    // Disable the clicked button and show loading state
+    const btn = event.currentTarget;
+    const orig = btn.textContent;
+    btn.disabled = true;
+    btn.textContent = '⏳ Redirecting…';
+
+    try {
+      const res = await fetch('/api/stripe-checkout.php', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + token,
+        },
+        body: JSON.stringify({ plan }),
+      });
+      const data = await res.json();
+
+      if (data.success && data.url) {
+        window.location.href = data.url;
+      } else {
+        btn.textContent = '❌ ' + (data.message || 'Error — try again');
+        btn.disabled = false;
+        setTimeout(() => { btn.textContent = orig; }, 3500);
+      }
+    } catch (err) {
+      btn.textContent = '❌ Network error';
+      btn.disabled = false;
+      setTimeout(() => { btn.textContent = orig; }, 3500);
     }
   }
 
