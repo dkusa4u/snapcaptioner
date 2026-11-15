@@ -98,7 +98,7 @@
   /* LAYOUT */
   .app-wrap {
     max-width: 1100px; margin: 0 auto; padding: 24px 16px;
-    display: grid; grid-template-columns: 1fr 1fr; gap: 20px;
+    display: grid; grid-template-columns: 1fr 380px; gap: 20px;
   }
   @media(max-width:768px){ .app-wrap { grid-template-columns: 1fr; padding: 16px; } }
 
@@ -1534,6 +1534,153 @@
     select, .context-input { font-size: .85rem; padding: 9px 28px 9px 11px; }
     .mob-gen-btn { font-size: .88rem; padding: 12px; }
   }
+
+  /* ═══════════════════════════════════════════════════════
+     METRICS PANEL — 9 live widgets
+  ═══════════════════════════════════════════════════════ */
+  .metrics-panel {
+    display: flex; flex-direction: column; gap: 12px;
+    position: sticky; top: 72px; max-height: calc(100vh - 90px);
+    overflow-y: auto; padding-bottom: 20px; padding-right: 2px;
+    scrollbar-width: thin; scrollbar-color: rgba(139,92,246,.3) transparent;
+  }
+  .metrics-panel::-webkit-scrollbar { width: 4px; }
+  .metrics-panel::-webkit-scrollbar-thumb { background: rgba(139,92,246,.3); border-radius: 2px; }
+
+  /* Stats bar */
+  .metrics-stats-bar {
+    display: grid; grid-template-columns: repeat(4,1fr); gap: 6px;
+    background: rgba(255,255,255,.03); border: 1px solid rgba(255,255,255,.07);
+    border-radius: 12px; padding: 10px 8px;
+  }
+  .mstat { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+  .mstat-val { font-size: 1.1rem; font-weight: 800; color: var(--text); line-height: 1; }
+  .mstat-lbl { font-size: .58rem; color: var(--muted); font-weight: 700; text-transform: uppercase; letter-spacing: .04em; }
+
+  /* Base widget */
+  .mw {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 14px; padding: 14px;
+    animation: mwIn .4s ease both;
+  }
+  @keyframes mwIn { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:none; } }
+  .mw-title { font-size: .68rem; font-weight: 800; color: var(--muted2); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 10px; }
+
+  /* Widget 1 — Dial */
+  .mw-dial { background: linear-gradient(135deg,rgba(139,92,246,.09),rgba(6,182,212,.05)); }
+  .mw-dial-wrap { position: relative; display: flex; justify-content: center; }
+  .dial-svg { width: 160px; height: 90px; }
+  .dial-center { position: absolute; bottom: 2px; left: 50%; transform: translateX(-50%); text-align: center; line-height: 1; }
+  .dial-score { font-size: 1.9rem; font-weight: 900; color: var(--text); display: block; }
+  .dial-lbl { font-size: .6rem; color: var(--muted); font-weight: 700; }
+  .dial-breakdown { font-size: .66rem; color: var(--muted); text-align: center; margin-top: 6px; line-height: 1.4; }
+
+  /* Widget 2 — Hook bars */
+  .mw-hooks { background: linear-gradient(135deg,rgba(236,72,153,.07),rgba(139,92,246,.05)); }
+  .mw-hooks-grid { display: flex; gap: 8px; align-items: flex-end; height: 70px; justify-content: center; padding-bottom: 2px; }
+  .hook-bar-wrap { display: flex; flex-direction: column; align-items: center; gap: 4px; height: 100%; justify-content: flex-end; }
+  .hook-bar {
+    width: 28px; border-radius: 5px 5px 0 0;
+    background: linear-gradient(to top,#8b5cf6,#34d399);
+    transition: height .7s cubic-bezier(.34,1.56,.64,1);
+  }
+  .hook-num { font-size: .64rem; color: var(--muted); font-weight: 700; }
+  .hooks-legend { display: flex; justify-content: space-between; margin-top: 7px; font-size: .6rem; color: var(--muted); font-weight: 700; }
+
+  /* Widget 3 — Donut */
+  .mw-donut { background: linear-gradient(135deg,rgba(16,185,129,.07),rgba(245,158,11,.04)); }
+  .mw-donut-wrap { position: relative; display: flex; justify-content: center; align-items: center; }
+  .donut-svg { width: 80px; height: 80px; }
+  .donut-center { position: absolute; text-align: center; }
+  .donut-total { font-size: 1.3rem; font-weight: 900; color: var(--text); display: block; line-height: 1; }
+  .donut-sub { font-size: .58rem; color: var(--muted); font-weight: 700; }
+  .donut-legend { display: flex; justify-content: center; gap: 10px; margin-top: 8px; }
+  .dl-item { display: flex; align-items: center; gap: 4px; font-size: .64rem; color: var(--muted2); font-weight: 600; }
+  .dl-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+
+  /* Widget 4 — Flow */
+  .mw-flow { background: linear-gradient(135deg,rgba(6,182,212,.08),rgba(139,92,246,.04)); }
+  .flow-pipe { display: flex; align-items: center; gap: 4px; justify-content: center; padding: 6px 0 2px; }
+  .fp-step { display: flex; flex-direction: column; align-items: center; gap: 3px; }
+  .fp-icon { font-size: 1.3rem; }
+  .fp-lbl { font-size: .58rem; color: var(--muted); font-weight: 700; }
+  .fp-step.fp-active .fp-icon { animation: fpPop .6s ease; }
+  @keyframes fpPop { 0%,100%{transform:scale(1)} 40%{transform:scale(1.3)} }
+  .fp-arrow { width: 14px; height: 2px; background: linear-gradient(90deg,rgba(139,92,246,.4),rgba(6,182,212,.5)); position: relative; flex-shrink: 0; }
+  .fp-arrow::after { content:''; position:absolute; right:-1px; top:-3px; border:4px solid transparent; border-left:5px solid rgba(6,182,212,.5); }
+  .flow-last { font-size: .66rem; color: var(--muted); text-align: center; margin-top: 6px; }
+
+  /* Widget 5 — Tiles */
+  .mw-tiles { background: rgba(255,255,255,.025); }
+  .tiles-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .tile { border-radius: 10px; padding: 10px 8px; text-align: center; border: 1px solid transparent; }
+  .tile-val { font-size: 1.5rem; font-weight: 900; line-height: 1; }
+  .tile-lbl { font-size: .58rem; font-weight: 700; color: rgba(255,255,255,.45); margin-top: 3px; text-transform: uppercase; letter-spacing: .04em; }
+  .tile-purple { background:rgba(139,92,246,.1); border-color:rgba(139,92,246,.2); }
+  .tile-purple .tile-val { color:#c084fc; }
+  .tile-cyan   { background:rgba(6,182,212,.1);  border-color:rgba(6,182,212,.2); }
+  .tile-cyan .tile-val   { color:#22d3ee; }
+  .tile-pink   { background:rgba(236,72,153,.1); border-color:rgba(236,72,153,.2); }
+  .tile-pink .tile-val   { color:#f472b6; }
+  .tile-green  { background:rgba(16,185,129,.1); border-color:rgba(16,185,129,.2); }
+  .tile-green .tile-val  { color:#34d399; }
+
+  /* Widget 6 — Bubbles */
+  .mw-bubbles { background: linear-gradient(135deg,rgba(139,92,246,.07),rgba(16,185,129,.04)); }
+  .bubbles-wrap { position: relative; height: 85px; overflow: hidden; }
+  .bubbles-empty { font-size: .67rem; color: var(--muted); text-align: center; padding-top: 26px; line-height: 1.4; }
+  .hbubble {
+    position: absolute; border-radius: 100px; display: flex; align-items: center; justify-content: center;
+    font-size: .57rem; font-weight: 700; cursor: default;
+    transition: transform .2s ease; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 0 6px;
+  }
+  .hbubble:hover { transform: scale(1.1); z-index: 2; }
+  .hbubble.sweet { background:rgba(16,185,129,.15); border:1px solid rgba(16,185,129,.3); color:#34d399; }
+  .hbubble.comp  { background:rgba(245,158,11,.12); border:1px solid rgba(245,158,11,.3); color:#fbbf24; }
+  .hbubble.sat   { background:rgba(239,68,68,.1);   border:1px solid rgba(239,68,68,.25); color:#f87171; }
+
+  /* Widget 7 — Timeline bars */
+  .mw-timeline { background: rgba(255,255,255,.025); }
+  .timeline-bars { display: flex; flex-direction: column; gap: 7px; }
+  .tb-row { display: flex; align-items: center; gap: 7px; }
+  .tb-plat { font-size: .6rem; font-weight: 700; color: var(--muted2); width: 54px; flex-shrink: 0; }
+  .tb-track { flex: 1; height: 8px; background: rgba(255,255,255,.06); border-radius: 4px; overflow: hidden; }
+  .tb-fill { height: 100%; border-radius: 4px; transition: width .6s ease; min-width: 0; background: linear-gradient(90deg,#8b5cf6,#c084fc); }
+  .tb-tiktok  { background: linear-gradient(90deg,#ef4444,#f97316); }
+  .tb-linkedin { background: linear-gradient(90deg,#0077b5,#38bdf8); }
+  .tb-x       { background: linear-gradient(90deg,#94a3b8,#e2e8f0); }
+  .tb-fb      { background: linear-gradient(90deg,#1877f2,#60a5fa); }
+  .tb-pin     { background: linear-gradient(90deg,#e60023,#f87171); }
+  .tb-cnt { font-size: .64rem; font-weight: 700; color: var(--muted); width: 16px; text-align: right; flex-shrink: 0; }
+
+  /* Widget 8 — Radar */
+  .mw-radar { background: linear-gradient(135deg,rgba(139,92,246,.08),rgba(236,72,153,.04)); }
+  .radar-wrap { display: flex; justify-content: center; }
+  .radar-svg { width: 160px; height: 140px; }
+  .radar-hint { font-size: .64rem; color: var(--muted); text-align: center; margin-top: 2px; }
+
+  /* Widget 9 — Calendar */
+  .mw-calendar { background: rgba(255,255,255,.025); }
+  .cal-grid { display: grid; grid-template-columns: repeat(7,1fr); gap: 4px; margin-bottom: 6px; }
+  .cal-day {
+    aspect-ratio: 1; border-radius: 4px; background: rgba(139,92,246,.07);
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px;
+    font-size: .5rem; color: var(--muted); font-weight: 700; cursor: default;
+  }
+  .cal-day.has-activity { background: rgba(139,92,246,.3); color: #c084fc; }
+  .cal-day.high { background: #8b5cf6 !important; color: #fff !important; }
+  .cal-day.today { outline: 1.5px solid rgba(139,92,246,.6); outline-offset: 1px; }
+  .cal-day-name { font-size: .44rem; color: var(--muted); opacity: .6; }
+  .cal-legend { display: flex; align-items: center; gap: 5px; justify-content: center; font-size: .6rem; color: var(--muted); flex-wrap: wrap; }
+  .cal-leg-dot { width: 8px; height: 8px; border-radius: 2px; display: inline-block; flex-shrink: 0; }
+
+  /* Upgrade CTA */
+  .metrics-cta { background: linear-gradient(135deg,rgba(139,92,246,.12),rgba(6,182,212,.06)); border: 1px solid rgba(139,92,246,.2); border-radius: 12px; padding: 12px; text-align: center; }
+  .mcta-text { font-size: .68rem; color: var(--muted2); margin-bottom: 7px; font-weight: 600; }
+  .mcta-btn { display: inline-block; background: linear-gradient(135deg,#8b5cf6,#06b6d4); color: #fff; font-size: .72rem; font-weight: 700; padding: 7px 16px; border-radius: 8px; text-decoration: none; transition: opacity .15s; }
+  .mcta-btn:hover { opacity: .85; }
+  /* Mobile: stack metrics below left column */
+  @media(max-width:768px) { .metrics-panel { position: static; max-height: none; } }
 </style>
 </head>
 <body>
@@ -2347,56 +2494,172 @@
     <div id="planInfoText" style="padding:10px 4px;font-size:.72rem;color:var(--muted);text-align:center;line-height:1.6;">
       Free plan: 3 AI captions/day · 3 photo edits/day · <a href="pricing.html" style="color:var(--grad2);font-weight:600;">Upgrade for unlimited captions &amp; edits</a>
     </div>
+
+    <!-- Caption results inject here (moved from right panel) -->
+    <div id="captionResults"></div>
   </div>
 
-  <!-- RIGHT: RESULTS -->
-  <div class="results-panel" id="resultsPanel">
-    <!-- Empty state — AI Transform Teaser -->
-    <div class="empty-state" id="emptyState">
-      <div class="teaser-wrap">
-        <div class="teaser-header">
-          <div class="teaser-badge">✨ AI Transforms Preview</div>
-          <p class="teaser-sub">Drag the slider · see what Premium unlocks</p>
-        </div>
+  <!-- RIGHT: METRICS PANEL -->
+  <!-- Metrics Panel: 9 live widgets, always visible -->
+  <div class="metrics-panel" id="metricsPanel">
 
-        <!-- Before/After slider -->
-        <div class="ba-container" id="baContainer">
-          <div class="ba-before">
-            <!-- Woman on tropical beach — same person, different background demo -->
-            <img src="https://images.unsplash.com/photo-1529963183134-61a90db47eaf?w=600&h=900&q=90&fit=crop&crop=faces,top" class="ba-img" alt="Before — beach photo">
-            <span class="ba-label ba-label-left">YOUR PHOTO</span>
-          </div>
-          <!-- After: AI-transformed to Eiffel Tower / Paris background -->
-          <div class="ba-after" id="baAfter" style="background-image:url('https://images.unsplash.com/photo-1499856871958-5b9627545d1a?w=600&h=900&q=90&fit=crop&crop=center')">
-            <span class="ba-label ba-label-right">AI TRANSFORM ✦</span>
-          </div>
-          <div class="ba-handle" id="baHandle">
-            <div class="ba-handle-line"></div>
-            <div class="ba-handle-btn">
-              <svg width="18" height="18" viewBox="0 0 24 24">
-                <path d="M8 5l-5 7 5 7M16 5l5 7-5 7"/>
-              </svg>
-            </div>
-            <div class="ba-handle-line"></div>
-          </div>
-        </div>
+    <!-- Stats bar -->
+    <div class="metrics-stats-bar" id="metricsStatsBar">
+      <div class="mstat"><span class="mstat-val" id="mTotalCaps">0</span><span class="mstat-lbl">Captions</span></div>
+      <div class="mstat"><span class="mstat-val" id="mStreak">0</span><span class="mstat-lbl">Day Streak</span></div>
+      <div class="mstat"><span class="mstat-val" id="mTransforms">0</span><span class="mstat-lbl">Transforms</span></div>
+      <div class="mstat"><span class="mstat-val" id="mBgSwaps">0</span><span class="mstat-lbl">BG Swaps</span></div>
+    </div>
 
-        <!-- Transform style tabs -->
-        <div class="ba-tabs" id="baTabs">
-          <button class="ba-tab active" data-bg="https://images.unsplash.com/photo-1499856871958-5b9627545d1a?w=600&h=900&q=90&fit=crop&crop=center">🗼 Paris</button>
-          <button class="ba-tab" data-bg="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=600&q=90&fit=crop&crop=center">🌅 Beach</button>
-          <button class="ba-tab" data-bg="https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=600&q=90&fit=crop&crop=center">🏯 Tokyo</button>
-          <button class="ba-tab" data-bg="https://images.unsplash.com/photo-1534430480872-3498386e7856?w=600&q=90&fit=crop&crop=center">🌴 Maldives</button>
-          <button class="ba-tab" data-bg="https://images.unsplash.com/photo-1491156855053-9cdff72c7f85?w=600&q=90&fit=crop&crop=center">❄️ Winter</button>
-          <button class="ba-tab" data-bg="https://images.unsplash.com/photo-1519501025264-65ba15a82390?w=600&q=90&fit=crop&crop=center">🌙 Night</button>
+    <!-- Widget 1: Caption Quality Score (SVG arc dial) -->
+    <div class="mw mw-dial">
+      <div class="mw-title">📊 Caption Quality Score</div>
+      <div class="mw-dial-wrap">
+        <svg class="dial-svg" viewBox="0 0 120 70">
+          <path d="M10,65 A55,55 0 0,1 110,65" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="8" stroke-linecap="round"/>
+          <path id="dialArc" d="M10,65 A55,55 0 0,1 110,65" fill="none" stroke="url(#dialGrad)" stroke-width="8" stroke-linecap="round" stroke-dasharray="0 172"/>
+          <defs>
+            <linearGradient id="dialGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#8b5cf6"/>
+              <stop offset="100%" stop-color="#06b6d4"/>
+            </linearGradient>
+          </defs>
+        </svg>
+        <div class="dial-center">
+          <span class="dial-score" id="dialScore">—</span>
+          <span class="dial-lbl">/ 100</span>
         </div>
+      </div>
+      <div class="dial-breakdown" id="dialBreakdown">Generate captions to see your score</div>
+    </div>
 
-        <a href="pricing.html" class="ba-cta" id="baCta">🔓 Unlock All 20 AI Transforms · $7/mo →</a>
-        <p class="ba-hint">Upload your own photo above, then try these on it</p>
+    <!-- Widget 2: Hook Strength (5 vertical bars) -->
+    <div class="mw mw-hooks">
+      <div class="mw-title">⚡ Hook Strength</div>
+      <div class="mw-hooks-grid" id="hooksGrid">
+        <div class="hook-bar-wrap"><div class="hook-bar" style="height:4px"></div><span class="hook-num">1</span></div>
+        <div class="hook-bar-wrap"><div class="hook-bar" style="height:4px"></div><span class="hook-num">2</span></div>
+        <div class="hook-bar-wrap"><div class="hook-bar" style="height:4px"></div><span class="hook-num">3</span></div>
+        <div class="hook-bar-wrap"><div class="hook-bar" style="height:4px"></div><span class="hook-num">4</span></div>
+        <div class="hook-bar-wrap"><div class="hook-bar" style="height:4px"></div><span class="hook-num">5</span></div>
+      </div>
+      <div class="hooks-legend"><span style="color:#a78bfa">LOW</span><span>HOOK POWER</span><span style="color:#34d399">HIGH</span></div>
+    </div>
+
+    <!-- Widget 3: Hashtag Health Donut -->
+    <div class="mw mw-donut">
+      <div class="mw-title">🏷️ Hashtag Health</div>
+      <div class="mw-donut-wrap">
+        <svg class="donut-svg" viewBox="0 0 80 80">
+          <circle cx="40" cy="40" r="30" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="12"/>
+          <circle id="donutSweet" cx="40" cy="40" r="30" fill="none" stroke="#10b981" stroke-width="12" stroke-dasharray="0 188" stroke-dashoffset="0" stroke-linecap="round" transform="rotate(-90 40 40)"/>
+          <circle id="donutComp"  cx="40" cy="40" r="30" fill="none" stroke="#f59e0b" stroke-width="12" stroke-dasharray="0 188" stroke-dashoffset="0" stroke-linecap="round" transform="rotate(-90 40 40)"/>
+          <circle id="donutSat"   cx="40" cy="40" r="30" fill="none" stroke="#ef4444" stroke-width="12" stroke-dasharray="0 188" stroke-dashoffset="0" stroke-linecap="round" transform="rotate(-90 40 40)"/>
+        </svg>
+        <div class="donut-center">
+          <span class="donut-total" id="donutTotal">0</span>
+          <span class="donut-sub">tags</span>
+        </div>
+      </div>
+      <div class="donut-legend">
+        <div class="dl-item"><span class="dl-dot" style="background:#10b981"></span><span id="dlSweet">Sweet 0</span></div>
+        <div class="dl-item"><span class="dl-dot" style="background:#f59e0b"></span><span id="dlComp">Comp 0</span></div>
+        <div class="dl-item"><span class="dl-dot" style="background:#ef4444"></span><span id="dlSat">Sat 0</span></div>
       </div>
     </div>
-  </div>
-</div>
+
+    <!-- Widget 4: Generation Flow (animated pipeline) -->
+    <div class="mw mw-flow">
+      <div class="mw-title">🔄 Generation Flow</div>
+      <div class="flow-pipe">
+        <div class="fp-step" id="fp1"><div class="fp-icon">📸</div><div class="fp-lbl">Photo</div></div>
+        <div class="fp-arrow"></div>
+        <div class="fp-step" id="fp2"><div class="fp-icon">🎯</div><div class="fp-lbl">Platform</div></div>
+        <div class="fp-arrow"></div>
+        <div class="fp-step" id="fp3"><div class="fp-icon">🤖</div><div class="fp-lbl">AI Engine</div></div>
+        <div class="fp-arrow"></div>
+        <div class="fp-step" id="fp4"><div class="fp-icon">✨</div><div class="fp-lbl">Captions</div></div>
+      </div>
+      <div class="flow-last" id="flowLast">Waiting for first generation…</div>
+    </div>
+
+    <!-- Widget 5: Activity Tiles (4 counter squares) -->
+    <div class="mw mw-tiles">
+      <div class="mw-title">📈 Your Activity</div>
+      <div class="tiles-grid">
+        <div class="tile tile-purple"><div class="tile-val" id="tileCaps">0</div><div class="tile-lbl">Total Caps</div></div>
+        <div class="tile tile-cyan"><div class="tile-val" id="tileStreak">0</div><div class="tile-lbl">Day Streak</div></div>
+        <div class="tile tile-pink"><div class="tile-val" id="tileTx">0</div><div class="tile-lbl">AI Transforms</div></div>
+        <div class="tile tile-green"><div class="tile-val" id="tileBg">0</div><div class="tile-lbl">BG Swaps</div></div>
+      </div>
+    </div>
+
+    <!-- Widget 6: Hashtag Bubble Cloud -->
+    <div class="mw mw-bubbles">
+      <div class="mw-title">💭 Hashtag Universe</div>
+      <div class="bubbles-wrap" id="bubblesWrap">
+        <div class="bubbles-empty">Generate captions to see your hashtag universe</div>
+      </div>
+    </div>
+
+    <!-- Widget 7: Platform Timeline (horizontal bars) -->
+    <div class="mw mw-timeline">
+      <div class="mw-title">📅 Platform Usage</div>
+      <div class="timeline-bars">
+        <div class="tb-row"><span class="tb-plat">Instagram</span><div class="tb-track"><div class="tb-fill" id="tbIG" style="width:0%"></div></div><span class="tb-cnt" id="tcIG">0</span></div>
+        <div class="tb-row"><span class="tb-plat">TikTok</span><div class="tb-track"><div class="tb-fill tb-tiktok" id="tbTK" style="width:0%"></div></div><span class="tb-cnt" id="tcTK">0</span></div>
+        <div class="tb-row"><span class="tb-plat">LinkedIn</span><div class="tb-track"><div class="tb-fill tb-linkedin" id="tbLI" style="width:0%"></div></div><span class="tb-cnt" id="tcLI">0</span></div>
+        <div class="tb-row"><span class="tb-plat">X</span><div class="tb-track"><div class="tb-fill tb-x" id="tbX" style="width:0%"></div></div><span class="tb-cnt" id="tcX">0</span></div>
+        <div class="tb-row"><span class="tb-plat">Facebook</span><div class="tb-track"><div class="tb-fill tb-fb" id="tbFB" style="width:0%"></div></div><span class="tb-cnt" id="tcFB">0</span></div>
+        <div class="tb-row"><span class="tb-plat">Pinterest</span><div class="tb-track"><div class="tb-fill tb-pin" id="tbPN" style="width:0%"></div></div><span class="tb-cnt" id="tcPN">0</span></div>
+      </div>
+    </div>
+
+    <!-- Widget 8: Brand Voice Radar (SVG spider chart) -->
+    <div class="mw mw-radar">
+      <div class="mw-title">🎭 Brand Voice Radar</div>
+      <div class="radar-wrap">
+        <svg class="radar-svg" viewBox="0 0 160 140">
+          <polygon points="80,20 130,47 130,93 80,120 30,93 30,47" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="1"/>
+          <polygon points="80,35 115,54 115,86 80,105 45,86 45,54" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="1"/>
+          <polygon points="80,50 100,61 100,79 80,90 60,79 60,61" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="1"/>
+          <line x1="80" y1="70" x2="80" y2="20" stroke="rgba(255,255,255,.08)" stroke-width="1"/>
+          <line x1="80" y1="70" x2="130" y2="47" stroke="rgba(255,255,255,.08)" stroke-width="1"/>
+          <line x1="80" y1="70" x2="130" y2="93" stroke="rgba(255,255,255,.08)" stroke-width="1"/>
+          <line x1="80" y1="70" x2="80" y2="120" stroke="rgba(255,255,255,.08)" stroke-width="1"/>
+          <line x1="80" y1="70" x2="30" y2="93" stroke="rgba(255,255,255,.08)" stroke-width="1"/>
+          <line x1="80" y1="70" x2="30" y2="47" stroke="rgba(255,255,255,.08)" stroke-width="1"/>
+          <polygon id="radarPoly" points="80,70 80,70 80,70 80,70 80,70 80,70" fill="rgba(139,92,246,.2)" stroke="#8b5cf6" stroke-width="1.5"/>
+          <text x="80" y="15" text-anchor="middle" fill="rgba(255,255,255,.45)" font-size="8">Energy</text>
+          <text x="135" y="45" text-anchor="start" fill="rgba(255,255,255,.45)" font-size="8">Wit</text>
+          <text x="135" y="98" text-anchor="start" fill="rgba(255,255,255,.45)" font-size="8">Emotion</text>
+          <text x="80" y="132" text-anchor="middle" fill="rgba(255,255,255,.45)" font-size="8">Clarity</text>
+          <text x="25" y="98" text-anchor="end" fill="rgba(255,255,255,.45)" font-size="8">Authority</text>
+          <text x="25" y="45" text-anchor="end" fill="rgba(255,255,255,.45)" font-size="8">Trust</text>
+        </svg>
+      </div>
+      <div class="radar-hint" id="radarHint">Set tone above to shape your voice</div>
+    </div>
+
+    <!-- Widget 9: 7-Day Activity Calendar -->
+    <div class="mw mw-calendar">
+      <div class="mw-title">📆 Activity Calendar</div>
+      <div class="cal-grid" id="calGrid"></div>
+      <div class="cal-legend">
+        <span class="cal-leg-dot" style="background:rgba(139,92,246,.12)"></span><span>None</span>
+        <span class="cal-leg-dot" style="background:rgba(139,92,246,.4)"></span><span>Some</span>
+        <span class="cal-leg-dot" style="background:#8b5cf6"></span><span>Active</span>
+      </div>
+    </div>
+
+    <!-- Upgrade CTA (free users) -->
+    <div class="metrics-cta" id="metricsCta">
+      <div class="mcta-text">🔓 Unlock full analytics + unlimited captions</div>
+      <a href="pricing.html" class="mcta-btn">Upgrade to Premium →</a>
+    </div>
+
+  </div><!-- /metrics-panel -->
+</div><!-- /app-wrap -->
 
 <script>
   // ── State ──────────────────────────────────────────────
@@ -2813,6 +3076,7 @@
 
     hideLoading();
     renderResults(data, platform);
+    updateCaptionScoreWidget(data, platform);
     btn.disabled = false;
     spinner.style.display = 'none';
     btnText.textContent = '✨ Generate 5 Captions';
@@ -2829,7 +3093,7 @@
 
     // Scroll to results on mobile
     if (window.innerWidth < 768) {
-      document.getElementById('resultsPanel').scrollIntoView({ behavior: 'smooth' });
+      document.getElementById('captionResults').scrollIntoView({ behavior: 'smooth' });
     }
   }
 
@@ -2840,7 +3104,7 @@
   function renderResults(data, platform) {
     _lastPlatform = platform;
     _lastHashtags = data.hashtags || [];
-    const panel = document.getElementById('resultsPanel');
+    const panel = document.getElementById('captionResults');
     const isPremium = currentUser?.plan === 'premium' || currentUser?.plan === 'teams';
 
     const platIcons = {
@@ -3461,6 +3725,7 @@
           b.classList.toggle('active', !!matches);
         });
       }
+      if (activeTransform) updateTransformMetrics(activeTransform);
       document.getElementById('aiTxOverlay').classList.remove('active');
     }
   }
@@ -3902,6 +4167,7 @@
         document.getElementById('bgResultPanel').classList.add('active');
         document.getElementById('bgSwapCtr').textContent = data.used + '/' + data.limit + ' today';
         document.getElementById('bgResultPanel').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        updateBgSwapMetrics(bgPrompt);
       }
     } catch(e) {
       alert('Network error. Please check your connection and try again.');
@@ -4289,6 +4555,274 @@
         .observe(genBtn, { attributes: true, attributeFilter: ['disabled'] });
     }
   });
+
+  // ══════════════════════════════════════════════════════════════════════
+  //  METRICS PANEL — SnapCaptioner Live Analytics
+  // ══════════════════════════════════════════════════════════════════════
+  (function initMetrics() {
+    const SK = 'sc_metrics';
+    function loadState() { try { return JSON.parse(localStorage.getItem(SK)) || {}; } catch(e) { return {}; } }
+    function saveState(s) { try { localStorage.setItem(SK, JSON.stringify(s)); } catch(e) {} }
+    window._mState = loadState();
+    const ms = window._mState;
+    if (!ms.platforms)  ms.platforms  = {};
+    if (!ms.totalCaps)  ms.totalCaps  = 0;
+    if (!ms.transforms) ms.transforms = 0;
+    if (!ms.bgSwaps)    ms.bgSwaps    = 0;
+    if (!ms.days)       ms.days       = {};
+    if (!ms.streak)     ms.streak     = 0;
+    if (!ms.lastDate)   ms.lastDate   = null;
+
+    function $id(id) { return document.getElementById(id); }
+
+    function updateStatsBar() {
+      const s = window._mState;
+      if ($id('mTotalCaps'))  $id('mTotalCaps').textContent  = s.totalCaps;
+      if ($id('mStreak'))     $id('mStreak').textContent     = s.streak;
+      if ($id('mTransforms')) $id('mTransforms').textContent = s.transforms;
+      if ($id('mBgSwaps'))    $id('mBgSwaps').textContent    = s.bgSwaps;
+      if ($id('tileCaps'))    $id('tileCaps').textContent    = s.totalCaps;
+      if ($id('tileStreak'))  $id('tileStreak').textContent  = s.streak + (s.streak > 0 ? '🔥' : '');
+      if ($id('tileTx'))      $id('tileTx').textContent      = s.transforms;
+      if ($id('tileBg'))      $id('tileBg').textContent      = s.bgSwaps;
+    }
+
+    function updateStreak() {
+      const s = window._mState;
+      const today = new Date().toISOString().slice(0,10);
+      if (s.lastDate === today) return;
+      const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0,10);
+      s.streak = (s.lastDate === yesterday) ? s.streak + 1 : 1;
+      s.lastDate = today;
+      if (!s.days[today]) s.days[today] = 0;
+      s.days[today]++;
+    }
+
+    // ── Widget 1: Engagement Dial ────────────────────────────────────────
+    function updateDial(captions, platform) {
+      const scores = (captions || []).map(c => calcEngagementScore(c.text, c.hook_score, platform));
+      const avg = scores.length ? Math.round(scores.reduce((a,b) => a+b, 0) / scores.length) : 0;
+      const totalLen = 172;
+      const dash = Math.round((avg / 100) * totalLen);
+      const arcEl = $id('dialArc');
+      if (arcEl) {
+        arcEl.style.transition = 'stroke-dasharray .8s cubic-bezier(.34,1.56,.64,1)';
+        arcEl.setAttribute('stroke-dasharray', dash + ' ' + (totalLen - dash));
+      }
+      const scoreEl = $id('dialScore');
+      if (scoreEl) {
+        let cur = 0;
+        const step = () => { cur = Math.min(cur + 2, avg); scoreEl.textContent = cur; if (cur < avg) requestAnimationFrame(step); };
+        requestAnimationFrame(step);
+      }
+      const breakEl = $id('dialBreakdown');
+      if (breakEl) {
+        const label = avg >= 80 ? '🔥 Excellent' : avg >= 65 ? '✅ Good' : avg >= 50 ? '⚠️ Average' : '📉 Needs work';
+        breakEl.textContent = label + ' · avg across ' + (captions||[]).length + ' captions';
+      }
+    }
+
+    // ── Widget 2: Hook Bars ──────────────────────────────────────────────
+    function updateHookBars(captions) {
+      const grid = $id('hooksGrid');
+      if (!grid) return;
+      const bars = grid.querySelectorAll('.hook-bar');
+      (captions || []).slice(0, 5).forEach((cap, i) => {
+        if (!bars[i]) return;
+        const pct = Math.round(((cap.hook_score || 5) / 10) * 100);
+        bars[i].style.height = pct + '%';
+        const hue = Math.round(120 * (cap.hook_score / 10));
+        bars[i].style.background = `linear-gradient(to top, hsl(${Math.max(0,hue-20)},70%,50%), hsl(${Math.min(240,hue+20)},80%,65%))`;
+      });
+    }
+
+    // ── Widget 3: Hashtag Donut ──────────────────────────────────────────
+    function updateDonut(hashtags) {
+      const ht = hashtags || [];
+      const sweet = ht.filter(h => h.tier === 'sweet').length;
+      const comp  = ht.filter(h => h.tier === 'comp').length;
+      const sat   = ht.filter(h => h.tier === 'sat').length;
+      const total = sweet + comp + sat;
+      const totalLen = 188;
+      if ($id('donutTotal')) $id('donutTotal').textContent = total;
+      if ($id('dlSweet'))    $id('dlSweet').textContent    = 'Sweet ' + sweet;
+      if ($id('dlComp'))     $id('dlComp').textContent     = 'Comp '  + comp;
+      if ($id('dlSat'))      $id('dlSat').textContent      = 'Sat '   + sat;
+      if (!total) return;
+      const sweetsEl = $id('donutSweet'), compEl = $id('donutComp'), satEl = $id('donutSat');
+      if (!sweetsEl) return;
+      const sLen = (sweet/total)*totalLen, cLen = (comp/total)*totalLen, satLen = (sat/total)*totalLen;
+      sweetsEl.setAttribute('stroke-dasharray', sLen + ' ' + (totalLen-sLen));
+      sweetsEl.setAttribute('stroke-dashoffset', '0');
+      sweetsEl.setAttribute('transform', 'rotate(-90 40 40)');
+      compEl.setAttribute('stroke-dasharray', cLen + ' ' + (totalLen-cLen));
+      compEl.setAttribute('stroke-dashoffset', -sLen);
+      compEl.setAttribute('transform', 'rotate(-90 40 40)');
+      satEl.setAttribute('stroke-dasharray', satLen + ' ' + (totalLen-satLen));
+      satEl.setAttribute('stroke-dashoffset', -(sLen+cLen));
+      satEl.setAttribute('transform', 'rotate(-90 40 40)');
+    }
+
+    // ── Widget 4: AI Flow Pipeline ───────────────────────────────────────
+    function updateFlow(platform) {
+      ['fp1','fp2','fp3','fp4'].forEach(id => { const el = $id(id); if (el) el.classList.remove('fp-active'); });
+      const platIcons = { Instagram:'📸', TikTok:'🎵', LinkedIn:'💼', X:'🐦', Facebook:'📘', Pinterest:'📌' };
+      const fp2 = $id('fp2');
+      if (fp2) {
+        const icon = fp2.querySelector('.fp-icon'), lbl = fp2.querySelector('.fp-lbl');
+        if (icon) icon.textContent = platIcons[platform] || '📲';
+        if (lbl)  lbl.textContent  = platform;
+      }
+      const lastEl = $id('flowLast');
+      if (lastEl) {
+        const now = new Date();
+        lastEl.textContent = 'Last run: ' + platform + ' · ' + now.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+      }
+      ['fp1','fp2','fp3','fp4'].forEach((id, i) => {
+        setTimeout(() => {
+          const el = $id(id);
+          if (el) { el.classList.add('fp-active'); setTimeout(() => el.classList.remove('fp-active'), 600); }
+        }, i * 200);
+      });
+    }
+
+    // ── Widget 6: Hashtag Bubbles ────────────────────────────────────────
+    function updateBubbles(hashtags) {
+      const wrap = $id('bubblesWrap');
+      if (!wrap) return;
+      wrap.innerHTML = '';
+      const ht = hashtags || [];
+      if (!ht.length) {
+        wrap.innerHTML = '<div class="bubbles-empty">Generate captions to see your hashtag universe</div>';
+        return;
+      }
+      const W = 340, H = 85;
+      const placed = [];
+      const shuffled = [...ht].sort(() => Math.random() - 0.5);
+      shuffled.slice(0, 15).forEach(h => {
+        const size = h.tier === 'sweet' ? 36 : h.tier === 'comp' ? 28 : 22;
+        let tries = 0, x, y, ok;
+        do {
+          x = Math.random() * (W - size - 20);
+          y = Math.random() * (H - size);
+          ok = !placed.some(p => Math.abs(p.x-x) < (size+p.s)/2+2 && Math.abs(p.y-y) < (size+p.s)/2+2);
+          tries++;
+        } while (!ok && tries < 60);
+        placed.push({x,y,s:size});
+        const el = document.createElement('div');
+        el.className = 'hbubble ' + h.tier;
+        el.style.cssText = `left:${x}px;top:${y}px;width:${size+20}px;height:${size}px;`;
+        el.textContent = '#' + h.tag;
+        el.title = '#' + h.tag + ' (' + h.tier + ')';
+        wrap.appendChild(el);
+      });
+    }
+
+    // ── Widget 7: Platform Timeline Bars ────────────────────────────────
+    function updateTimeline() {
+      const platMap = { Instagram:'IG', TikTok:'TK', LinkedIn:'LI', X:'X', Facebook:'FB', Pinterest:'PN' };
+      const platforms = window._mState.platforms || {};
+      const max = Math.max(1, ...Object.values(platforms));
+      Object.entries(platMap).forEach(([full, code]) => {
+        const cnt = platforms[full] || 0;
+        const fillEl = $id('tb' + code), cntEl = $id('tc' + code);
+        if (fillEl) fillEl.style.width = Math.round((cnt/max)*100) + '%';
+        if (cntEl)  cntEl.textContent  = cnt;
+      });
+    }
+
+    // ── Widget 8: Brand Voice Radar ──────────────────────────────────────
+    function updateRadar(platform) {
+      const tone = document.querySelector('.tone-btn.active')?.dataset?.tone || 'Professional';
+      const toneScores = {
+        Professional:[40,35,40,90,80,85], Casual:[70,60,65,75,45,60],
+        Humorous:[65,90,55,60,35,50],     Inspirational:[80,45,90,70,65,75],
+        Educational:[50,55,45,95,75,80],  Trendy:[85,80,70,60,30,45]
+      };
+      const platBoost = {
+        Instagram:[15,10,10,0,0,0],  TikTok:[20,20,10,-5,-10,-5],
+        LinkedIn:[-10,-5,0,10,20,15], X:[10,15,5,0,-5,-5],
+        Facebook:[0,0,15,5,0,10],     Pinterest:[5,5,15,5,0,10]
+      };
+      const base  = toneScores[tone]  || toneScores.Professional;
+      const boost = platBoost[platform] || [0,0,0,0,0,0];
+      const scores = base.map((v,i) => Math.min(100, Math.max(10, v + boost[i])));
+      const cx = 80, cy = 70, maxR = 50;
+      const angles = [-90,-30,30,90,150,210];
+      const pts = angles.map((a,i) => {
+        const rad = a * Math.PI / 180;
+        const r   = (scores[i] / 100) * maxR;
+        return [(cx + r*Math.cos(rad)).toFixed(1), (cy + r*Math.sin(rad)).toFixed(1)].join(',');
+      }).join(' ');
+      const poly = $id('radarPoly');
+      if (poly) { poly.style.transition = 'points .6s ease'; poly.setAttribute('points', pts); }
+      const hint = $id('radarHint');
+      if (hint) hint.textContent = tone + ' voice · ' + platform;
+    }
+
+    // ── Widget 9: 7-Day Activity Calendar ───────────────────────────────
+    function updateCalendar() {
+      const grid = $id('calGrid');
+      if (!grid) return;
+      grid.innerHTML = '';
+      const days  = window._mState.days || {};
+      const today = new Date();
+      const shortDays = ['Su','Mo','Tu','We','Th','Fr','Sa'];
+      for (let i = 6; i >= 0; i--) {
+        const d = new Date(today);
+        d.setDate(d.getDate() - i);
+        const key = d.toISOString().slice(0,10);
+        const cnt = days[key] || 0;
+        const el  = document.createElement('div');
+        const cls = ['cal-day', cnt > 0 ? (cnt >= 3 ? 'has-activity high' : 'has-activity') : '', i === 0 ? 'today' : ''].filter(Boolean).join(' ');
+        el.className = cls;
+        el.innerHTML = `<span class="cal-day-name">${shortDays[d.getDay()]}</span><span>${d.getDate()}</span>`;
+        el.title = key + ': ' + cnt + ' generation' + (cnt !== 1 ? 's' : '');
+        grid.appendChild(el);
+      }
+    }
+
+    // ── Public API ───────────────────────────────────────────────────────
+    window.updateCaptionScoreWidget = function(data, platform) {
+      const s = window._mState;
+      s.totalCaps += (data.captions || []).length;
+      updateStreak();
+      if (!s.platforms[platform]) s.platforms[platform] = 0;
+      s.platforms[platform]++;
+      saveState(s);
+      updateStatsBar();
+      updateDial(data.captions || [], platform);
+      updateHookBars(data.captions || []);
+      updateDonut(data.hashtags || []);
+      updateFlow(platform);
+      updateBubbles(data.hashtags || []);
+      updateTimeline();
+      updateRadar(platform);
+      updateCalendar();
+      const ctaEl = $id('metricsCta');
+      if (ctaEl) {
+        ctaEl.style.display = (window.currentUser?.plan === 'premium' || window.currentUser?.plan === 'teams') ? 'none' : '';
+      }
+    };
+
+    window.updateTransformMetrics = function(transformKey) {
+      if (!transformKey) return;
+      window._mState.transforms++;
+      saveState(window._mState);
+      updateStatsBar();
+    };
+
+    window.updateBgSwapMetrics = function(prompt) {
+      window._mState.bgSwaps++;
+      saveState(window._mState);
+      updateStatsBar();
+    };
+
+    // Init render
+    updateStatsBar();
+    updateCalendar();
+    updateTimeline();
+  })();
 </script>
 
 <!-- ── PWA Service Worker + Install Prompt ── -->
