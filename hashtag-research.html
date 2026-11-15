@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hashtag Research — SnapCaption AI</title>
+<style>
+:root {
+  --bg:    #0f0f1a;
+  --card:  #1a1a2e;
+  --grad1: #7c3aed;
+  --grad2: #a855f7;
+  --grad3: #ec4899;
+  --text:  #f1f5f9;
+  --muted: #94a3b8;
+  --border:#2d2d4e;
+  --green: #22c55e;
+  --amber: #f59e0b;
+  --red:   #f43f5e;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;min-height:100vh}
+
+/* ── TOP NAV ── */
+.topnav{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;background:var(--card);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100}
+.topnav-brand{font-size:1rem;font-weight:700;background:linear-gradient(135deg,var(--grad1),var(--grad3));-webkit-background-clip:text;-webkit-text-fill-color:transparent;text-decoration:none}
+.nav-links{display:flex;gap:16px;align-items:center}
+.nav-link{color:var(--muted);text-decoration:none;font-size:.82rem;transition:color .2s}
+.nav-link:hover,.nav-link.active{color:var(--text)}
+.nav-link.active{font-weight:600}
+
+/* ── PAGE ── */
+.page{max-width:1120px;margin:0 auto;padding:24px 20px}
+.page-header{margin-bottom:24px}
+.page-title{font-size:1.4rem;font-weight:700;margin-bottom:4px}
+.page-sub{color:var(--muted);font-size:.88rem}
+
+/* ── PRO GATE ── */
+.pro-gate{background:linear-gradient(135deg,rgba(124,58,237,.15),rgba(236,72,153,.15));border:1px solid rgba(168,85,247,.3);border-radius:16px;padding:32px;text-align:center;max-width:480px;margin:0 auto}
+.pro-gate h2{font-size:1.3rem;margin-bottom:8px}
+.pro-gate p{color:var(--muted);font-size:.9rem;margin-bottom:20px;line-height:1.5}
+.btn-upgrade{display:inline-block;padding:12px 28px;border-radius:10px;background:linear-gradient(135deg,var(--grad1),var(--grad3));color:#fff;font-weight:700;font-size:.9rem;text-decoration:none;cursor:pointer;border:none}
+
+/* ── SEARCH FORM ── */
+.search-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:24px;margin-bottom:24px}
+.form-row{display:grid;grid-template-columns:1fr 180px;gap:12px;margin-bottom:12px}
+@media(max-width:600px){.form-row{grid-template-columns:1fr}}
+.form-row-2{display:grid;grid-template-columns:1fr 160px 120px;gap:12px;margin-bottom:16px}
+@media(max-width:600px){.form-row-2{grid-template-columns:1fr 1fr}}
+.inp{width:100%;background:#0f0f1a;border:1px solid var(--border);border-radius:9px;padding:11px 14px;color:var(--text);font-size:.9rem;outline:none;transition:border-color .2s}
+.inp:focus{border-color:var(--grad2)}
+.inp::placeholder{color:var(--muted)}
+select.inp{cursor:pointer}
+.btn-search{width:100%;padding:12px;border-radius:10px;border:none;background:linear-gradient(135deg,var(--grad1),var(--grad3));color:#fff;font-size:.95rem;font-weight:700;cursor:pointer;transition:opacity .2s;display:flex;align-items:center;justify-content:center;gap:8px}
+.btn-search:disabled{opacity:.5;cursor:not-allowed}
+.form-label{font-size:.75rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:5px}
+
+/* ── RESULTS ── */
+.results-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:gap}
+.results-title{font-size:1rem;font-weight:700}
+.results-meta{font-size:.78rem;color:var(--muted)}
+.tip-banner{background:rgba(168,85,247,.1);border:1px solid rgba(168,85,247,.2);border-radius:10px;padding:12px 16px;margin-bottom:20px;font-size:.82rem;color:var(--grad2);display:flex;align-items:flex-start;gap:8px}
+.tip-banner span{flex-shrink:0;font-size:1rem}
+.best-count-badge{display:inline-flex;align-items:center;gap:5px;background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.2);color:var(--green);padding:4px 12px;border-radius:20px;font-size:.78rem;font-weight:600}
+
+/* ── TAG GROUPS ── */
+.groups-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:720px){.groups-grid{grid-template-columns:1fr}}
+.group-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px}
+.group-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.group-title{font-size:.85rem;font-weight:700;display:flex;align-items:center;gap:7px}
+.group-count{font-size:.72rem;color:var(--muted);background:rgba(255,255,255,.06);padding:2px 8px;border-radius:5px}
+.btn-copy-group{font-size:.72rem;padding:4px 10px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;transition:all .2s}
+.btn-copy-group:hover{border-color:var(--grad2);color:var(--grad2)}
+.btn-copy-group.copied{border-color:var(--green);color:var(--green)}
+
+/* ── TAG CHIPS ── */
+.tags-wrap{display:flex;flex-wrap:wrap;gap:7px}
+.tag-chip{display:inline-flex;align-items:center;gap:5px;padding:5px 10px;border-radius:8px;font-size:.78rem;cursor:pointer;border:1px solid transparent;transition:all .15s;background:rgba(255,255,255,.05);color:var(--text)}
+.tag-chip:hover{background:rgba(168,85,247,.15);border-color:rgba(168,85,247,.3);color:var(--grad2)}
+.tag-chip.selected{background:rgba(168,85,247,.2);border-color:var(--grad2);color:var(--grad2)}
+.diff-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.diff-low{background:var(--green)}
+.diff-medium{background:var(--amber)}
+.diff-high{background:var(--red)}
+.tag-reach{font-size:.65rem;color:var(--muted);white-space:nowrap}
+
+/* ── ACTION BAR ── */
+.action-bar{display:flex;align-items:center;gap:10px;margin-top:20px;flex-wrap:wrap}
+.btn-action{padding:9px 18px;border-radius:9px;border:1px solid var(--border);background:transparent;color:var(--text);font-size:.82rem;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:6px}
+.btn-action:hover{border-color:var(--grad2);color:var(--grad2)}
+.btn-action.primary{background:linear-gradient(135deg,var(--grad1),var(--grad3));border-color:transparent;color:#fff;font-weight:600}
+.btn-action.primary:hover{opacity:.9}
+.selected-count{font-size:.8rem;color:var(--muted);margin-left:auto}
+
+/* ── LEGEND ── */
+.legend{display:flex;align-items:center;gap:14px;margin-bottom:16px;flex-wrap:wrap}
+.legend-item{display:flex;align-items:center;gap:5px;font-size:.74rem;color:var(--muted)}
+
+/* ── LOADING ── */
+.loading-state{text-align:center;padding:48px 20px}
+.spinner{width:40px;height:40px;border:3px solid var(--border);border-top-color:var(--grad2);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 16px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-state p{color:var(--muted);font-size:.88rem}
+
+/* ── EMPTY ── */
+.empty-state{text-align:center;padding:64px 20px;color:var(--muted)}
+.empty-state .icon{font-size:3rem;margin-bottom:12px}
+.empty-state h3{font-size:1rem;color:var(--text);margin-bottom:6px}
+.empty-state p{font-size:.85rem}
+
+/* ── TOAST ── */
+#toast{position:fixed;bottom:24px;right:24px;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:11px 18px;font-size:.82rem;color:var(--text);z-index:9999;opacity:0;transform:translateY(8px);transition:all .25s;pointer-events:none;max-width:300px}
+#toast.show{opacity:1;transform:translateY(0)}
+</style>
+</head>
+<body>
+
+<!-- TOP NAV -->
+<nav class="topnav">
+  <a href="app.html" class="topnav-brand">📸 SnapCaption AI</a>
+  <div class="nav-links">
+    <a href="app.html" class="nav-link">Generate</a>
+    <a href="history.html" class="nav-link">History</a>
+    <a href="analytics.html" class="nav-link">Analytics</a>
+    <a href="hashtag-research.html" class="nav-link active">Hashtags</a>
+    <a href="settings.html" class="nav-link">Settings</a>
+  </div>
+</nav>
+
+<div class="page">
+  <div class="page-header">
+    <div class="page-title">#️⃣ Hashtag Research</div>
+    <div class="page-sub">AI-powered hashtag strategy — niche, trending, broad, and long-tail tags</div>
+  </div>
+
+  <!-- Pro gate (shown if not Pro) -->
+  <div id="proGate" style="display:none">
+    <div class="pro-gate">
+      <div style="font-size:2.5rem;margin-bottom:12px">#️⃣</div>
+      <h2>Hashtag Research is a Pro Feature</h2>
+      <p>Upgrade to Pro to unlock AI-powered hashtag research with reach estimates, difficulty ratings, and strategic groupings for every platform.</p>
+      <a href="pricing.html" class="btn-upgrade">⚡ Upgrade to Pro</a>
+    </div>
+  </div>
+
+  <!-- Main tool -->
+  <div id="mainTool" style="display:none">
+
+    <!-- Search form -->
+    <div class="search-card">
+      <div class="form-row">
+        <div>
+          <div class="form-label">Topic or Keyword *</div>
+          <input id="topicInput" class="inp" type="text" placeholder="e.g. fitness motivation, travel photography, sourdough bread…" autocomplete="off">
+        </div>
+        <div>
+          <div class="form-label">Platform</div>
+          <select id="platformSelect" class="inp">
+            <option value="Instagram">Instagram</option>
+            <option value="TikTok">TikTok</option>
+            <option value="LinkedIn">LinkedIn</option>
+            <option value="Twitter/X">Twitter / X</option>
+            <option value="Facebook">Facebook</option>
+            <option value="Pinterest">Pinterest</option>
+            <option value="YouTube">YouTube</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row-2">
+        <div>
+          <div class="form-label">Niche / Industry <span style="font-weight:400;text-transform:none;letter-spacing:0">(optional)</span></div>
+          <input id="nicheInput" class="inp" type="text" placeholder="e.g. women's fitness, travel blogging, food entrepreneur…">
+        </div>
+        <div>
+          <div class="form-label">Total Hashtags</div>
+          <select id="countSelect" class="inp">
+            <option value="20">20 tags</option>
+            <option value="30" selected>30 tags</option>
+            <option value="40">40 tags</option>
+            <option value="50">50 tags</option>
+          </select>
+        </div>
+        <div style="display:flex;align-items:flex-end">
+          <button class="btn-search" id="searchBtn" onclick="doResearch()">
+            <span id="searchBtnIcon">🔍</span>
+            <span id="searchBtnText">Research</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Loading -->
+    <div id="loadingArea" style="display:none">
+      <div class="loading-state">
+        <div class="spinner"></div>
+        <p>Researching hashtags for <strong id="loadingTopic"></strong>…</p>
+      </div>
+    </div>
+
+    <!-- Results -->
+    <div id="resultsArea" style="display:none">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:10px">
+        <div>
+          <div class="results-title" id="resultsTitle"></div>
+          <div class="results-meta" id="resultsMeta"></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <div class="best-count-badge">✅ Use <span id="bestCountNum"></span> tags per post</div>
+        </div>
+      </div>
+
+      <!-- Strategy tip -->
+      <div class="tip-banner" id="strategyTip" style="display:none">
+        <span>💡</span>
+        <div id="strategyTipText"></div>
+      </div>
+
+      <!-- Difficulty legend -->
+      <div class="legend">
+        <span style="font-size:.74rem;color:var(--muted);font-weight:600">DIFFICULTY:</span>
+        <div class="legend-item"><div class="diff-dot diff-low"></div>Low — easier to rank</div>
+        <div class="legend-item"><div class="diff-dot diff-medium"></div>Medium</div>
+        <div class="legend-item"><div class="diff-dot diff-high"></div>High — very competitive</div>
+      </div>
+
+      <!-- Tag groups -->
+      <div class="groups-grid" id="groupsGrid"></div>
+
+      <!-- Action bar -->
+      <div class="action-bar">
+        <button class="btn-action" onclick="selectAll()">✅ Select All</button>
+        <button class="btn-action" onclick="clearSelection()">✕ Clear</button>
+        <button class="btn-action primary" onclick="copySelected()">📋 Copy Selected</button>
+        <button class="btn-action" onclick="copyAll()">📋 Copy All</button>
+        <div class="selected-count" id="selectedCount"></div>
+      </div>
+    </div>
+
+    <!-- Empty state (before first search) -->
+    <div id="emptyState">
+      <div class="empty-state">
+        <div class="icon">#️⃣</div>
+        <h3>Enter a topic to get started</h3>
+        <p>Get AI-curated hashtags grouped by niche, trending, broad, and long-tail — with reach estimates for each tag.</p>
+      </div>
+    </div>
+
+  </div><!-- /mainTool -->
+</div><!-- /page -->
+
+<div id="toast"></div>
+
+<script>
+// ─── Auth & plan check ──────────────────────────────────────────────────────
+const currentToken = localStorage.getItem('sc_token');
+const currentUser  = (() => { try { return JSON.parse(localStorage.getItem('sc_user')||'{}'); } catch { return {}; } })();
+
+function isPro() {
+  const plan = (currentUser?.plan || '').toLowerCase();
+  return plan === 'pro';
+}
+
+if (!currentToken) {
+  window.location.href = 'login.html';
+} else if (!isPro()) {
+  document.getElementById('proGate').style.display = 'block';
+} else {
+  document.getElementById('mainTool').style.display = 'block';
+}
+
+// ─── Enter key ──────────────────────────────────────────────────────────────
+document.getElementById('topicInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') doResearch();
+});
+
+// ─── State ──────────────────────────────────────────────────────────────────
+let _allTags    = [];   // flat array of all tags across groups
+let _selected   = new Set();
+let _lastResult = null;
+
+// ─── Research ───────────────────────────────────────────────────────────────
+async function doResearch() {
+  const topic    = document.getElementById('topicInput').value.trim();
+  const platform = document.getElementById('platformSelect').value;
+  const niche    = document.getElementById('nicheInput').value.trim();
+  const count    = parseInt(document.getElementById('countSelect').value);
+
+  if (!topic) {
+    _showToast('Enter a topic to research.');
+    document.getElementById('topicInput').focus();
+    return;
+  }
+
+  // UI: loading
+  document.getElementById('emptyState').style.display    = 'none';
+  document.getElementById('resultsArea').style.display   = 'none';
+  document.getElementById('loadingArea').style.display   = 'block';
+  document.getElementById('loadingTopic').textContent    = topic;
+  document.getElementById('searchBtn').disabled          = true;
+  document.getElementById('searchBtnIcon').textContent   = '⏳';
+  document.getElementById('searchBtnText').textContent   = 'Researching…';
+
+  try {
+    const res = await fetch('/api/hashtag-research.php', {
+      method:  'POST',
+      headers: {
+        'Content-Type':  'application/json',
+        'Authorization': `Bearer ${currentToken}`,
+      },
+      body: JSON.stringify({ topic, platform, niche, count }),
+    });
+    const data = await res.json();
+
+    if (!data.success) {
+      if (data.upgrade) {
+        document.getElementById('mainTool').style.display = 'none';
+        document.getElementById('proGate').style.display  = 'block';
+        return;
+      }
+      throw new Error(data.message || 'Research failed');
+    }
+
+    _lastResult = data;
+    renderResults(data);
+
+  } catch (e) {
+    document.getElementById('loadingArea').style.display = 'none';
+    document.getElementById('emptyState').style.display  = 'block';
+    document.getElementById('emptyState').innerHTML = `
+      <div class="empty-state">
+        <div class="icon">⚠️</div>
+        <h3>Research failed</h3>
+        <p>${escHtml(e.message)}</p>
+      </div>`;
+    _showToast('Research failed. Please try again.');
+  } finally {
+    document.getElementById('searchBtn').disabled        = false;
+    document.getElementById('searchBtnIcon').textContent = '🔍';
+    document.getElementById('searchBtnText').textContent = 'Research';
+  }
+}
+
+// ─── Render ──────────────────────────────────────────────────────────────────
+const GROUP_META = {
+  niche_specific: { label: '🎯 Niche-Specific',  desc: 'Highly targeted to your audience',  color: '#7c3aed' },
+  trending:       { label: '🔥 Trending',         desc: 'High-volume, competitive',           color: '#ec4899' },
+  broad:          { label: '🌍 Broad',            desc: 'Large reach, harder to rank',        color: '#38bdf8' },
+  long_tail:      { label: '🔬 Long-Tail',        desc: 'Specific phrases, easier to rank',   color: '#22c55e' },
+};
+
+function renderResults(data) {
+  document.getElementById('loadingArea').style.display = 'none';
+  document.getElementById('resultsArea').style.display = 'block';
+
+  // Header
+  const total = (data.niche_specific?.length || 0) + (data.trending?.length || 0) +
+                (data.broad?.length || 0) + (data.long_tail?.length || 0);
+  document.getElementById('resultsTitle').textContent = `#️⃣ Results for "${data.topic}"`;
+  document.getElementById('resultsMeta').textContent  = `${total} hashtags for ${data.platform}`;
+  document.getElementById('bestCountNum').textContent = data.best_count || 15;
+
+  // Strategy tip
+  const tipEl  = document.getElementById('strategyTip');
+  const tipTxt = document.getElementById('strategyTipText');
+  if (data.strategy_tip) {
+    tipTxt.textContent = data.strategy_tip;
+    tipEl.style.display = 'flex';
+  } else {
+    tipEl.style.display = 'none';
+  }
+
+  // Build groups
+  _allTags = [];
+  _selected.clear();
+  const grid = document.getElementById('groupsGrid');
+  grid.innerHTML = '';
+
+  const groups = [
+    { key: 'niche_specific', items: data.niche_specific },
+    { key: 'trending',       items: data.trending       },
+    { key: 'broad',          items: data.broad          },
+    { key: 'long_tail',      items: data.long_tail      },
+  ];
+
+  groups.forEach(({ key, items }) => {
+    if (!items || !items.length) return;
+    const meta = GROUP_META[key];
+
+    items.forEach(t => {
+      t._group = key;
+      _allTags.push(t);
+    });
+
+    const card = document.createElement('div');
+    card.className = 'group-card';
+    card.id = `group-${key}`;
+    card.innerHTML = `
+      <div class="group-header">
+        <div>
+          <div class="group-title" style="color:${meta.color}">${meta.label} <span class="group-count">${items.length}</span></div>
+          <div style="font-size:.7rem;color:var(--muted);margin-top:2px">${meta.desc}</div>
+        </div>
+        <button class="btn-copy-group" onclick="copyGroup('${key}')" id="copybtn-${key}">📋 Copy</button>
+      </div>
+      <div class="tags-wrap" id="tags-${key}">
+        ${items.map(t => tagChipHtml(t)).join('')}
+      </div>`;
+    grid.appendChild(card);
+  });
+
+  updateSelectionUI();
+}
+
+function tagChipHtml(t) {
+  const diffClass = { low: 'diff-low', medium: 'diff-medium', high: 'diff-high' }[t.difficulty] || 'diff-medium';
+  return `<div class="tag-chip" id="chip-${cssId(t.tag)}" onclick="toggleTag('${escAttr(t.tag)}')" title="${escAttr(t.tag)} · reach: ${escAttr(t.reach||'')} · difficulty: ${escAttr(t.difficulty||'')}">
+    <div class="diff-dot ${diffClass}"></div>
+    <span>${escHtml(t.tag)}</span>
+    <span class="tag-reach">${escHtml(t.reach||'')}</span>
+  </div>`;
+}
+
+// ─── Selection ───────────────────────────────────────────────────────────────
+function toggleTag(tag) {
+  if (_selected.has(tag)) {
+    _selected.delete(tag);
+  } else {
+    _selected.add(tag);
+  }
+  const chip = document.getElementById('chip-' + cssId(tag));
+  if (chip) chip.classList.toggle('selected', _selected.has(tag));
+  updateSelectionUI();
+}
+
+function selectAll() {
+  _allTags.forEach(t => {
+    _selected.add(t.tag);
+    const chip = document.getElementById('chip-' + cssId(t.tag));
+    if (chip) chip.classList.add('selected');
+  });
+  updateSelectionUI();
+}
+
+function clearSelection() {
+  _allTags.forEach(t => {
+    _selected.delete(t.tag);
+    const chip = document.getElementById('chip-' + cssId(t.tag));
+    if (chip) chip.classList.remove('selected');
+  });
+  updateSelectionUI();
+}
+
+function updateSelectionUI() {
+  const n = _selected.size;
+  document.getElementById('selectedCount').textContent = n > 0 ? `${n} tag${n!==1?'s':''} selected` : '';
+}
+
+// ─── Copy ────────────────────────────────────────────────────────────────────
+function copySelected() {
+  if (!_selected.size) { _showToast('Select some tags first.'); return; }
+  navigator.clipboard.writeText([..._selected].join(' '))
+    .then(() => _showToast(`✅ Copied ${_selected.size} tag${_selected.size!==1?'s':''}!`))
+    .catch(() => _showToast('Copy failed — try manually.'));
+}
+
+function copyAll() {
+  const all = _allTags.map(t => t.tag).join(' ');
+  navigator.clipboard.writeText(all)
+    .then(() => _showToast(`✅ Copied all ${_allTags.length} tags!`))
+    .catch(() => _showToast('Copy failed — try manually.'));
+}
+
+function copyGroup(key) {
+  const group = _lastResult?.[key] || [];
+  const text  = group.map(t => t.tag).join(' ');
+  if (!text) return;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.getElementById(`copybtn-${key}`);
+    if (btn) {
+      btn.classList.add('copied');
+      btn.textContent = '✅ Copied!';
+      setTimeout(() => { btn.classList.remove('copied'); btn.innerHTML = '📋 Copy'; }, 2000);
+    }
+    _showToast(`✅ ${GROUP_META[key]?.label || key} tags copied!`);
+  });
+}
+
+// ─── Helpers ─────────────────────────────────────────────────────────────────
+function cssId(tag) {
+  return tag.replace(/[^a-zA-Z0-9]/g, '_');
+}
+
+function escHtml(s) {
+  return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function escAttr(s) {
+  return String(s || '').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+let _toastTimer;
+function _showToast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(_toastTimer);
+  _toastTimer = setTimeout(() => el.classList.remove('show'), 2800);
+}
+</script>
+</body>
+</html>
