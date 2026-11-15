@@ -1562,6 +1562,7 @@
   <a class="mob-nav-link" href="calendar.html">📅 Content Calendar</a>
   <a class="mob-nav-link" href="analytics.html">📈 Analytics</a>
   <a class="mob-nav-link" href="hashtag-research.html">#️⃣ Hashtag Research</a>
+  <a class="mob-nav-link" href="brands.html">🏢 Brand Profiles</a>
   <div class="mob-nav-sep"></div>
   <span class="mob-nav-plan">Account</span>
   <div class="mob-nav-link" id="mobUpgradeRow" style="display:none;"><a href="pricing.html" style="color:inherit;text-decoration:none;display:flex;align-items:center;gap:10px;width:100%;">⚡ Upgrade Plan</a></div>
@@ -1599,6 +1600,7 @@
       <a href="calendar.html" style="font-size:.78rem;color:#a0a0b8;text-decoration:none;padding:4px 9px;border-radius:7px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);" title="Content Calendar">📅 Calendar</a>
       <a href="analytics.html" style="font-size:.78rem;color:#a0a0b8;text-decoration:none;padding:4px 9px;border-radius:7px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);" title="Analytics Dashboard">📈 Analytics</a>
       <a href="hashtag-research.html" style="font-size:.78rem;color:#a0a0b8;text-decoration:none;padding:4px 9px;border-radius:7px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);" title="Hashtag Research">#️⃣ Hashtags</a>
+      <a href="brands.html" style="font-size:.78rem;color:#a0a0b8;text-decoration:none;padding:4px 9px;border-radius:7px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);" title="Brand Profiles">🏢 Brands</a>
     </div>
     <!-- Usage pill (always visible for free/guest) -->
     <div class="usage-pill" id="usagePill">
@@ -2148,6 +2150,21 @@
         </div>
       </div>
 
+      <!-- Active brand banner -->
+      <div id="activeBrandBanner" style="display:none;background:rgba(124,58,237,.12);border:1px solid rgba(168,85,247,.25);border-radius:10px;padding:9px 14px;margin-bottom:12px;display:none;align-items:center;justify-content:space-between;gap:10px">
+        <div style="display:flex;align-items:center;gap:9px">
+          <div id="brandAvatarBadge" style="width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700;color:#fff;flex-shrink:0"></div>
+          <div>
+            <div style="font-size:.8rem;font-weight:700;color:#a855f7" id="brandBannerName"></div>
+            <div style="font-size:.7rem;color:#94a3b8" id="brandBannerMeta"></div>
+          </div>
+        </div>
+        <div style="display:flex;gap:7px">
+          <a href="brands.html" style="font-size:.72rem;padding:4px 10px;border-radius:6px;border:1px solid rgba(168,85,247,.3);color:#a855f7;text-decoration:none;white-space:nowrap">Switch</a>
+          <button onclick="clearActiveBrand()" style="font-size:.72rem;padding:4px 10px;border-radius:6px;border:1px solid #2d2d4e;background:transparent;color:#94a3b8;cursor:pointer;white-space:nowrap">✕ Clear</button>
+        </div>
+      </div>
+
       <!-- Selectors -->
       <div class="selectors">
 
@@ -2476,8 +2493,70 @@
       showGenLocked(false);
     }
     updateBaCta(user.plan);
+    loadActiveBrand();
     if (document.getElementById('bgSwapWrap').classList.contains('active')) initBgSwapUI();
   }
+
+  // ── Active brand ────────────────────────────────────────────────────────
+  function loadActiveBrand() {
+    try {
+      const b = JSON.parse(localStorage.getItem('sc_active_brand') || 'null');
+      if (!b) { document.getElementById('activeBrandBanner').style.display = 'none'; return; }
+      showBrandBanner(b);
+      applyBrandToForm(b);
+    } catch (e) { /* ignore */ }
+  }
+
+  function showBrandBanner(b) {
+    const banner = document.getElementById('activeBrandBanner');
+    if (!banner) return;
+    banner.style.display = 'flex';
+    const initials = b.name.split(' ').slice(0,2).map(w => w[0]?.toUpperCase()).join('');
+    const av = document.getElementById('brandAvatarBadge');
+    if (av) { av.textContent = initials; av.style.background = b.color || '#7c3aed'; }
+    const nm = document.getElementById('brandBannerName');
+    if (nm) nm.textContent = '🏢 ' + b.name;
+    const mt = document.getElementById('brandBannerMeta');
+    if (mt) {
+      const parts = [];
+      if (b.tone)     parts.push(b.tone);
+      if (b.niche)    parts.push(b.niche);
+      if (b.language && b.language !== 'English') parts.push(b.language);
+      mt.textContent = parts.join(' · ') || 'Brand active';
+    }
+  }
+
+  function applyBrandToForm(b) {
+    if (b.tone) {
+      const toneEl = document.getElementById('toneSel');
+      if (toneEl) {
+        for (const opt of toneEl.options) {
+          if (opt.value.toLowerCase().includes(b.tone.toLowerCase()) ||
+              b.tone.toLowerCase().includes(opt.value.toLowerCase())) {
+            toneEl.value = opt.value; break;
+          }
+        }
+      }
+    }
+    if (b.language) {
+      const langEl = document.getElementById('langSel');
+      if (langEl) {
+        for (const opt of langEl.options) {
+          if (opt.value.toLowerCase() === b.language.toLowerCase() ||
+              opt.text.toLowerCase().includes(b.language.toLowerCase())) {
+            langEl.value = opt.value; break;
+          }
+        }
+      }
+    }
+  }
+
+  function clearActiveBrand() {
+    localStorage.removeItem('sc_active_brand');
+    document.getElementById('activeBrandBanner').style.display = 'none';
+    _showToast('Brand cleared.');
+  }
+  // ────────────────────────────────────────────────────────────────────────
 
   function clearAuth() {
     localStorage.removeItem('sc_token');

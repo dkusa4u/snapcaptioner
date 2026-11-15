@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Brand Profiles — SnapCaption AI</title>
+<style>
+:root {
+  --bg:    #0f0f1a;
+  --card:  #1a1a2e;
+  --grad1: #7c3aed;
+  --grad2: #a855f7;
+  --grad3: #ec4899;
+  --text:  #f1f5f9;
+  --muted: #94a3b8;
+  --border:#2d2d4e;
+  --green: #22c55e;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;min-height:100vh}
+
+.topnav{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;background:var(--card);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100}
+.topnav-brand{font-size:1rem;font-weight:700;background:linear-gradient(135deg,var(--grad1),var(--grad3));-webkit-background-clip:text;-webkit-text-fill-color:transparent;text-decoration:none}
+.nav-links{display:flex;gap:16px;align-items:center}
+.nav-link{color:var(--muted);text-decoration:none;font-size:.82rem;transition:color .2s}
+.nav-link:hover,.nav-link.active{color:var(--text)}
+.nav-link.active{font-weight:600}
+
+.page{max-width:960px;margin:0 auto;padding:24px 20px}
+.page-title{font-size:1.4rem;font-weight:700;margin-bottom:4px}
+.page-sub{color:var(--muted);font-size:.88rem;margin-bottom:24px}
+
+/* ── PRO GATE ── */
+.pro-gate{background:linear-gradient(135deg,rgba(124,58,237,.15),rgba(236,72,153,.15));border:1px solid rgba(168,85,247,.3);border-radius:16px;padding:32px;text-align:center;max-width:480px;margin:0 auto}
+.pro-gate h2{font-size:1.3rem;margin-bottom:8px}
+.pro-gate p{color:var(--muted);font-size:.9rem;margin-bottom:20px;line-height:1.5}
+.btn-primary{display:inline-flex;align-items:center;gap:7px;padding:10px 22px;border-radius:10px;background:linear-gradient(135deg,var(--grad1),var(--grad3));color:#fff;font-weight:700;font-size:.88rem;text-decoration:none;cursor:pointer;border:none}
+.btn-primary:hover{opacity:.9}
+
+/* ── BRAND CARDS ── */
+.brands-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.brands-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;margin-bottom:24px}
+
+.brand-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:0;overflow:hidden;position:relative;transition:border-color .2s}
+.brand-card:hover{border-color:rgba(168,85,247,.4)}
+.brand-card.is-default{border-color:rgba(168,85,247,.5)}
+.brand-accent{height:4px;width:100%}
+.brand-body{padding:16px}
+.brand-name-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.brand-avatar{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;font-weight:700;color:#fff;flex-shrink:0}
+.brand-name{font-size:.95rem;font-weight:700;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.default-badge{font-size:.65rem;font-weight:700;padding:2px 7px;border-radius:4px;background:rgba(168,85,247,.2);color:var(--grad2);white-space:nowrap;flex-shrink:0}
+
+.brand-meta{display:flex;flex-direction:column;gap:4px;margin-bottom:12px}
+.brand-meta-row{display:flex;align-items:center;gap:6px;font-size:.76rem;color:var(--muted)}
+.brand-meta-row span:first-child{width:14px;text-align:center;flex-shrink:0}
+
+.brand-hashtags{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:12px;min-height:0}
+.htag-pill{font-size:.68rem;padding:2px 7px;border-radius:5px;background:rgba(255,255,255,.06);color:var(--muted)}
+
+.brand-actions{display:flex;gap:7px}
+.btn-sm{padding:6px 13px;border-radius:7px;border:1px solid var(--border);background:transparent;color:var(--muted);font-size:.75rem;cursor:pointer;transition:all .2s}
+.btn-sm:hover{border-color:var(--grad2);color:var(--grad2)}
+.btn-sm.danger:hover{border-color:#f43f5e;color:#f43f5e}
+.btn-sm.use{background:linear-gradient(135deg,var(--grad1),var(--grad3));border-color:transparent;color:#fff;font-weight:600}
+.btn-sm.use:hover{opacity:.9}
+
+/* ── MODAL ── */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:200;align-items:center;justify-content:center;padding:16px}
+.modal-overlay.open{display:flex}
+.modal{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:24px;width:100%;max-width:520px;max-height:90vh;overflow-y:auto}
+.modal-title{font-size:1.1rem;font-weight:700;margin-bottom:20px}
+.form-field{margin-bottom:14px}
+.form-label{font-size:.74rem;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);margin-bottom:5px;display:block}
+.inp{width:100%;background:#0f0f1a;border:1px solid var(--border);border-radius:9px;padding:10px 13px;color:var(--text);font-size:.88rem;outline:none;transition:border-color .2s}
+.inp:focus{border-color:var(--grad2)}
+.inp::placeholder{color:var(--muted)}
+select.inp{cursor:pointer}
+textarea.inp{resize:vertical;min-height:70px;line-height:1.5}
+
+.color-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
+.color-swatch{width:28px;height:28px;border-radius:7px;cursor:pointer;border:2px solid transparent;transition:all .2s;flex-shrink:0}
+.color-swatch.active{border-color:var(--text);transform:scale(1.15)}
+
+.hashtag-editor{display:flex;gap:7px;margin-bottom:7px}
+.hashtag-chips{display:flex;flex-wrap:wrap;gap:5px;min-height:28px}
+.htag-edit-pill{display:inline-flex;align-items:center;gap:5px;padding:4px 9px;border-radius:6px;background:rgba(168,85,247,.15);border:1px solid rgba(168,85,247,.3);font-size:.76rem;color:var(--grad2)}
+.htag-edit-pill button{background:none;border:none;color:var(--muted);cursor:pointer;font-size:.75rem;padding:0;line-height:1}
+.htag-edit-pill button:hover{color:#f43f5e}
+
+.modal-footer{display:flex;gap:8px;justify-content:flex-end;margin-top:20px}
+.btn-cancel{padding:9px 18px;border-radius:9px;border:1px solid var(--border);background:transparent;color:var(--muted);font-size:.84rem;cursor:pointer}
+.btn-cancel:hover{border-color:var(--grad2);color:var(--text)}
+.btn-save{padding:9px 20px;border-radius:9px;border:none;background:linear-gradient(135deg,var(--grad1),var(--grad3));color:#fff;font-weight:700;font-size:.84rem;cursor:pointer}
+.btn-save:hover{opacity:.9}
+
+/* ── EMPTY ── */
+.empty-state{text-align:center;padding:48px 20px;color:var(--muted)}
+.empty-state h3{font-size:1rem;color:var(--text);margin-bottom:6px}
+.empty-state p{font-size:.85rem;margin-bottom:16px}
+
+/* ── TOAST ── */
+#toast{position:fixed;bottom:24px;right:24px;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:11px 18px;font-size:.82rem;color:var(--text);z-index:9999;opacity:0;transform:translateY(8px);transition:all .25s;pointer-events:none}
+#toast.show{opacity:1;transform:translateY(0)}
+
+/* ── SKELETON ── */
+.skeleton{background:linear-gradient(90deg,var(--border) 25%,rgba(255,255,255,.04) 50%,var(--border) 75%);background-size:200% 100%;animation:shimmer 1.3s infinite;border-radius:8px}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+</style>
+</head>
+<body>
+
+<nav class="topnav">
+  <a href="app.html" class="topnav-brand">📸 SnapCaption AI</a>
+  <div class="nav-links">
+    <a href="app.html" class="nav-link">Generate</a>
+    <a href="analytics.html" class="nav-link">Analytics</a>
+    <a href="hashtag-research.html" class="nav-link">Hashtags</a>
+    <a href="brands.html" class="nav-link active">Brands</a>
+    <a href="settings.html" class="nav-link">Settings</a>
+  </div>
+</nav>
+
+<div class="page">
+  <div class="page-title">🏢 Brand Profiles</div>
+  <div class="page-sub">Save your brand voices and settings — switch instantly when generating captions</div>
+
+  <!-- Pro gate -->
+  <div id="proGate" style="display:none">
+    <div class="pro-gate">
+      <div style="font-size:2.5rem;margin-bottom:12px">🏢</div>
+      <h2>Multi-Brand Profiles is a Pro Feature</h2>
+      <p>Upgrade to Pro to save up to 10 brand profiles, each with its own tone, niche, language, and hashtag sets — switch brands in one click when generating.</p>
+      <a href="pricing.html" class="btn-primary">⚡ Upgrade to Pro</a>
+    </div>
+  </div>
+
+  <!-- Main tool -->
+  <div id="mainTool" style="display:none">
+
+    <div class="brands-header">
+      <div style="font-size:.85rem;color:var(--muted)" id="brandsCountLabel"></div>
+      <button class="btn-primary" onclick="openModal()">+ New Brand</button>
+    </div>
+
+    <!-- Loading skeletons -->
+    <div id="loadingArea">
+      <div class="brands-grid">
+        <div class="brand-card skeleton" style="height:160px"></div>
+        <div class="brand-card skeleton" style="height:160px"></div>
+        <div class="brand-card skeleton" style="height:160px"></div>
+      </div>
+    </div>
+
+    <!-- Brands grid -->
+    <div class="brands-grid" id="brandsGrid" style="display:none"></div>
+
+    <!-- Empty -->
+    <div id="emptyState" style="display:none">
+      <div class="empty-state">
+        <div style="font-size:3rem;margin-bottom:12px">🏢</div>
+        <h3>No brand profiles yet</h3>
+        <p>Create your first brand profile to save tone, niche, language, and hashtag preferences.</p>
+        <button class="btn-primary" onclick="openModal()">+ Create Brand Profile</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Create / Edit modal -->
+<div class="modal-overlay" id="modalOverlay" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <div class="modal-title" id="modalTitle">New Brand Profile</div>
+
+    <div class="form-field">
+      <label class="form-label">Brand Name *</label>
+      <input id="fName" class="inp" type="text" placeholder="e.g. My Fitness Brand, Travel Blog, Food Store…" maxlength="100">
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <div class="form-field">
+        <label class="form-label">Default Tone</label>
+        <select id="fTone" class="inp">
+          <option value="">— any —</option>
+          <option>Inspirational</option>
+          <option>Funny &amp; Playful</option>
+          <option>Professional</option>
+          <option>Casual &amp; Friendly</option>
+          <option>Luxury &amp; Exclusive</option>
+          <option>Educational</option>
+          <option>Storytelling</option>
+          <option>Bold &amp; Edgy</option>
+          <option>Minimal &amp; Clean</option>
+        </select>
+      </div>
+      <div class="form-field">
+        <label class="form-label">Default Language</label>
+        <select id="fLanguage" class="inp">
+          <option>English</option>
+          <option>Spanish</option>
+          <option>French</option>
+          <option>German</option>
+          <option>Portuguese</option>
+          <option>Italian</option>
+          <option>Japanese</option>
+          <option>Korean</option>
+          <option>Chinese (Simplified)</option>
+          <option>Arabic</option>
+          <option>Hindi</option>
+          <option>Dutch</option>
+          <option>Russian</option>
+          <option>Turkish</option>
+          <option>Polish</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="form-field">
+      <label class="form-label">Niche / Industry</label>
+      <input id="fNiche" class="inp" type="text" placeholder="e.g. women's fitness, travel blogging, artisan coffee…" maxlength="100">
+    </div>
+
+    <div class="form-field">
+      <label class="form-label">Brand Voice Notes</label>
+      <textarea id="fVoice" class="inp" placeholder="Describe your brand voice, audience, style, and anything the AI should keep in mind…" maxlength="500"></textarea>
+    </div>
+
+    <div class="form-field">
+      <label class="form-label">Default Hashtags</label>
+      <div class="hashtag-editor">
+        <input id="fHashtagInp" class="inp" type="text" placeholder="#yourbrandtag — press Enter or comma">
+        <button class="btn-sm" onclick="addHashtag()">Add</button>
+      </div>
+      <div class="hashtag-chips" id="hashtagChips"></div>
+    </div>
+
+    <div class="form-field">
+      <label class="form-label">Brand Color</label>
+      <div class="color-row" id="colorRow"></div>
+    </div>
+
+    <div class="form-field" style="display:flex;align-items:center;gap:10px">
+      <input id="fDefault" type="checkbox" style="accent-color:var(--grad2);width:16px;height:16px;cursor:pointer">
+      <label for="fDefault" style="font-size:.84rem;cursor:pointer;color:var(--muted)">Set as default brand (auto-selected on Generate page)</label>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+      <button class="btn-save" id="saveBtn" onclick="saveBrand()">Save Brand</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// ─── Auth & plan ────────────────────────────────────────────────────────────
+const currentToken = localStorage.getItem('sc_token');
+const currentUser  = (() => { try { return JSON.parse(localStorage.getItem('sc_user')||'{}'); } catch { return {}; } })();
+
+function isPro() {
+  return (currentUser?.plan || '').toLowerCase() === 'pro';
+}
+
+if (!currentToken) {
+  window.location.href = 'login.html';
+} else if (!isPro()) {
+  document.getElementById('proGate').style.display = 'block';
+} else {
+  document.getElementById('mainTool').style.display = 'block';
+  loadBrands();
+}
+
+// ─── Color palette ──────────────────────────────────────────────────────────
+const COLORS = ['#7c3aed','#a855f7','#ec4899','#f43f5e','#f59e0b','#22c55e','#38bdf8','#64748b','#0ea5e9','#d946ef'];
+let _currentColor = COLORS[0];
+
+function buildColorRow() {
+  const row = document.getElementById('colorRow');
+  row.innerHTML = COLORS.map(c => `
+    <div class="color-swatch ${c === _currentColor ? 'active' : ''}"
+         style="background:${c}"
+         onclick="pickColor('${c}')"
+         title="${c}"></div>
+  `).join('');
+}
+
+function pickColor(c) {
+  _currentColor = c;
+  buildColorRow();
+}
+
+// ─── Hashtag editor ─────────────────────────────────────────────────────────
+let _hashtags = [];
+
+document.getElementById('fHashtagInp').addEventListener('keydown', e => {
+  if (e.key === 'Enter' || e.key === ',') { e.preventDefault(); addHashtag(); }
+});
+
+function addHashtag() {
+  let val = document.getElementById('fHashtagInp').value.trim().replace(/,/g,'');
+  if (!val) return;
+  if (!val.startsWith('#')) val = '#' + val;
+  val = val.toLowerCase().replace(/[^a-z0-9#_]/g, '');
+  if (!val || val === '#') return;
+  if (_hashtags.includes(val)) { document.getElementById('fHashtagInp').value = ''; return; }
+  if (_hashtags.length >= 30) { _showToast('Max 30 hashtags per brand.'); return; }
+  _hashtags.push(val);
+  document.getElementById('fHashtagInp').value = '';
+  renderHashtagChips();
+}
+
+function removeHashtag(tag) {
+  _hashtags = _hashtags.filter(h => h !== tag);
+  renderHashtagChips();
+}
+
+function renderHashtagChips() {
+  document.getElementById('hashtagChips').innerHTML = _hashtags.map(h => `
+    <span class="htag-edit-pill">${escHtml(h)}<button onclick="removeHashtag('${escAttr(h)}')" title="Remove">✕</button></span>
+  `).join('');
+}
+
+// ─── Load brands ─────────────────────────────────────────────────────────────
+let _brands = [];
+
+async function loadBrands() {
+  try {
+    const res  = await fetch('/api/brands.php', { headers: { 'Authorization': `Bearer ${currentToken}` } });
+    const data = await res.json();
+    if (!data.success) throw new Error(data.message);
+    _brands = data.brands || [];
+    renderBrands();
+  } catch (e) {
+    document.getElementById('loadingArea').style.display = 'none';
+    _showToast('Could not load brands: ' + e.message);
+  }
+}
+
+function renderBrands() {
+  document.getElementById('loadingArea').style.display = 'none';
+  const grid = document.getElementById('brandsGrid');
+  const empty = document.getElementById('emptyState');
+  const label = document.getElementById('brandsCountLabel');
+
+  label.textContent = `${_brands.length} / 10 brand${_brands.length !== 1 ? 's' : ''}`;
+
+  if (!_brands.length) {
+    grid.style.display  = 'none';
+    empty.style.display = 'block';
+    return;
+  }
+
+  empty.style.display = 'none';
+  grid.style.display  = 'grid';
+  grid.innerHTML = _brands.map(b => brandCardHtml(b)).join('');
+}
+
+function brandCardHtml(b) {
+  const initials = b.name.split(' ').slice(0,2).map(w => w[0]?.toUpperCase()).join('');
+  const tags     = (b.hashtags || []).slice(0, 5);
+  const moreTags = (b.hashtags || []).length - tags.length;
+
+  return `<div class="brand-card${b.is_default ? ' is-default' : ''}">
+    <div class="brand-accent" style="background:${escAttr(b.color)}"></div>
+    <div class="brand-body">
+      <div class="brand-name-row">
+        <div class="brand-avatar" style="background:${escAttr(b.color)}">${escHtml(initials)}</div>
+        <div class="brand-name">${escHtml(b.name)}</div>
+        ${b.is_default ? '<div class="default-badge">DEFAULT</div>' : ''}
+      </div>
+      <div class="brand-meta">
+        ${b.tone    ? `<div class="brand-meta-row"><span>🎭</span>${escHtml(b.tone)}</div>` : ''}
+        ${b.niche   ? `<div class="brand-meta-row"><span>🎯</span>${escHtml(b.niche)}</div>` : ''}
+        ${b.language? `<div class="brand-meta-row"><span>🌐</span>${escHtml(b.language)}</div>` : ''}
+        ${b.voice_notes ? `<div class="brand-meta-row" style="max-width:220px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis"><span>📝</span>${escHtml(b.voice_notes)}</div>` : ''}
+      </div>
+      ${tags.length ? `<div class="brand-hashtags">
+        ${tags.map(h => `<span class="htag-pill">${escHtml(h)}</span>`).join('')}
+        ${moreTags > 0 ? `<span class="htag-pill">+${moreTags}</span>` : ''}
+      </div>` : ''}
+      <div class="brand-actions">
+        <button class="btn-sm use" onclick="useBrand(${b.id})">▶ Use</button>
+        <button class="btn-sm" onclick="editBrand(${b.id})">✏️ Edit</button>
+        ${!b.is_default ? `<button class="btn-sm" onclick="setDefault(${b.id})">⭐ Default</button>` : ''}
+        <button class="btn-sm danger" onclick="deleteBrand(${b.id},'${escAttr(b.name)}')">🗑</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+// ─── Use brand ───────────────────────────────────────────────────────────────
+function useBrand(id) {
+  const b = _brands.find(x => x.id === id);
+  if (!b) return;
+  localStorage.setItem('sc_active_brand', JSON.stringify(b));
+  _showToast(`✅ "${b.name}" activated — opening generator…`);
+  setTimeout(() => window.location.href = 'app.html', 900);
+}
+
+// ─── Set default ─────────────────────────────────────────────────────────────
+async function setDefault(id) {
+  const b = _brands.find(x => x.id === id);
+  if (!b) return;
+  try {
+    const payload = { ...b, is_default: true };
+    const res = await fetch('/api/brands.php', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${currentToken}` },
+      body: JSON.stringify(payload),
+    });
+    const data = await res.json();
+    if (!data.success) throw new Error(data.message);
+    await loadBrands();
+    _showToast(`✅ "${b.name}" set as default.`);
+  } catch (e) {
+    _showToast('Error: ' + e.message);
+  }
+}
+
+// ─── Delete brand ─────────────────────────────────────────────────────────────
+async function deleteBrand(id, name) {
+  if (!confirm(`Delete "${name}"? This cannot be undone.`)) return;
+  try {
+    const res = await fetch('/api/brands.php', {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${currentToken}` },
+      body: JSON.stringify({ id }),
+    });
+    const data = await res.json();
+    if (!data.success) throw new Error(data.message);
+    await loadBrands();
+    _showToast(`🗑 "${name}" deleted.`);
+  } catch (e) {
+    _showToast('Error: ' + e.message);
+  }
+}
+
+// ─── Modal ───────────────────────────────────────────────────────────────────
+let _editId = null;
+
+function openModal(brand = null) {
+  _editId    = brand ? brand.id : null;
+  _hashtags  = brand ? [...(brand.hashtags || [])] : [];
+  _currentColor = brand ? brand.color : COLORS[0];
+
+  document.getElementById('modalTitle').textContent  = brand ? 'Edit Brand Profile' : 'New Brand Profile';
+  document.getElementById('fName').value             = brand?.name       || '';
+  document.getElementById('fTone').value             = brand?.tone       || '';
+  document.getElementById('fNiche').value            = brand?.niche      || '';
+  document.getElementById('fLanguage').value         = brand?.language   || 'English';
+  document.getElementById('fVoice').value            = brand?.voice_notes|| '';
+  document.getElementById('fDefault').checked        = brand?.is_default || false;
+
+  buildColorRow();
+  renderHashtagChips();
+  document.getElementById('modalOverlay').classList.add('open');
+  document.getElementById('fName').focus();
+}
+
+function editBrand(id) {
+  const b = _brands.find(x => x.id === id);
+  if (b) openModal(b);
+}
+
+function closeModal() {
+  document.getElementById('modalOverlay').classList.remove('open');
+  _editId = null;
+}
+
+async function saveBrand() {
+  const name = document.getElementById('fName').value.trim();
+  if (!name) { _showToast('Brand name is required.'); document.getElementById('fName').focus(); return; }
+
+  const btn = document.getElementById('saveBtn');
+  btn.disabled = true; btn.textContent = 'Saving…';
+
+  const payload = {
+    name,
+    tone:        document.getElementById('fTone').value,
+    niche:       document.getElementById('fNiche').value.trim(),
+    language:    document.getElementById('fLanguage').value,
+    voice_notes: document.getElementById('fVoice').value.trim(),
+    hashtags:    _hashtags,
+    color:       _currentColor,
+    is_default:  document.getElementById('fDefault').checked,
+  };
+  if (_editId) payload.id = _editId;
+
+  try {
+    const res = await fetch('/api/brands.php', {
+      method:  _editId ? 'PUT' : 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${currentToken}` },
+      body:    JSON.stringify(payload),
+    });
+    const data = await res.json();
+    if (!data.success) throw new Error(data.message);
+    closeModal();
+    await loadBrands();
+    _showToast(_editId ? '✅ Brand updated!' : '✅ Brand created!');
+  } catch (e) {
+    _showToast('Error: ' + e.message);
+  } finally {
+    btn.disabled = false; btn.textContent = 'Save Brand';
+  }
+}
+
+// ─── Helpers ─────────────────────────────────────────────────────────────────
+function escHtml(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function escAttr(s){ return String(s||'').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+
+let _toastTimer;
+function _showToast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(_toastTimer);
+  _toastTimer = setTimeout(() => el.classList.remove('show'), 2800);
+}
+</script>
+</body>
+</html>
