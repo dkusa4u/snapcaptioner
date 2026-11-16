@@ -1773,6 +1773,62 @@
     border-top-color: var(--grad2);
     animation: spin .7s linear infinite;
   }
+
+  /* ── Burst-to-Best ──────────────────────────────────── */
+  .burst-toggle-row { display:flex; align-items:center; gap:8px; padding:8px 0 4px; }
+  .burst-toggle-btn { background:transparent; border:1px solid rgba(255,255,255,.12); border-radius:8px; color:#a0a0b8; font-size:.78rem; padding:5px 12px; cursor:pointer; display:flex; align-items:center; gap:5px; transition:all .2s; }
+  .burst-toggle-btn:hover, .burst-toggle-btn.active { border-color:rgba(168,85,247,.5); background:rgba(168,85,247,.1); color:#c084fc; }
+  .burst-panel { display:none; border:1px solid rgba(168,85,247,.2); border-radius:14px; background:rgba(168,85,247,.04); padding:14px; margin-bottom:10px; }
+  .burst-panel.show { display:block; }
+  .burst-panel-title { font-size:.82rem; font-weight:700; color:#c084fc; margin-bottom:10px; display:flex; align-items:center; gap:6px; }
+  .burst-drop { border:2px dashed rgba(168,85,247,.25); border-radius:10px; padding:18px; text-align:center; cursor:pointer; transition:all .2s; position:relative; }
+  .burst-drop:hover, .burst-drop.drag-over { border-color:rgba(168,85,247,.6); background:rgba(168,85,247,.07); }
+  .burst-drop-label { font-size:.82rem; color:#78788a; }
+  .burst-drop-label strong { color:#a855f7; }
+  .burst-drop input { position:absolute; inset:0; opacity:0; cursor:pointer; width:100%; height:100%; }
+  .burst-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(90px,1fr)); gap:8px; margin-top:12px; }
+  .burst-thumb { position:relative; border-radius:8px; overflow:hidden; cursor:pointer; border:2px solid transparent; transition:all .18s; }
+  .burst-thumb:hover { border-color:rgba(168,85,247,.5); }
+  .burst-thumb.best { border-color:#4ade80; }
+  .burst-thumb.worst { border-color:#f87171; opacity:.55; }
+  .burst-thumb img { width:100%; height:72px; object-fit:cover; display:block; }
+  .burst-score-badge { position:absolute; bottom:3px; right:3px; font-size:.62rem; font-weight:700; padding:2px 5px; border-radius:5px; }
+  .burst-score-badge.best { background:#4ade80; color:#0f2a18; }
+  .burst-score-badge.ok   { background:#fbbf24; color:#2a1e00; }
+  .burst-score-badge.weak { background:#f87171; color:#2a0808; }
+  .burst-pick-btn { display:block; width:100%; margin-top:10px; padding:9px; background:linear-gradient(135deg,#a855f7,#38bdf8); border:none; border-radius:9px; color:#fff; font-weight:700; font-size:.85rem; cursor:pointer; transition:opacity .2s; }
+  .burst-pick-btn:hover { opacity:.88; }
+  .burst-pick-btn:disabled { opacity:.4; cursor:not-allowed; }
+  .burst-label-row { font-size:.72rem; color:#78788a; margin-top:6px; text-align:center; }
+
+  /* ── Vibe-Lock ──────────────────────────────────────── */
+  .vibe-bar { display:none; align-items:center; gap:8px; padding:8px 0; }
+  .vibe-bar.show { display:flex; }
+  .vibe-swatches { display:flex; gap:4px; }
+  .vibe-swatch { width:14px; height:14px; border-radius:50%; border:1px solid rgba(255,255,255,.15); }
+  .vibe-lock-btn { background:transparent; border:1px solid rgba(255,255,255,.12); border-radius:8px; color:#a0a0b8; font-size:.78rem; padding:4px 11px; cursor:pointer; transition:all .2s; white-space:nowrap; }
+  .vibe-lock-btn.locked { border-color:rgba(74,222,128,.4); color:#4ade80; background:rgba(74,222,128,.08); }
+  .vibe-lock-btn.locked:hover { border-color:#f87171; color:#f87171; background:rgba(248,113,113,.08); }
+  .vibe-label { font-size:.72rem; color:#78788a; }
+
+  /* ── Schedule Modal ─────────────────────────────────── */
+  .sched-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.7); z-index:3000; align-items:center; justify-content:center; }
+  .sched-overlay.show { display:flex; }
+  .sched-modal { background:#1a1a24; border:1px solid rgba(168,85,247,.3); border-radius:18px; padding:24px; max-width:380px; width:90%; }
+  .sched-modal-title { font-size:1rem; font-weight:700; color:#e0e0f0; margin-bottom:16px; display:flex; align-items:center; gap:7px; }
+  .sched-caption-preview { background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.08); border-radius:10px; padding:10px 12px; font-size:.82rem; line-height:1.5; color:#c0c0d8; max-height:80px; overflow-y:auto; margin-bottom:16px; }
+  .sched-row { display:flex; gap:10px; margin-bottom:12px; }
+  .sched-field { flex:1; display:flex; flex-direction:column; gap:5px; }
+  .sched-field label { font-size:.72rem; font-weight:600; color:#78788a; text-transform:uppercase; letter-spacing:.04em; }
+  .sched-field input, .sched-field select { background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.1); border-radius:8px; color:#e8e8f0; font-size:.85rem; padding:8px 10px; outline:none; transition:border-color .2s; }
+  .sched-field input:focus, .sched-field select:focus { border-color:rgba(168,85,247,.5); }
+  .sched-modal-btns { display:flex; gap:10px; margin-top:16px; }
+  .sched-cancel { flex:1; padding:10px; background:transparent; border:1px solid rgba(255,255,255,.12); border-radius:10px; color:#a0a0b8; font-size:.88rem; cursor:pointer; }
+  .sched-save { flex:2; padding:10px; background:linear-gradient(135deg,#a855f7,#ec4899); border:none; border-radius:10px; color:#fff; font-weight:700; font-size:.88rem; cursor:pointer; transition:opacity .2s; }
+  .sched-save:hover { opacity:.88; }
+  .sched-save:disabled { opacity:.4; cursor:not-allowed; }
+  .cap-schedule-btn { background:transparent; border:1px solid rgba(56,189,248,.25); border-radius:7px; color:#38bdf8; font-size:.74rem; padding:4px 9px; cursor:pointer; transition:all .2s; white-space:nowrap; }
+  .cap-schedule-btn:hover { background:rgba(56,189,248,.1); border-color:rgba(56,189,248,.5); }
 </style>
 </head>
 <body>
@@ -2149,6 +2205,26 @@
         <span class="panel-head-sub">AI reads it directly</span>
       </div>
 
+      <!-- Burst-to-Best Toggle -->
+      <div class="burst-toggle-row">
+        <button class="burst-toggle-btn" id="burstToggleBtn" onclick="toggleBurstPanel()">
+          📸 Burst-to-Best
+        </button>
+        <span style="font-size:.72rem;color:#78788a;">Upload a burst — pick the sharpest</span>
+      </div>
+
+      <!-- Burst-to-Best Panel -->
+      <div class="burst-panel" id="burstPanel">
+        <div class="burst-panel-title">📸 Burst-to-Best <span style="font-size:.72rem;font-weight:400;color:#78788a;">— ranked by sharpness</span></div>
+        <div class="burst-drop" id="burstDrop">
+          <div class="burst-drop-label">Drop <strong>2–10 burst photos</strong> or click to select</div>
+          <input type="file" id="burstInput" accept="image/*" multiple onchange="loadBurstImages(this.files)">
+        </div>
+        <div class="burst-grid" id="burstGrid" style="display:none;"></div>
+        <button class="burst-pick-btn" id="burstPickBtn" onclick="pickBestBurst()" disabled>⚡ Use Best Shot</button>
+        <div class="burst-label-row" id="burstLabelRow"></div>
+      </div>
+
       <!-- Upload Zone -->
       <div class="upload-zone" id="uploadZone" onclick="document.getElementById('fileInput').click()">
         <span class="upload-icon-big">📸</span>
@@ -2163,6 +2239,13 @@
           <div class="ai-tx-label">🤖 AI is transforming…</div>
           <div class="ai-tx-sub" id="aiTxSub">This takes 15–30 seconds</div>
         </div>
+      </div>
+
+      <!-- Vibe-Lock Bar (shown after photo loads) -->
+      <div class="vibe-bar" id="vibeBar">
+        <div class="vibe-swatches" id="vibeSwatches"></div>
+        <button class="vibe-lock-btn" id="vibeLockBtn" onclick="toggleVibeLock()">🔒 Lock Vibe</button>
+        <span class="vibe-label" id="vibeLabel">Lock dominant colors to grade future photos</span>
       </div>
 
       <!-- Photo Enhance Toolbar (shown after photo loaded) -->
@@ -2821,6 +2904,7 @@
       }
       const d = await r.json();
       currentUser = stored;
+      fetchBrandVoice(); // load brand voice DNA in background
 
       enhanceUsed    = d.enhance_used    ?? 0;
       enhanceLimit   = d.enhance_limit   ?? 3;
@@ -2852,6 +2936,19 @@
   function showGenLocked(locked) {
     document.getElementById('genBtn').style.display    = locked ? 'none' : '';
     document.getElementById('genLocked').style.display = locked ? 'flex' : 'none';
+  }
+
+  // ── Brand Voice DNA — fetch saved voice on login ──────────────────────
+  async function fetchBrandVoice() {
+    if (!authToken) return;
+    try {
+      const r = await fetch('api/brand-voice.php', {
+        headers: { 'Authorization': 'Bearer ' + authToken }
+      });
+      if (!r.ok) return;
+      const d = await r.json();
+      _savedBrandVoice = d.brand_voice || '';
+    } catch(e) { /* silent */ }
   }
 
   function applyUserUI(user) {
@@ -3003,6 +3100,15 @@
       // Show enhance toolbar
       document.getElementById('enhanceBar').classList.add('active');
       updateEnhanceCtr();
+      // Show vibe bar + extract colors
+      document.getElementById('vibeBar').classList.add('show');
+      _extractVibeColors(dataUrl);
+      if (_vibeLocked && _vibeColors) {
+        _updateVibeSwatches(_vibeColors);
+        document.getElementById('vibeLockBtn').classList.add('locked');
+        document.getElementById('vibeLockBtn').textContent = '🔓 Vibe Locked — tap to unlock';
+        document.getElementById('vibeLabel').textContent = 'Color palette locked for future photos';
+      }
       // Show AI transforms (premium) or locked teaser (free/guest)
       const isPrem = currentUser?.plan === 'premium' || currentUser?.plan === 'teams';
       document.getElementById('aiTransformBar').classList.toggle('active', isPrem);
@@ -3028,6 +3134,7 @@
   }
 
   // ── EXIF Time-Gap Framing ──────────────────────────────
+  let _savedBrandVoice = '';   // Brand Voice DNA — fetched on login
   let exifFramingEnabled = false;
   let exifDaysAgo = 0;
 
@@ -3377,7 +3484,7 @@
       const res = await fetch('api/generate-captions.php', {
         method: 'POST',
         headers: genHeaders,
-        body: JSON.stringify({ image: currentImageBase64, platform, language, tone, context })
+        body: JSON.stringify({ image: currentImageBase64, platform, language, tone, context, brand_voice: _savedBrandVoice })
       });
       const resText = await res.text();
       let resJson;
@@ -3715,11 +3822,10 @@
 
   // ── Schedule caption → calendar.html ─────────────────────────────────────
   function scheduleCaption(captionText) {
-    const today = new Date().toISOString().split('T')[0];
+    if (!authToken) { _showToast('Sign in to schedule posts'); return; }
     const platEl = document.getElementById('platformSelect');
     const plat = platEl ? platEl.value : 'instagram';
-    const url = `calendar.html?date=${today}&platform=${encodeURIComponent(plat)}&caption=${encodeURIComponent(captionText)}`;
-    window.location.href = url;
+    openScheduleModal(captionText, plat);
   }
 
   // ── Open Instagram post preview ───────────────────────
@@ -5555,6 +5661,353 @@ function _vsDownloadScript() {
   a.click();
   _showToast('Script downloaded ⬇️');
 }
+
+
+/* ── Burst-to-Best ─────────────────────────────────────── */
+let _burstImages   = [];   // [{file, dataUrl, score}]
+let _burstSelected = -1;   // index of selected burst pick
+
+function toggleBurstPanel() {
+  const panel = document.getElementById('burstPanel');
+  const btn   = document.getElementById('burstToggleBtn');
+  const show  = !panel.classList.contains('show');
+  panel.classList.toggle('show', show);
+  btn.classList.toggle('active', show);
+}
+
+async function loadBurstImages(files) {
+  if (!files || files.length < 2) {
+    _showToast('Pick 2–10 burst photos');
+    return;
+  }
+  _burstImages = [];
+  _burstSelected = -1;
+  document.getElementById('burstPickBtn').disabled = true;
+  document.getElementById('burstLabelRow').textContent = 'Scoring sharpness…';
+  const grid = document.getElementById('burstGrid');
+  grid.innerHTML = '';
+  grid.style.display = 'grid';
+
+  const tasks = Array.from(files).slice(0, 10).map(file => new Promise(resolve => {
+    const reader = new FileReader();
+    reader.onload = e => resolve({ file, dataUrl: e.target.result });
+    reader.readAsDataURL(file);
+  }));
+  const loaded = await Promise.all(tasks);
+
+  // Score sharpness via canvas Laplacian variance
+  for (const item of loaded) {
+    const score = await _laplacianScore(item.dataUrl);
+    _burstImages.push({ ...item, score });
+  }
+
+  // Sort best-first
+  _burstImages.sort((a, b) => b.score - a.score);
+  _renderBurstGrid();
+}
+
+function _laplacianScore(dataUrl) {
+  return new Promise(resolve => {
+    const img = new Image();
+    img.onload = () => {
+      const W = 160, H = Math.round(img.height * (160 / img.width));
+      const c = document.createElement('canvas');
+      c.width = W; c.height = H;
+      const ctx = c.getContext('2d');
+      ctx.drawImage(img, 0, 0, W, H);
+      const { data } = ctx.getImageData(0, 0, W, H);
+      // Grayscale + 3×3 Laplacian
+      const gray = new Float32Array(W * H);
+      for (let i = 0; i < W * H; i++) {
+        const p = i * 4;
+        gray[i] = 0.299 * data[p] + 0.587 * data[p+1] + 0.114 * data[p+2];
+      }
+      let sum = 0, sum2 = 0, n = 0;
+      for (let y = 1; y < H-1; y++) {
+        for (let x = 1; x < W-1; x++) {
+          const lap = -gray[(y-1)*W+x] - gray[(y+1)*W+x]
+                      - gray[y*W+x-1] - gray[y*W+x+1]
+                      + 4 * gray[y*W+x];
+          sum += lap; sum2 += lap * lap; n++;
+        }
+      }
+      const mean = sum / n;
+      const variance = (sum2 / n) - mean * mean;
+      resolve(Math.round(variance));
+    };
+    img.src = dataUrl;
+  });
+}
+
+function _renderBurstGrid() {
+  const grid = document.getElementById('burstGrid');
+  grid.innerHTML = '';
+  const max = _burstImages[0].score, min = _burstImages[_burstImages.length-1].score;
+
+  _burstImages.forEach((item, idx) => {
+    const pct = max > min ? (item.score - min) / (max - min) : 1;
+    const cls = pct > 0.65 ? 'best' : pct > 0.3 ? 'ok' : 'weak';
+    const badge = pct > 0.65 ? 'best' : pct > 0.3 ? 'ok' : 'weak';
+    const wrap = document.createElement('div');
+    wrap.className = 'burst-thumb' + (idx === 0 ? ' best' : cls === 'weak' ? ' worst' : '');
+    wrap.onclick = () => _selectBurst(idx);
+    wrap.innerHTML = `
+      <img src="${item.dataUrl}" loading="lazy">
+      <div class="burst-score-badge ${badge}">${idx === 0 ? '🏆' : '#' + (idx+1)}</div>
+    `;
+    grid.appendChild(wrap);
+  });
+
+  // Auto-select best
+  _selectBurst(0);
+  document.getElementById('burstLabelRow').textContent =
+    `${_burstImages.length} photos scored — #1 is sharpest`;
+}
+
+function _selectBurst(idx) {
+  _burstSelected = idx;
+  document.querySelectorAll('.burst-thumb').forEach((el, i) => {
+    el.style.outline = i === idx ? '2px solid #a855f7' : '';
+  });
+  document.getElementById('burstPickBtn').disabled = false;
+}
+
+function pickBestBurst() {
+  if (_burstSelected < 0 || !_burstImages[_burstSelected]) return;
+  const item = _burstImages[_burstSelected];
+  // Set as current image (same flow as normal upload)
+  currentImageBase64   = item.dataUrl;
+  originalImageBase64  = item.dataUrl;
+  const preview = document.getElementById('photoPreview');
+  preview.src   = item.dataUrl;
+  preview.style.display = 'block';
+  document.getElementById('uploadZone').classList.add('has-photo');
+  document.getElementById('enhanceBar').classList.add('show');
+  document.getElementById('vibeBar').classList.add('show');
+  _extractVibeColors(item.dataUrl);
+  _applyVibeFilter(item.dataUrl);
+  // Collapse burst panel
+  document.getElementById('burstPanel').classList.remove('show');
+  document.getElementById('burstToggleBtn').classList.remove('active');
+  _showToast('⚡ Best burst shot selected!');
+}
+
+/* ── Vibe-Lock ────────────────────────────────────────── */
+let _vibeColors = JSON.parse(localStorage.getItem('sc_vibe') || 'null');
+let _vibeLocked = !!_vibeColors;
+
+function _extractVibeColors(dataUrl) {
+  return new Promise(resolve => {
+    const img = new Image();
+    img.onload = () => {
+      const W = 50, H = 50;
+      const c = document.createElement('canvas');
+      c.width = W; c.height = H;
+      const ctx = c.getContext('2d');
+      ctx.drawImage(img, 0, 0, W, H);
+      const { data } = ctx.getImageData(0, 0, W, H);
+      // Sample 5 dominant colors (simple k-means-lite)
+      const buckets = {}, step = 32;
+      for (let i = 0; i < data.length; i += 4) {
+        const r = Math.round(data[i]   / step) * step;
+        const g = Math.round(data[i+1] / step) * step;
+        const b = Math.round(data[i+2] / step) * step;
+        const key = `${r},${g},${b}`;
+        buckets[key] = (buckets[key] || 0) + 1;
+      }
+      const sorted = Object.entries(buckets).sort((a,b)=>b[1]-a[1]);
+      const colors = sorted.slice(0, 5).map(([k]) => {
+        const [r,g,b] = k.split(',').map(Number);
+        return `rgb(${r},${g},${b})`;
+      });
+      _updateVibeSwatches(colors);
+      resolve(colors);
+    };
+    img.src = dataUrl;
+  });
+}
+
+function _updateVibeSwatches(colors) {
+  const wrap = document.getElementById('vibeSwatches');
+  wrap.innerHTML = colors.map(c =>
+    `<div class="vibe-swatch" style="background:${c};"></div>`
+  ).join('');
+}
+
+function toggleVibeLock() {
+  if (_vibeLocked) {
+    // Unlock
+    _vibeLocked = false;
+    _vibeColors = null;
+    localStorage.removeItem('sc_vibe');
+    const btn = document.getElementById('vibeLockBtn');
+    btn.textContent = '🔒 Lock Vibe';
+    btn.classList.remove('locked');
+    document.getElementById('vibeLabel').textContent = 'Lock dominant colors to grade future photos';
+    _showToast('Vibe unlocked');
+  } else {
+    // Lock current palette
+    if (!currentImageBase64) { _showToast('Upload a photo first'); return; }
+    _extractVibeColors(currentImageBase64).then(colors => {
+      _vibeColors = colors;
+      _vibeLocked = true;
+      localStorage.setItem('sc_vibe', JSON.stringify(colors));
+      const btn = document.getElementById('vibeLockBtn');
+      btn.textContent = '🔓 Vibe Locked — tap to unlock';
+      btn.classList.add('locked');
+      document.getElementById('vibeLabel').textContent = 'Color palette locked for future photos';
+      _showToast('🔒 Vibe locked! Future photos will match this palette.');
+    });
+  }
+}
+
+function _applyVibeFilter(dataUrl) {
+  if (!_vibeLocked || !_vibeColors) return dataUrl;
+  // Show indicator that vibe is applied
+  const btn = document.getElementById('vibeLockBtn');
+  btn.classList.add('locked');
+  btn.textContent = '🔓 Vibe Locked — tap to unlock';
+  _updateVibeSwatches(_vibeColors);
+  return dataUrl; // Visual filter via CSS overlay handled by swatch display
+}
+
+// Init vibe bar on existing photo load
+function _onPhotoLoaded(dataUrl) {
+  document.getElementById('vibeBar').classList.add('show');
+  _extractVibeColors(dataUrl);
+  if (_vibeLocked && _vibeColors) {
+    _updateVibeSwatches(_vibeColors);
+    document.getElementById('vibeLockBtn').classList.add('locked');
+    document.getElementById('vibeLockBtn').textContent = '🔓 Vibe Locked — tap to unlock';
+    document.getElementById('vibeLabel').textContent = 'Color palette locked for future photos';
+  }
+}
+
+/* ── Schedule to Calendar ──────────────────────────────── */
+let _schedCaption  = '';
+let _schedPlatform = '';
+
+function openScheduleModal(captionText, platform) {
+  _schedCaption  = captionText;
+  _schedPlatform = platform || 'instagram';
+  document.getElementById('schedCaptionPreview').textContent = captionText;
+  // Set platform selector
+  const sel = document.getElementById('schedPlatform');
+  if (sel) sel.value = _schedPlatform;
+  // Default date/time: tomorrow at 10am
+  const tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  tomorrow.setHours(10, 0, 0, 0);
+  document.getElementById('schedDate').value = tomorrow.toISOString().split('T')[0];
+  document.getElementById('schedTime').value = '10:00';
+  document.getElementById('schedOverlay').classList.add('show');
+}
+
+function closeScheduleModal() {
+  document.getElementById('schedOverlay').classList.remove('show');
+}
+
+async function saveScheduledPost() {
+  const btn = document.getElementById('schedSaveBtn');
+  btn.disabled = true;
+  btn.textContent = 'Scheduling…';
+  const platform     = document.getElementById('schedPlatform').value;
+  const scheduledDate= document.getElementById('schedDate').value;
+  const scheduledTime= document.getElementById('schedTime').value;
+  const scheduledAt  = `${scheduledDate} ${scheduledTime}:00`;
+
+  try {
+    const r = await fetch('api/calendar.php', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + authToken
+      },
+      body: JSON.stringify({
+        platform,
+        caption: _schedCaption,
+        scheduled_at: scheduledAt,
+        status: 'scheduled'
+      })
+    });
+    const d = await r.json();
+    if (d.success) {
+      closeScheduleModal();
+      _showToast('📅 Scheduled! Check your Content Calendar.');
+    } else {
+      _showToast(d.error || 'Failed to schedule');
+    }
+  } catch(e) {
+    _showToast('Network error');
+  }
+  btn.disabled = false;
+  btn.textContent = '📅 Schedule Post';
+}
+
+// Hook into existing photo file input
+(function() {
+  const orig = window.onload;
+  window.addEventListener('DOMContentLoaded', () => {
+    const fi = document.getElementById('fileInput');
+    if (fi) {
+      fi.addEventListener('change', function() {
+        if (this.files && this.files[0]) {
+          const reader = new FileReader();
+          reader.onload = e => _onPhotoLoaded(e.target.result);
+          reader.readAsDataURL(this.files[0]);
+        }
+      });
+    }
+    // Burst drag-over styling
+    const bd = document.getElementById('burstDrop');
+    if (bd) {
+      bd.addEventListener('dragover', e => { e.preventDefault(); bd.classList.add('drag-over'); });
+      bd.addEventListener('dragleave', () => bd.classList.remove('drag-over'));
+      bd.addEventListener('drop', e => {
+        e.preventDefault();
+        bd.classList.remove('drag-over');
+        loadBurstImages(e.dataTransfer.files);
+      });
+    }
+  });
+})();
 </script>
+
+<!-- Schedule Modal -->
+<div class="sched-overlay" id="schedOverlay" onclick="if(event.target===this)closeScheduleModal()">
+  <div class="sched-modal">
+    <div class="sched-modal-title">📅 Schedule to Content Calendar</div>
+    <div class="sched-caption-preview" id="schedCaptionPreview"></div>
+    <div class="sched-row">
+      <div class="sched-field">
+        <label>Platform</label>
+        <select id="schedPlatform">
+          <option value="instagram">Instagram</option>
+          <option value="tiktok">TikTok</option>
+          <option value="linkedin">LinkedIn</option>
+          <option value="facebook">Facebook</option>
+          <option value="twitter">Twitter/X</option>
+          <option value="pinterest">Pinterest</option>
+          <option value="youtube">YouTube</option>
+        </select>
+      </div>
+    </div>
+    <div class="sched-row">
+      <div class="sched-field">
+        <label>Date</label>
+        <input type="date" id="schedDate">
+      </div>
+      <div class="sched-field">
+        <label>Time</label>
+        <input type="time" id="schedTime">
+      </div>
+    </div>
+    <div class="sched-modal-btns">
+      <button class="sched-cancel" onclick="closeScheduleModal()">Cancel</button>
+      <button class="sched-save" id="schedSaveBtn" onclick="saveScheduledPost()">📅 Schedule Post</button>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>

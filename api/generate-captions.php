@@ -96,6 +96,7 @@ $platform    = isset($input['platform'])  ? trim($input['platform'])  : 'Instagr
 $language    = isset($input['language'])  ? trim($input['language'])  : 'English';
 $tone        = isset($input['tone'])      ? trim($input['tone'])      : 'engaging';
 $context     = isset($input['context'])   ? trim($input['context'])   : '';
+$brandVoice  = isset($input['brand_voice']) ? substr(trim($input['brand_voice']), 0, 800) : '';
 
 // Validate base64 image (basic sanity check)
 if (strlen($imageBase64) < 100) {
@@ -132,7 +133,8 @@ $platformGuidelines = [
 ];
 $platGuide = $platformGuidelines[$platform] ?? $platformGuidelines['Instagram'];
 
-$contextNote = $context ? "\nExtra context from the user: \"$context\"" : '';
+$contextNote    = $context    ? "\nExtra context from the user: \"$context\""    : '';
+$brandVoiceNote = $brandVoice ? "\n\nIMPORTANT — Brand Voice DNA: The user has a saved brand voice profile. Match this voice and style closely in all 5 captions:\n\"$brandVoice\"" : '';
 
 $systemPrompt = "You are SnapCaption AI, an expert social media copywriter who creates platform-optimized captions from photos. You write natively in any language — not translations.";
 
@@ -140,7 +142,7 @@ $userPrompt = <<<PROMPT
 Analyze this photo and generate social media content for $platform in $language.
 
 Tone: $toneDesc
-Platform guidelines: $platGuide$contextNote
+Platform guidelines: $platGuide$contextNote$brandVoiceNote
 
 Return ONLY valid JSON (no markdown, no explanation) in exactly this format:
 {
