@@ -12,6 +12,8 @@
 <meta name="apple-mobile-web-app-title" content="SnapCaption">
 <link rel="apple-touch-icon" href="/icons/icon-192.png">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<!-- exifr: client-side EXIF reader for time-gap framing -->
+<script src="https://cdn.jsdelivr.net/npm/exifr/dist/full.esm.js" type="module" id="exifrModule"></script>
 <style>
   :root {
     --bg: #09090f;
@@ -1681,6 +1683,96 @@
   .mcta-btn:hover { opacity: .85; }
   /* Mobile: stack metrics below left column */
   @media(max-width:768px) { .metrics-panel { position: static; max-height: none; } }
+
+  /* ── EXIF Time-Gap Banner ───────────────────────────────── */
+  .exif-banner {
+    display: none; margin: 10px 16px 0;
+    background: rgba(245,158,11,.1); border: 1px solid rgba(245,158,11,.3);
+    border-radius: 10px; padding: 10px 14px;
+    display: none; align-items: center; gap: 10px; font-size: .82rem;
+  }
+  .exif-banner.show { display: flex; }
+  .exif-banner-text { flex: 1; color: var(--text); line-height: 1.4; }
+  .exif-banner-text strong { color: var(--yellow); }
+  .exif-toggle-btn {
+    background: rgba(245,158,11,.18); border: 1px solid rgba(245,158,11,.4);
+    color: var(--yellow); font-size: .78rem; font-weight: 700;
+    padding: 5px 10px; border-radius: 7px; cursor: pointer; white-space: nowrap;
+    transition: background .15s;
+  }
+  .exif-toggle-btn.on { background: rgba(245,158,11,.35); }
+  .exif-toggle-btn:hover { background: rgba(245,158,11,.3); }
+
+  /* ── 2-Question Interview Panel ────────────────────────── */
+  .interview-panel {
+    display: none; margin: 12px 16px 0;
+    background: var(--bg3); border: 1px solid var(--border2);
+    border-radius: 12px; padding: 14px 16px; gap: 12px;
+    flex-direction: column;
+  }
+  .interview-panel.show { display: flex; }
+  .interview-title {
+    font-size: .82rem; font-weight: 700; color: var(--grad2);
+    display: flex; align-items: center; gap: 7px;
+  }
+  .interview-title span { font-size: .72rem; color: var(--muted2); font-weight: 400; }
+  .interview-q {
+    font-size: .84rem; font-weight: 600; color: var(--text); margin-bottom: 6px;
+  }
+  .chip-row { display: flex; flex-wrap: wrap; gap: 7px; }
+  .chip {
+    background: var(--card); border: 1.5px solid var(--border2);
+    color: var(--muted2); font-size: .78rem; font-weight: 600;
+    padding: 5px 12px; border-radius: 20px; cursor: pointer;
+    transition: all .15s; user-select: none;
+  }
+  .chip:hover { border-color: var(--grad2); color: var(--text); }
+  .chip.selected {
+    background: rgba(168,85,247,.15); border-color: var(--grad2);
+    color: var(--grad2);
+  }
+  .interview-skip {
+    font-size: .74rem; color: var(--muted); background: none; border: none;
+    cursor: pointer; padding: 2px 0; text-decoration: underline; align-self: flex-start;
+  }
+  .interview-skip:hover { color: var(--muted2); }
+
+  /* ── Tone Toggle (Cringe Radar) ────────────────────────── */
+  .tone-toggle-wrap {
+    display: none; padding: 14px 16px;
+    border-top: 1px solid var(--border);
+    background: var(--bg3);
+  }
+  .tone-toggle-wrap.show { display: block; }
+  .tone-toggle-title {
+    font-size: .78rem; font-weight: 700; color: var(--muted2);
+    text-transform: uppercase; letter-spacing: .06em; margin-bottom: 10px;
+  }
+  .tone-btn-row { display: flex; gap: 8px; flex-wrap: wrap; }
+  .tone-btn {
+    flex: 1; min-width: 110px;
+    background: var(--card); border: 1.5px solid var(--border2);
+    color: var(--text); border-radius: 10px; padding: 9px 10px;
+    cursor: pointer; text-align: center; font-size: .78rem; font-weight: 600;
+    transition: all .17s; line-height: 1.35;
+  }
+  .tone-btn:hover { border-color: var(--grad2); background: rgba(168,85,247,.07); }
+  .tone-btn.active { border-color: var(--grad2); background: rgba(168,85,247,.15); color: var(--grad2); }
+  .tone-btn .tb-emoji { font-size: 1.1rem; display: block; margin-bottom: 2px; }
+  .tone-btn .tb-name { font-weight: 700; display: block; }
+  .tone-btn .tb-desc { font-size: .7rem; color: var(--muted2); display: block; margin-top: 1px; }
+  .tone-btn.active .tb-desc { color: rgba(168,85,247,.7); }
+  .tone-rewriting {
+    display: none; font-size: .78rem; color: var(--muted2);
+    margin-top: 8px; align-items: center; gap: 7px;
+  }
+  .tone-rewriting.show { display: flex; }
+  .tone-spin {
+    width: 14px; height: 14px; border-radius: 50%;
+    border: 2px solid rgba(168,85,247,.2);
+    border-top-color: var(--grad2);
+    animation: spin .7s linear infinite;
+  }
 </style>
 </head>
 <body>
@@ -2475,6 +2567,30 @@
         </div>
       </div>
 
+      <!-- EXIF Time-Gap Banner -->
+      <div class="exif-banner" id="exifBanner">
+        <span style="font-size:1.3rem;">📅</span>
+        <div class="exif-banner-text">
+          <strong>Old photo detected!</strong> This was taken <span id="exifAgo"></span> ago.
+          Add a "camera roll catch-up" framing to make it feel intentional.
+        </div>
+        <button class="exif-toggle-btn" id="exifToggleBtn" onclick="toggleExifFraming()">Add Framing</button>
+      </div>
+
+      <!-- 2-Question Interview Panel -->
+      <div class="interview-panel" id="interviewPanel">
+        <div class="interview-title">🎯 Quick Context — <span>2 questions to sharpen your caption</span></div>
+        <div id="interviewQ1Wrap">
+          <div class="interview-q" id="interviewQ1Text"></div>
+          <div class="chip-row" id="interviewQ1Chips"></div>
+        </div>
+        <div id="interviewQ2Wrap" style="display:none;">
+          <div class="interview-q" id="interviewQ2Text"></div>
+          <div class="chip-row" id="interviewQ2Chips"></div>
+        </div>
+        <button class="interview-skip" onclick="skipInterview()">Skip — just generate captions</button>
+      </div>
+
       <!-- Generate Button (premium users) -->
       <button class="gen-btn" id="genBtn" onclick="generateCaptions()">
         <div class="spinner" id="btnSpinner"></div>
@@ -2901,8 +3017,215 @@
       document.getElementById('bgSwapWrap').classList.add('active');
       closeBgResult();
       initBgSwapUI();
+      // Reset interview & EXIF state for new photo
+      resetInterviewState();
+      // Read EXIF timestamp (async, non-blocking)
+      checkExifTimestamp(file);
+      // Show interview panel with smart context questions
+      showInterviewPanel(file);
     };
     reader.readAsDataURL(file);
+  }
+
+  // ── EXIF Time-Gap Framing ──────────────────────────────
+  let exifFramingEnabled = false;
+  let exifDaysAgo = 0;
+
+  async function checkExifTimestamp(file) {
+    try {
+      // Use dynamic import for exifr (ES module via CDN)
+      const exifr = await import('https://cdn.jsdelivr.net/npm/exifr/dist/full.esm.js');
+      const tags = await exifr.parse(file, ['DateTimeOriginal','CreateDate']);
+      const dt = tags?.DateTimeOriginal || tags?.CreateDate;
+      if (!dt) return;
+      const photoDate = dt instanceof Date ? dt : new Date(dt);
+      if (isNaN(photoDate)) return;
+      const now = new Date();
+      const diffMs = now - photoDate;
+      const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+      if (diffDays >= 5) {
+        exifDaysAgo = diffDays;
+        const agoText = diffDays < 30
+          ? diffDays + ' day' + (diffDays !== 1 ? 's' : '')
+          : diffDays < 365
+            ? Math.floor(diffDays / 30) + ' month' + (Math.floor(diffDays / 30) !== 1 ? 's' : '')
+            : (diffDays / 365).toFixed(1).replace('.0','') + ' year' + (diffDays >= 730 ? 's' : '');
+        document.getElementById('exifAgo').textContent = agoText;
+        document.getElementById('exifBanner').classList.add('show');
+      }
+    } catch(e) {
+      // exifr unavailable or no EXIF — silent fail
+    }
+  }
+
+  function toggleExifFraming() {
+    exifFramingEnabled = !exifFramingEnabled;
+    const btn = document.getElementById('exifToggleBtn');
+    btn.textContent = exifFramingEnabled ? '✓ Framing On' : 'Add Framing';
+    btn.classList.toggle('on', exifFramingEnabled);
+  }
+
+  // ── 2-Question Interview Flow ──────────────────────────
+  // Interview state
+  let interviewAnswers = { q1: '', q2: '' };
+  let interviewSkipped = false;
+
+  // Static question bank keyed by photo type (detected via basic heuristics)
+  // In future: replace with API call to analyze image first
+  const INTERVIEW_BANKS = {
+    default: [
+      {
+        q: 'What's the main vibe of this photo?',
+        chips: ['Casual / everyday', 'Achievement / milestone', 'Travel / adventure', 'Food / dining', 'Work / professional', 'Nature / outdoors']
+      },
+      {
+        q: 'Who is this post for?',
+        chips: ['My followers who know me', 'New audience / discovery', 'Work contacts', 'Close friends / family', 'Everyone / general']
+      }
+    ],
+    food: [
+      {
+        q: 'What's the food story here?',
+        chips: ['Made it myself 🍳', 'Restaurant find 🍽️', 'Trying something new', 'Old comfort food', 'Special occasion']
+      },
+      {
+        q: 'What do you want people to do?',
+        chips: ['Try the recipe', 'Visit this place', 'Comment their fave dish', 'Just enjoy the vibes', 'Save for later']
+      }
+    ],
+    selfie: [
+      {
+        q: 'What's the energy in this photo?',
+        chips: ['Good day 😊', 'Big announcement', 'Just felt cute', 'After a workout', 'Dressed up occasion']
+      },
+      {
+        q: 'What do you want to say?',
+        chips: ['Celebrating something', 'Being real / vulnerable', 'Showing off a look', 'Feeling grateful', 'Just sharing my day']
+      }
+    ]
+  };
+
+  function showInterviewPanel(file) {
+    // Show after a slight delay so photo preview loads first
+    setTimeout(() => {
+      const panel = document.getElementById('interviewPanel');
+      const bank = INTERVIEW_BANKS.default; // future: detect food/selfie from filename or size
+      // Load Q1
+      document.getElementById('interviewQ1Text').textContent = bank[0].q;
+      const q1Chips = document.getElementById('interviewQ1Chips');
+      q1Chips.innerHTML = bank[0].chips.map(c =>
+        `<div class="chip" onclick="selectChip(this,'q1','${escAttrInline(c)}')">${c}</div>`
+      ).join('');
+      // Q2 loaded after Q1 answer
+      const bank2 = bank[1];
+      document.getElementById('interviewQ2Text').textContent = bank2.q;
+      const q2Chips = document.getElementById('interviewQ2Chips');
+      q2Chips.innerHTML = bank2.chips.map(c =>
+        `<div class="chip" onclick="selectChip(this,'q2','${escAttrInline(c)}')">${c}</div>`
+      ).join('');
+      panel.classList.add('show');
+    }, 400);
+  }
+
+  function escAttrInline(str) {
+    return str.replace(/'/g,"&#39;").replace(/"/g,'&quot;');
+  }
+
+  function selectChip(el, qKey, value) {
+    // Deselect siblings
+    el.closest('.chip-row').querySelectorAll('.chip').forEach(c => c.classList.remove('selected'));
+    el.classList.add('selected');
+    interviewAnswers[qKey] = value;
+    if (qKey === 'q1') {
+      // Reveal Q2
+      document.getElementById('interviewQ2Wrap').style.display = 'block';
+    }
+  }
+
+  function skipInterview() {
+    interviewSkipped = true;
+    document.getElementById('interviewPanel').classList.remove('show');
+  }
+
+  function resetInterviewState() {
+    interviewAnswers = { q1: '', q2: '' };
+    interviewSkipped = false;
+    exifFramingEnabled = false;
+    exifDaysAgo = 0;
+    document.getElementById('exifBanner').classList.remove('show');
+    document.getElementById('exifToggleBtn').textContent = 'Add Framing';
+    document.getElementById('exifToggleBtn').classList.remove('on');
+    document.getElementById('interviewPanel').classList.remove('show');
+    document.getElementById('interviewQ2Wrap').style.display = 'none';
+  }
+
+  // ── Tone Toggle (Cringe Radar) ─────────────────────────
+  let _lastCaptionTexts = [];
+
+  function rewriteTone(btn, toneKey) {
+    // Toggle off if already active
+    const allToneBtns = document.querySelectorAll('.tone-btn');
+    const wasActive = btn.classList.contains('active');
+    allToneBtns.forEach(b => b.classList.remove('active'));
+    if (wasActive) {
+      // Restore originals
+      restoreCaptionsFromCache();
+      return;
+    }
+    btn.classList.add('active');
+    doToneRewrite(toneKey);
+  }
+
+  async function doToneRewrite(toneKey) {
+    if (!_lastCaptionTexts.length) return;
+    const toneRewriting = document.getElementById('toneRewriting');
+    toneRewriting.classList.add('show');
+
+    const tonePromptMap = {
+      'close-friends': 'Rewrite in a super casual, lowercase, authentic close-friends style. No corporate words. Sound like a real person texting a friend. Keep emojis natural. No hashtags in the caption text.',
+      'coworker-safe': 'Rewrite in a warm but professional tone suitable to share with coworkers or on LinkedIn. Clear, positive, no slang. Can keep 1-2 tasteful emojis.',
+      'minimalist': 'Rewrite as ultra-minimalist captions. Very short (under 15 words each). No hashtags. Almost no emojis. Let white space and simplicity carry the feeling.'
+    };
+
+    const toneInstruction = tonePromptMap[toneKey] || '';
+
+    // Build the original captions as a numbered list for the prompt
+    const captionsText = _lastCaptionTexts.map((t, i) => `${i+1}. ${t}`).join('\n');
+
+    let rewritten = null;
+    try {
+      const headers = { 'Content-Type': 'application/json' };
+      if (typeof authToken !== 'undefined' && authToken) headers['Authorization'] = 'Bearer ' + authToken;
+      const res = await fetch('api/rewrite-tone.php', {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({ captions: _lastCaptionTexts, tone_key: toneKey, tone_instruction: toneInstruction })
+      });
+      const json = await res.json();
+      rewritten = json.captions;
+    } catch(e) {
+      // Fallback: show notice
+    }
+
+    toneRewriting.classList.remove('show');
+
+    if (rewritten && Array.isArray(rewritten)) {
+      // Update caption text in DOM
+      const capEls = document.querySelectorAll('#captionResults .cap-text');
+      rewritten.forEach((text, i) => {
+        if (capEls[i]) capEls[i].textContent = text;
+        // Update copy buttons' onclick too
+        const copyBtn = capEls[i]?.closest('.caption-item')?.querySelector('.cap-btn');
+        if (copyBtn) copyBtn.setAttribute('onclick', `copyCaption(this,'${escAttr(text)}')`);
+      });
+    }
+  }
+
+  function restoreCaptionsFromCache() {
+    const capEls = document.querySelectorAll('#captionResults .cap-text');
+    _lastCaptionTexts.forEach((text, i) => {
+      if (capEls[i]) capEls[i].textContent = text;
+    });
   }
 
   // ── Mic Input ──────────────────────────────────────────
@@ -3026,7 +3349,25 @@
     const platform = document.getElementById('platformSel').value;
     const language = document.getElementById('langSel').value;
     const tone     = document.getElementById('toneSel').value;
-    const context  = document.getElementById('contextInput').value;
+    let   context  = document.getElementById('contextInput').value;
+
+    // Inject interview answers into context
+    if (interviewAnswers.q1 || interviewAnswers.q2) {
+      const ivParts = [];
+      if (interviewAnswers.q1) ivParts.push('Vibe: ' + interviewAnswers.q1);
+      if (interviewAnswers.q2) ivParts.push('Audience: ' + interviewAnswers.q2);
+      const ivStr = ivParts.join('. ');
+      context = context ? context + '. ' + ivStr : ivStr;
+    }
+
+    // Inject EXIF time-gap framing
+    if (exifFramingEnabled && exifDaysAgo >= 5) {
+      const framingNote = `This photo is from ${exifDaysAgo} days ago — use a "camera roll catch-up" framing to make it feel intentional, like "finally posting this gem 📸" or "this deserved a belated post".`;
+      context = context ? context + '. ' + framingNote : framingNote;
+    }
+
+    // Hide interview panel once generating
+    document.getElementById('interviewPanel').classList.remove('show');
 
     let data = null;
     let apiError = null;
@@ -3076,6 +3417,10 @@
 
     hideLoading();
     renderResults(data, platform);
+    // Cache caption texts for tone toggle rewriting
+    if (data.captions && data.captions.length) {
+      _lastCaptionTexts = data.captions.map(c => c.text);
+    }
     updateCaptionScoreWidget(data, platform);
     btn.disabled = false;
     spinner.style.display = 'none';
@@ -3220,6 +3565,31 @@
           <span class="plat-badge">${icon} ${platform}</span>
         </div>
         ${captionHTML}
+        <!-- Tone Toggle (Cringe Radar) -->
+        <div class="tone-toggle-wrap show" id="toneToggleWrap">
+          <div class="tone-toggle-title">🎚️ Rewrite Tone</div>
+          <div class="tone-btn-row">
+            <button class="tone-btn" data-tone="close-friends" onclick="rewriteTone(this,'close-friends')">
+              <span class="tb-emoji">👯</span>
+              <span class="tb-name">Close Friends</span>
+              <span class="tb-desc">casual · lowercase · real</span>
+            </button>
+            <button class="tone-btn" data-tone="coworker-safe" onclick="rewriteTone(this,'coworker-safe')">
+              <span class="tb-emoji">💼</span>
+              <span class="tb-name">Coworker-Safe</span>
+              <span class="tb-desc">warm · polished · pro</span>
+            </button>
+            <button class="tone-btn" data-tone="minimalist" onclick="rewriteTone(this,'minimalist')">
+              <span class="tb-emoji">🤍</span>
+              <span class="tb-name">Minimalist</span>
+              <span class="tb-desc">subtle · clean · quiet</span>
+            </button>
+          </div>
+          <div class="tone-rewriting" id="toneRewriting">
+            <div class="tone-spin"></div>
+            <span>Rewriting captions…</span>
+          </div>
+        </div>
       </div>
 
       <!-- Hashtags -->
