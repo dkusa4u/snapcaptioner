@@ -11,7 +11,13 @@
  * Steps:
  *   1. Add to api/config.php:
  *        define('SETUP_TOKEN',   'your-random-secret');
- *        define('RAPIDAPI_KEY',  '');  // Optional: RapidAPI key for live hashtag volumes
+ *        define('RAPIDAPI_KEY',        '');  // Optional: RapidAPI key for live hashtag volumes
+ *        define('META_APP_ID',         '');  // Optional: Meta App ID for Instagram direct publish (Feature 4)
+ *        define('META_APP_SECRET',     '');  // Meta App Secret
+ *        define('PINTEREST_APP_ID',    '');  // Optional: Pinterest App ID (Feature 4)
+ *        define('PINTEREST_APP_SECRET','');  // Pinterest App Secret
+ *        define('PHOTOROOM_API_KEY',  '');  // Optional: Photoroom API key (Feature 5 — AI Relight)
+ *                                     // Get key at app.photoroom.com/api
  *                                     // Get key at rapidapi.com → "Instagram Scraper API2"
  *   2. Visit https://yourdomain.com/api/setup.php?token=your-random-secret
  *   3. Confirm all tables show ✓
@@ -85,7 +91,7 @@ if (!$expected || $provided !== $expected) {
       initDB();
       $db = getDB();
 
-      $tables = ['users', 'tokens', 'captions', 'usage_log'];
+      $tables = ['users', 'tokens', 'captions', 'usage_log', 'social_connections'];
       foreach ($tables as $t) {
           $stmt = $db->query("SHOW TABLES LIKE " . $db->quote($t));
           $found = ($stmt->rowCount() > 0);

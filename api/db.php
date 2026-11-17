@@ -96,12 +96,30 @@ function initDB(): void {
             created_at DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
             FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+        CREATE TABLE IF NOT EXISTS social_connections (
+            id           INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+            user_id      INT UNSIGNED  NOT NULL,
+            platform     VARCHAR(20)   NOT NULL COMMENT 'instagram | pinterest',
+            access_token TEXT          NOT NULL,
+            account_id   VARCHAR(128)  NOT NULL COMMENT 'IG user id or Pinterest user id',
+            account_name VARCHAR(128)  NOT NULL DEFAULT '',
+            page_id      VARCHAR(128)  NULL COMMENT 'FB Page id (Instagram only)',
+            extra_data   TEXT          NULL COMMENT 'JSON — boards list, etc.',
+            expires_at   DATETIME      NULL,
+            created_at   DATETIME      NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            updated_at   DATETIME      NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            UNIQUE KEY uq_user_platform (user_id, platform),
+            FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
     ");
 
     // Migrate ENUM to include new plans (safe no-op if already migrated)
     migratePlansEnum($db);
     // Migrate users table to add Stripe columns (safe no-op if already present)
     migrateStripeColumns($db);
+    // Migrate social_connections table (safe no-op for new installs)
+    migrateSocialConnections($db);
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -177,6 +195,31 @@ function migrateStripeColumns(PDO $db): void {
             ADD COLUMN IF NOT EXISTS stripe_sub_id      VARCHAR(64) NULL");
     } catch (PDOException $e) {
         // Already present — ignore
+    }
+}
+
+function migrateSocialConnections(PDO $db): void {
+    try {
+        // Ensure the table exists even on installations that ran setup before Feature 4
+        $db->exec("
+            CREATE TABLE IF NOT EXISTS social_connections (
+                id           INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+                user_id      INT UNSIGNED  NOT NULL,
+                platform     VARCHAR(20)   NOT NULL,
+                access_token TEXT          NOT NULL,
+                account_id   VARCHAR(128)  NOT NULL,
+                account_name VARCHAR(128)  NOT NULL DEFAULT '',
+                page_id      VARCHAR(128)  NULL,
+                extra_data   TEXT          NULL,
+                expires_at   DATETIME      NULL,
+                created_at   DATETIME      NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                updated_at   DATETIME      NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                UNIQUE KEY uq_user_platform (user_id, platform),
+                FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+        ");
+    } catch (PDOException $e) {
+        error_log('migrateSocialConnections: ' . $e->getMessage());
     }
 }
 
