@@ -458,6 +458,228 @@
   .enh-btn:hover { opacity: .9; }
   .enh-note { font-size: .82rem; color: #b0b8d0; text-align: center; margin-top: 8px; }
 
+  /* RELIGHT PANEL */
+  .relight-block {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 16px; overflow: hidden; margin-top: 16px;
+  }
+  .relight-header {
+    padding: 13px 16px; border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .relight-header .rl-badge {
+    font-size: .72rem; font-weight: 700; padding: 2px 8px;
+    border-radius: 20px; background: linear-gradient(135deg,#b060f0,#7040e0);
+    color: #fff; letter-spacing: .04em; text-transform: uppercase;
+  }
+  .relight-header span { font-size: .95rem; font-weight: 600; flex: 1; }
+  .relight-body { padding: 14px 16px; }
+  .rl-mode-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 10px; }
+  .rl-mode-btn {
+    flex: 1; min-width: 90px; padding: 7px 10px; border-radius: 10px;
+    border: 1.5px solid var(--border); background: var(--bg);
+    color: var(--text); font-size: .82rem; cursor: pointer;
+    text-align: center; transition: all .18s;
+  }
+  .rl-mode-btn.active, .rl-mode-btn:hover {
+    border-color: #b060f0; background: rgba(176,96,240,.12); color: #d090ff;
+  }
+  .rl-bg-row { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+  .rl-bg-row label { font-size: .84rem; color: var(--text-muted); white-space: nowrap; }
+  .rl-bg-row input[type=checkbox] { accent-color: #b060f0; width: 16px; height: 16px; cursor: pointer; }
+  .rl-prompt-wrap { margin-bottom: 12px; display: none; }
+  .rl-prompt-wrap.visible { display: block; }
+  .rl-prompt { width: 100%; padding: 8px 12px; border-radius: 10px;
+    border: 1.5px solid var(--border); background: var(--bg); color: var(--text);
+    font-size: .84rem; resize: none; height: 56px; }
+  .rl-prompt::placeholder { color: var(--text-muted); }
+  .rl-action-btn {
+    width: 100%; padding: 10px; border-radius: 12px; border: none;
+    background: linear-gradient(135deg,#b060f0,#7040e0);
+    color: #fff; font-size: .92rem; font-weight: 700; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    transition: opacity .18s;
+  }
+  .rl-action-btn:disabled { opacity: .5; cursor: not-allowed; }
+  .rl-action-btn:hover:not(:disabled) { opacity: .88; }
+  .rl-preview { margin-top: 12px; display: none; }
+  .rl-preview.visible { display: block; }
+  .rl-preview img { width: 100%; border-radius: 10px; border: 1px solid var(--border); }
+  .rl-preview-actions { display: flex; gap: 8px; margin-top: 8px; }
+  .rl-use-btn, .rl-dl-btn {
+    flex: 1; padding: 8px; border-radius: 10px; border: none;
+    font-size: .84rem; font-weight: 600; cursor: pointer; transition: opacity .18s;
+  }
+  .rl-use-btn { background: linear-gradient(135deg,#b060f0,#7040e0); color: #fff; }
+  .rl-dl-btn  { background: var(--bg); border: 1.5px solid var(--border); color: var(--text); }
+  .rl-use-btn:hover, .rl-dl-btn:hover { opacity: .82; }
+  .rl-note { font-size: .79rem; color: var(--text-muted); text-align: center; margin-top: 8px; }
+  .relight-locked {
+    padding: 14px 16px; font-size: .85rem; color: var(--text-muted); text-align: center;
+  }
+  .relight-locked a { color: #b060f0; font-weight: 600; }
+
+  /* SOCIAL PUBLISH PANEL */
+  .social-pub-block {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 16px; overflow: hidden;
+  }
+  .social-pub-header {
+    padding: 13px 16px; border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .social-pub-header .pub-badge {
+    margin-left: auto; font-size: .68rem; font-weight: 700;
+    padding: 2px 8px; border-radius: 20px;
+    background: rgba(168,85,247,.15); color: #c084fc; border: 1px solid rgba(168,85,247,.2);
+  }
+  .social-pub-body { padding: 14px 16px; display: flex; flex-direction: column; gap: 10px; }
+  .social-row {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 12px; border-radius: 10px;
+    background: rgba(255,255,255,.03); border: 1px solid rgba(255,255,255,.06);
+  }
+  .social-row .soc-icon { font-size: 1.3rem; flex-shrink: 0; }
+  .social-row .soc-info { flex: 1; min-width: 0; }
+  .social-row .soc-name { font-size: .82rem; font-weight: 700; color: var(--text); }
+  .social-row .soc-acct { font-size: .72rem; color: var(--muted); margin-top: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .soc-connect-btn {
+    padding: 5px 12px; border-radius: 7px; border: 1px solid rgba(168,85,247,.4);
+    background: transparent; color: var(--grad1); font-size: .74rem; font-weight: 700;
+    cursor: pointer; white-space: nowrap; transition: all .2s;
+  }
+  .soc-connect-btn:hover { background: rgba(168,85,247,.1); border-color: rgba(168,85,247,.6); }
+  .soc-publish-btn {
+    padding: 5px 12px; border-radius: 7px; border: none;
+    background: linear-gradient(135deg,var(--grad1),var(--grad2));
+    color: #fff; font-size: .74rem; font-weight: 700;
+    cursor: pointer; white-space: nowrap; transition: opacity .2s;
+  }
+  .soc-publish-btn:hover { opacity: .88; }
+  .soc-publish-btn:disabled { opacity: .45; cursor: not-allowed; }
+  .soc-disc-btn {
+    padding: 4px 9px; border-radius: 6px; border: 1px solid rgba(248,113,113,.3);
+    background: transparent; color: #f87171; font-size: .68rem; cursor: pointer;
+  }
+  .soc-disc-btn:hover { background: rgba(248,113,113,.08); }
+  .social-pub-locked {
+    text-align: center; padding: 14px 10px; font-size: .78rem; color: var(--muted);
+  }
+  .social-pub-locked a { color: var(--grad2); font-weight: 600; }
+  .pub-select-row { display: flex; align-items: center; gap: 8px; }
+  .pub-board-sel {
+    flex: 1; padding: 5px 9px; border-radius: 7px;
+    background: rgba(255,255,255,.05); border: 1px solid var(--border);
+    color: var(--text); font-size: .74rem; font-family: inherit;
+  }
+  .pub-board-sel:focus { outline: none; border-color: rgba(168,85,247,.4); }
+
+  /* ─── BRAND KIT CAROUSEL DESIGNER (Feature 6) ─── */
+  .bk-block {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 16px; overflow: hidden; margin-top: 16px;
+  }
+  .bk-header {
+    padding: 13px 16px; border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 8px; cursor: pointer;
+    user-select: none;
+  }
+  .bk-header .bk-badge {
+    font-size: .72rem; font-weight: 700; padding: 2px 8px; border-radius: 20px;
+    background: linear-gradient(135deg,#f0a060,#e06030); color: #fff;
+    letter-spacing: .04em; text-transform: uppercase;
+  }
+  .bk-header span { font-size: .95rem; font-weight: 600; flex: 1; }
+  .bk-toggle-icon { font-size: .85rem; transition: transform .2s; }
+  .bk-toggle-icon.open { transform: rotate(180deg); }
+  .bk-body { display: none; padding: 14px 16px; }
+  .bk-body.open { display: block; }
+  .bk-locked { padding: 14px 16px; font-size: .85rem; color: var(--text-muted); text-align: center; }
+  .bk-locked a { color: #f0a060; font-weight: 600; }
+
+  /* Brand Kit settings row */
+  .bk-settings { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+  .bk-field label { display: block; font-size: .75rem; color: var(--text-muted); margin-bottom: 4px; }
+  .bk-field input[type=text], .bk-field select {
+    width: 100%; padding: 7px 10px; border-radius: 9px;
+    border: 1.5px solid var(--border); background: var(--bg);
+    color: var(--text); font-size: .82rem; font-family: inherit;
+  }
+  .bk-colors { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 12px; }
+  .bk-color-swatch {
+    width: 32px; height: 32px; border-radius: 8px; cursor: pointer;
+    border: 2px solid transparent; transition: border-color .15s; position: relative;
+  }
+  .bk-color-swatch.active { border-color: #fff; }
+  .bk-color-swatch input[type=color] {
+    position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
+  }
+  .bk-color-label { font-size: .75rem; color: var(--text-muted); margin-right: 4px; }
+
+  /* Slide strip */
+  .bk-slide-strip {
+    display: flex; gap: 8px; overflow-x: auto; padding-bottom: 8px; margin-bottom: 10px;
+  }
+  .bk-slide-thumb {
+    min-width: 72px; height: 72px; border-radius: 9px; cursor: pointer;
+    border: 2px solid transparent; overflow: hidden; position: relative; flex-shrink: 0;
+    background: var(--bg);
+  }
+  .bk-slide-thumb.active { border-color: #f0a060; }
+  .bk-slide-thumb canvas { width: 72px; height: 72px; display: block; }
+  .bk-slide-del {
+    position: absolute; top: 2px; right: 2px; background: rgba(0,0,0,.55);
+    color: #fff; border: none; border-radius: 4px; font-size: .6rem;
+    padding: 1px 4px; cursor: pointer; display: none;
+  }
+  .bk-slide-thumb:hover .bk-slide-del { display: block; }
+  .bk-add-slide {
+    min-width: 72px; height: 72px; border-radius: 9px; cursor: pointer;
+    border: 2px dashed var(--border); background: transparent; color: var(--text-muted);
+    font-size: 1.5rem; display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; transition: border-color .18s;
+  }
+  .bk-add-slide:hover { border-color: #f0a060; color: #f0a060; }
+
+  /* Canvas editor */
+  .bk-canvas-wrap {
+    position: relative; border-radius: 12px; overflow: hidden;
+    border: 1.5px solid var(--border); margin-bottom: 10px;
+    background: #000; aspect-ratio: 1 / 1;
+  }
+  #bkCanvas { display: block; width: 100%; height: auto; cursor: text; }
+
+  /* Text layers list */
+  .bk-layers { margin-bottom: 10px; display: flex; flex-direction: column; gap: 6px; }
+  .bk-layer-row {
+    display: flex; align-items: center; gap: 7px;
+    background: rgba(255,255,255,.04); border-radius: 8px; padding: 7px 10px;
+    border: 1px solid var(--border);
+  }
+  .bk-layer-row input[type=text] {
+    flex: 1; background: transparent; border: none; color: var(--text);
+    font-size: .84rem; outline: none; font-family: inherit;
+  }
+  .bk-layer-del { background: none; border: none; color: #f87171; cursor: pointer; font-size: .9rem; }
+  .bk-add-text-btn {
+    width: 100%; padding: 7px; border-radius: 9px; border: 1.5px dashed var(--border);
+    background: transparent; color: var(--text-muted); font-size: .82rem; cursor: pointer;
+    transition: border-color .18s;
+  }
+  .bk-add-text-btn:hover { border-color: #f0a060; color: #f0a060; }
+
+  /* Bottom actions */
+  .bk-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+  .bk-btn {
+    flex: 1; min-width: 110px; padding: 9px 12px; border-radius: 11px; border: none;
+    font-size: .84rem; font-weight: 700; cursor: pointer; transition: opacity .18s;
+  }
+  .bk-btn:hover { opacity: .82; }
+  .bk-btn-export { background: linear-gradient(135deg,#f0a060,#e06030); color: #fff; }
+  .bk-btn-save   { background: rgba(255,255,255,.08); color: var(--text); border: 1.5px solid var(--border); }
+  .bk-btn-load   { background: rgba(255,255,255,.08); color: var(--text); border: 1.5px solid var(--border); }
+  .bk-status { font-size: .78rem; color: var(--text-muted); text-align: center; margin-top: 6px; min-height: 1.2em; }
+
   /* LOADING OVERLAY */
   #loadingOverlay {
     display: none; position: fixed; inset: 0; z-index: 200;
@@ -3823,8 +4045,432 @@
           </div>
         </div>
       </div>`}
+
+      <!-- AI Relight Panel (Pro/Teams) -->
+      ${_relightPanel()}
+
+      <!-- Brand Kit Carousel Designer (Pro/Teams) -->
+      ${_brandKitPanel()}
+
+      <!-- Direct Publish Panel (Pro/Teams) -->
+      ${_socialPubPanel(platform)}
     `;
+
+    // Load live connection status into the publish panel
+    if (currentUser?.plan === 'pro' || currentUser?.plan === 'teams') {
+      loadSocialStatus();
+    }
   }
+
+  /* ═══════════════════════════════════════════════════════════════════
+     FEATURE 5 — AI Photo Relighting (Pro/Teams)
+     ═══════════════════════════════════════════════════════════════════ */
+
+  let _relightResult = null; // last relit image base64
+
+  function _relightPanel() {
+    const isPro = currentUser?.plan === 'pro' || currentUser?.plan === 'teams';
+    if (!isPro) return `
+      <div class="relight-block">
+        <div class="relight-header">
+          <span>✨ AI Photo Relight</span>
+          <span class="rl-badge">PRO</span>
+        </div>
+        <div class="relight-locked">
+          🔒 Fix bad lighting, add studio glow, swap backgrounds with AI.
+          <a href="#pricing">Upgrade to Pro</a> to unlock.
+        </div>
+      </div>`;
+
+    return `
+      <div class="relight-block">
+        <div class="relight-header">
+          <span>✨ AI Photo Relight</span>
+          <span class="rl-badge">PRO</span>
+        </div>
+        <div class="relight-body">
+          <div class="rl-mode-row">
+            <button class="rl-mode-btn active" onclick="rlSetMode('ai.auto',this)" title="Best all-round relighting">🔆 Auto</button>
+            <button class="rl-mode-btn" onclick="rlSetMode('ai.preserve-hue-and-saturation',this)" title="Keeps exact product colors">🎨 Color-Safe</button>
+            <button class="rl-mode-btn" onclick="rlSetMode('ai.optimize-portrait',this)" title="Optimised for people">👤 Portrait</button>
+          </div>
+          <div class="rl-bg-row">
+            <input type="checkbox" id="rlRemoveBg" onchange="rlToggleBg(this.checked)">
+            <label for="rlRemoveBg">Replace background with AI</label>
+          </div>
+          <div class="rl-prompt-wrap" id="rlPromptWrap">
+            <textarea class="rl-prompt" id="rlBgPrompt" placeholder="Describe background: e.g. clean white studio, marble countertop, neon city night..."></textarea>
+          </div>
+          <button class="rl-action-btn" id="rlRunBtn" onclick="runRelight()">
+            <span id="rlBtnIcon">✨</span> Relight Photo
+          </button>
+          <div class="rl-preview" id="rlPreview">
+            <img id="rlResultImg" src="" alt="Relit photo">
+            <div class="rl-preview-actions">
+              <button class="rl-use-btn" onclick="rlUseResult()">✅ Use This Photo</button>
+              <button class="rl-dl-btn" onclick="rlDownload()">⬇ Download</button>
+            </div>
+          </div>
+          <div class="rl-note" id="rlNote">Pro: 10 relights/day</div>
+        </div>
+      </div>`;
+  }
+
+  let _rlMode = 'ai.auto';
+
+  function rlSetMode(mode, btn) {
+    _rlMode = mode;
+    document.querySelectorAll('.rl-mode-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  }
+
+  function rlToggleBg(checked) {
+    const wrap = document.getElementById('rlPromptWrap');
+    if (wrap) wrap.classList.toggle('visible', checked);
+  }
+
+  async function runRelight() {
+    const imgEl = document.getElementById('photoPreview');
+    if (!imgEl || !imgEl.src || imgEl.src.startsWith('data:,')) {
+      alert('Please upload a photo first.'); return;
+    }
+
+    const btn    = document.getElementById('rlRunBtn');
+    const icon   = document.getElementById('rlBtnIcon');
+    const note   = document.getElementById('rlNote');
+    const removeBg = document.getElementById('rlRemoveBg')?.checked || false;
+    const bgPrompt = document.getElementById('rlBgPrompt')?.value?.trim() || '';
+
+    btn.disabled = true;
+    icon.textContent = '⏳';
+    btn.childNodes[1].textContent = ' Relighting…';
+    if (note) note.textContent = 'Processing — this takes a few seconds…';
+
+    try {
+      // Get current image as base64 (use originalImageBase64 if available)
+      let imageB64 = window.originalImageBase64 || null;
+      if (!imageB64) {
+        // Fallback: draw canvas from img element
+        const canvas = document.createElement('canvas');
+        canvas.width  = imgEl.naturalWidth  || imgEl.width;
+        canvas.height = imgEl.naturalHeight || imgEl.height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(imgEl, 0, 0);
+        imageB64 = canvas.toDataURL('image/jpeg', 0.92);
+      }
+
+      const res = await fetch('/api/relight.php', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + (authToken || currentToken || ''),
+        },
+        body: JSON.stringify({
+          image_b64:         imageB64,
+          lighting_mode:     _rlMode,
+          remove_background: removeBg,
+          bg_prompt:         bgPrompt,
+          max_size:          1200,
+        }),
+      });
+
+      const data = await res.json();
+      if (!res.ok || !data.success) throw new Error(data.error || 'Relight failed');
+
+      _relightResult = data.image_b64;
+
+      // Show preview
+      const previewEl = document.getElementById('rlPreview');
+      const imgOut    = document.getElementById('rlResultImg');
+      if (imgOut)  imgOut.src = _relightResult;
+      if (previewEl) previewEl.classList.add('visible');
+
+      const remaining = data.remaining ?? '—';
+      if (note) note.textContent = `✅ Done! ${remaining} relight${remaining === 1 ? '' : 's'} remaining today`;
+
+    } catch (err) {
+      console.error('Relight error:', err);
+      if (note) note.textContent = '❌ ' + (err.message || 'Relight failed');
+    } finally {
+      btn.disabled = false;
+      icon.textContent = '✨';
+      btn.childNodes[1].textContent = ' Relight Photo';
+    }
+  }
+
+  function rlUseResult() {
+    if (!_relightResult) return;
+    // Replace the current photo with the relit version
+    const imgEl = document.getElementById('photoPreview');
+    if (imgEl) {
+      imgEl.src = _relightResult;
+      window.currentImageBase64    = _relightResult;
+      window.originalImageBase64   = _relightResult;
+    }
+    const note = document.getElementById('rlNote');
+    if (note) note.textContent = '✅ Relit photo is now your active photo!';
+  }
+
+  function rlDownload() {
+    if (!_relightResult) return;
+    const a    = document.createElement('a');
+    a.href     = _relightResult;
+    a.download = 'snapcaptioner-relit.png';
+    a.click();
+  }
+
+  /* ═══════════════════════════════════════════════════════════════════
+     FEATURE 4 — Direct API Auto-Publish (Pro/Teams)
+     ═══════════════════════════════════════════════════════════════════ */
+
+  // State: { instagram: {connected, account_name, boards:[{id,name}]}, pinterest: {...} }
+  let _socialConnections = {};
+
+  function _socialPubPanel(platform) {
+    const isPro = currentUser?.plan === 'pro' || currentUser?.plan === 'teams';
+    if (!isPro) return `
+      <div class="social-pub-block">
+        <div class="social-pub-header">
+          <span style="font-size:.88rem;font-weight:700;">🚀 Publish Directly</span>
+          <span class="pub-badge">PRO</span>
+        </div>
+        <div class="social-pub-locked">
+          🔒 Connect Instagram & Pinterest and publish with one click.
+          <br><a href="pricing.html">Upgrade to Pro to unlock</a>
+        </div>
+      </div>`;
+
+    // Shows skeleton; loadSocialStatus() fills in live data
+    const igRow  = _socialRow('instagram', '📸', 'Instagram', platform);
+    const pinRow = platform === 'Pinterest'
+      ? _socialRow('pinterest', '📌', 'Pinterest', platform)
+      : _socialRow('pinterest', '📌', 'Pinterest', platform);
+
+    return `
+      <div class="social-pub-block" id="socialPubBlock">
+        <div class="social-pub-header">
+          <span style="font-size:.88rem;font-weight:700;">🚀 Publish Directly</span>
+          <span class="pub-badge">PRO</span>
+        </div>
+        <div class="social-pub-body" id="socialPubBody">
+          ${igRow}
+          ${pinRow}
+        </div>
+      </div>`;
+  }
+
+  function _socialRow(platform, icon, label, activePlatform) {
+    const conn = _socialConnections[platform];
+    if (!conn || !conn.connected) {
+      return `
+        <div class="social-row" id="socialRow_${platform}">
+          <span class="soc-icon">${icon}</span>
+          <div class="soc-info">
+            <div class="soc-name">${label}</div>
+            <div class="soc-acct" style="color:var(--muted2)">Not connected</div>
+          </div>
+          <button class="soc-connect-btn" onclick="connectSocial('${platform}')">Connect</button>
+        </div>`;
+    }
+    // Connected
+    const boards = conn.boards || [];
+    const boardSel = platform === 'pinterest' && boards.length
+      ? `<select class="pub-board-sel" id="pintBoardSel" onchange="_lastPintBoard=this.value">
+          ${boards.map(b => `<option value="${escAttr(b.id)}">${escHtml(b.name)}</option>`).join('')}
+         </select>`
+      : '';
+    return `
+      <div class="social-row" id="socialRow_${platform}">
+        <span class="soc-icon">${icon}</span>
+        <div class="soc-info">
+          <div class="soc-name">${label}</div>
+          <div class="soc-acct">${escHtml(conn.account_name || '')}</div>
+        </div>
+        ${boardSel}
+        <button class="soc-publish-btn" id="pubBtn_${platform}" onclick="publishToSocial('${platform}')">Post Now</button>
+        <button class="soc-disc-btn" onclick="disconnectSocial('${platform}')" title="Disconnect">✕</button>
+      </div>`;
+  }
+
+  async function loadSocialStatus() {
+    try {
+      const r = await fetch('/api/social-connect.php?action=status', {
+        headers: { Authorization: 'Bearer ' + (authToken || currentToken || '') }
+      });
+      const data = await r.json();
+      if (!data.success) return;
+      _socialConnections = data.connections || {};
+      _refreshSocialRows();
+    } catch(e) { /* silent */ }
+  }
+
+  function _refreshSocialRows() {
+    const body = document.getElementById('socialPubBody');
+    if (!body) return;
+    body.innerHTML =
+      _socialRow('instagram', '📸', 'Instagram', _lastPlatform) +
+      _socialRow('pinterest', '📌', 'Pinterest', _lastPlatform);
+  }
+
+  let _lastPintBoard = '';
+
+  function connectSocial(platform) {
+    const token = authToken || currentToken || '';
+    if (!token) { alert('Please log in first.'); return; }
+    const url = `/api/social-connect.php?platform=${platform}&token=${encodeURIComponent(token)}`;
+    const popup = window.open(url, 'SocialConnect', 'width=600,height=700,left=200,top=100');
+    const handler = (e) => {
+      if (e.data?.type === 'social_auth_success') {
+        window.removeEventListener('message', handler);
+        // Update local state optimistically
+        _socialConnections[e.data.platform] = {
+          connected: true,
+          account_name: e.data.account,
+          boards: []
+        };
+        loadSocialStatus(); // refresh with real data including boards
+      } else if (e.data?.type === 'social_auth_error') {
+        window.removeEventListener('message', handler);
+        alert('Connection failed: ' + (e.data.error || 'Unknown error'));
+      }
+    };
+    window.addEventListener('message', handler);
+  }
+
+  async function disconnectSocial(platform) {
+    if (!confirm(`Disconnect your ${platform.charAt(0).toUpperCase()+platform.slice(1)} account?`)) return;
+    try {
+      const r = await fetch('/api/social-connect.php?action=disconnect', {
+        method: 'POST',
+        headers: {
+          Authorization: 'Bearer ' + (authToken || currentToken || ''),
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ platform })
+      });
+      const data = await r.json();
+      if (data.success) {
+        delete _socialConnections[platform];
+        _refreshSocialRows();
+      } else {
+        alert('Disconnect failed: ' + (data.message || data.error));
+      }
+    } catch(e) { alert('Network error disconnecting.'); }
+  }
+
+  async function publishToSocial(platform) {
+    const btn = document.getElementById('pubBtn_' + platform);
+    if (btn) { btn.disabled = true; btn.textContent = 'Posting…'; }
+
+    try {
+      // 1. Get the current image as base64
+      const imgSrc = document.getElementById('photoPreview')?.src || '';
+      if (!imgSrc || imgSrc.startsWith('data:') === false && imgSrc === '') {
+        alert('No image found. Please upload a photo first.');
+        if (btn) { btn.disabled = false; btn.textContent = 'Post Now'; }
+        return;
+      }
+
+      // Convert to base64 if it's a blob URL or already base64
+      let b64 = '';
+      let ext = 'jpg';
+      if (imgSrc.startsWith('data:')) {
+        const comma = imgSrc.indexOf(',');
+        b64 = imgSrc.slice(comma + 1);
+        ext = (imgSrc.match(/data:image\/([^;]+)/) || [])[1] || 'jpg';
+      } else {
+        // Fetch blob URL and convert
+        const blob  = await fetch(imgSrc).then(r => r.blob());
+        b64 = await new Promise((res) => {
+          const reader = new FileReader();
+          reader.onload = () => res(reader.result.split(',')[1]);
+          reader.readAsDataURL(blob);
+        });
+        ext = blob.type.split('/')[1] || 'jpg';
+      }
+
+      // 2. Upload to temp server storage to get a public URL
+      if (btn) btn.textContent = 'Uploading…';
+      const upResp = await fetch('/api/upload-temp.php', {
+        method: 'POST',
+        headers: {
+          Authorization: 'Bearer ' + (authToken || currentToken || ''),
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ image_b64: b64, ext })
+      });
+      const upData = await upResp.json();
+      if (!upData.success) {
+        alert('Upload failed: ' + (upData.message || upData.error));
+        if (btn) { btn.disabled = false; btn.textContent = 'Post Now'; }
+        return;
+      }
+      const imageUrl = upData.url;
+
+      // 3. Get the best caption (first one in results)
+      const capEls = document.querySelectorAll('#captionResults .cap-text');
+      const caption = capEls[0]?.textContent?.trim() || '';
+
+      // 4. Publish
+      if (btn) btn.textContent = 'Publishing…';
+      const payload = { platform, image_url: imageUrl, caption };
+      if (platform === 'pinterest') {
+        payload.board_id = _lastPintBoard || document.getElementById('pintBoardSel')?.value || '';
+        payload.pin_title = caption.slice(0, 100);
+      }
+
+      const pubResp = await fetch('/api/social-publish.php', {
+        method: 'POST',
+        headers: {
+          Authorization: 'Bearer ' + (authToken || currentToken || ''),
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload)
+      });
+      const pubData = await pubResp.json();
+
+      if (pubData.success) {
+        if (btn) { btn.textContent = '✅ Posted!'; btn.style.background = 'linear-gradient(135deg,#16a34a,#15803d)'; }
+        setTimeout(() => {
+          if (btn) { btn.disabled = false; btn.textContent = 'Post Now'; btn.style.background = ''; }
+        }, 4000);
+        // Show toast
+        const remaining = pubData.remaining ?? '—';
+        _showPubToast(platform, remaining, pubData.pin_url);
+      } else {
+        const msg = pubData.message || pubData.error || 'Publish failed';
+        alert(msg);
+        if (btn) { btn.disabled = false; btn.textContent = 'Post Now'; }
+      }
+    } catch(err) {
+      alert('Network error: ' + err.message);
+      if (btn) { btn.disabled = false; btn.textContent = 'Post Now'; }
+    }
+  }
+
+  function _showPubToast(platform, remaining, pinUrl) {
+    const icon = platform === 'instagram' ? '📸' : '📌';
+    const link = pinUrl ? `<a href="${pinUrl}" target="_blank" style="color:#a5f3fc;text-decoration:underline">View Pin →</a>` : '';
+    const msg  = `${icon} Published to ${platform.charAt(0).toUpperCase()+platform.slice(1)}! ${link}<br><span style="font-size:.7rem;color:#94a3b8">${remaining} posts remaining today</span>`;
+    // Reuse existing toast or create a simple banner
+    const existing = document.getElementById('pubToast');
+    if (existing) existing.remove();
+    const toast = document.createElement('div');
+    toast.id = 'pubToast';
+    Object.assign(toast.style, {
+      position:'fixed', bottom:'24px', left:'50%', transform:'translateX(-50%)',
+      background:'rgba(22,163,74,.92)', backdropFilter:'blur(8px)',
+      padding:'11px 20px', borderRadius:'12px', color:'#fff',
+      fontSize:'.82rem', fontWeight:'600', zIndex:'9999',
+      boxShadow:'0 8px 32px rgba(0,0,0,.4)', textAlign:'center',
+      minWidth:'260px',
+    });
+    toast.innerHTML = msg;
+    document.body.appendChild(toast);
+    setTimeout(() => toast.remove(), 6000);
+  }
+
+  /* ─────────────────────────────────────────────────────────── */
 
   // ── Engagement Score ───────────────────────────────────
   function calcEngagementScore(text, hookScore, platform) {
@@ -5046,6 +5692,454 @@
     if (cards && !cards.children.length) {
       empty.style.display = 'block';
     }
+  }
+
+  /* ═══════════════════════════════════════════════════════════════════
+     FEATURE 6 — Brand Kit Carousel Designer (Pro/Teams)
+     ═══════════════════════════════════════════════════════════════════ */
+
+  /* ── State ── */
+  const BK_STORAGE_KEY = 'sc_brand_kit_v1';
+  const BK_SLIDE_SIZE  = 1080; // canvas px
+  const BK_MAX_SLIDES  = 10;
+
+  let _bkSlides = [];        // array of slide objects { layers:[{text,x,y,size,color,font,align}], bg:{type,color,imageB64} }
+  let _bkCurrent = 0;        // active slide index
+  let _bkSelected = null;    // selected layer index
+  let _bkBrand = {           // brand kit settings
+    primaryColor: '#f0a060',
+    accentColor:  '#7040e0',
+    textColor:    '#ffffff',
+    font:         'Arial',
+    fontSize:     72,
+  };
+
+  /* ── Panel HTML ── */
+  function _brandKitPanel() {
+    const isPro = currentUser?.plan === 'pro' || currentUser?.plan === 'teams';
+    if (!isPro) return `
+      <div class="bk-block">
+        <div class="bk-header" onclick="">
+          <span>🎨 Brand Kit Carousel</span>
+          <span class="bk-badge">PRO</span>
+        </div>
+        <div class="bk-locked">
+          🔒 Design multi-slide carousels with your brand fonts & colors. Export as images.
+          <a href="#pricing">Upgrade to Pro</a> to unlock.
+        </div>
+      </div>`;
+
+    return `
+      <div class="bk-block" id="bkBlock">
+        <div class="bk-header" onclick="bkToggle()">
+          <span>🎨 Brand Kit Carousel</span>
+          <span class="bk-badge">PRO</span>
+          <span class="bk-toggle-icon" id="bkToggleIcon">▼</span>
+        </div>
+        <div class="bk-body" id="bkBody">
+
+          <!-- Brand settings -->
+          <div class="bk-settings">
+            <div class="bk-field">
+              <label>Font</label>
+              <select id="bkFont" onchange="bkSetFont(this.value)">
+                <option value="Arial">Arial</option>
+                <option value="Georgia">Georgia</option>
+                <option value="Helvetica">Helvetica</option>
+                <option value="Verdana">Verdana</option>
+                <option value="Trebuchet MS">Trebuchet MS</option>
+                <option value="Impact">Impact</option>
+                <option value="Courier New">Courier New</option>
+                <option value="Palatino">Palatino</option>
+              </select>
+            </div>
+            <div class="bk-field">
+              <label>Base font size (px)</label>
+              <input type="text" id="bkFontSize" value="72" oninput="bkSetFontSize(this.value)" style="font-size:.82rem;">
+            </div>
+          </div>
+
+          <!-- Brand colors -->
+          <div class="bk-colors">
+            <span class="bk-color-label">Brand colors:</span>
+            <div class="bk-color-swatch active" id="bkSwatch0" title="Primary" style="background:#f0a060" onclick="bkSelectSwatch(0)">
+              <input type="color" value="#f0a060" oninput="bkUpdateColor(0,this.value)">
+            </div>
+            <div class="bk-color-swatch" id="bkSwatch1" title="Accent" style="background:#7040e0" onclick="bkSelectSwatch(1)">
+              <input type="color" value="#7040e0" oninput="bkUpdateColor(1,this.value)">
+            </div>
+            <div class="bk-color-swatch" id="bkSwatch2" title="Text" style="background:#ffffff" onclick="bkSelectSwatch(2)">
+              <input type="color" value="#ffffff" oninput="bkUpdateColor(2,this.value)">
+            </div>
+            <div class="bk-color-swatch" style="background:#000000" onclick="bkSelectSwatch(3)" id="bkSwatch3" title="Dark">
+              <input type="color" value="#000000" oninput="bkUpdateColor(3,this.value)">
+            </div>
+          </div>
+
+          <!-- Slide strip -->
+          <div class="bk-slide-strip" id="bkSlideStrip"></div>
+
+          <!-- Canvas editor -->
+          <div class="bk-canvas-wrap">
+            <canvas id="bkCanvas" width="${BK_SLIDE_SIZE}" height="${BK_SLIDE_SIZE}"></canvas>
+          </div>
+
+          <!-- Text layers -->
+          <div class="bk-layers" id="bkLayers"></div>
+          <button class="bk-add-text-btn" onclick="bkAddLayer()">＋ Add text layer</button>
+
+          <!-- Actions -->
+          <div class="bk-actions">
+            <button class="bk-btn bk-btn-export" onclick="bkExportAll()">⬇ Export All Slides</button>
+            <button class="bk-btn bk-btn-save" onclick="bkSaveBrand()">💾 Save Brand Kit</button>
+            <button class="bk-btn bk-btn-load" onclick="bkLoadFromPhoto()">📷 Use Current Photo</button>
+          </div>
+          <div class="bk-status" id="bkStatus"></div>
+
+        </div>
+      </div>`;
+  }
+
+  function bkToggle() {
+    const body = document.getElementById('bkBody');
+    const icon = document.getElementById('bkToggleIcon');
+    if (!body) return;
+    const open = body.classList.toggle('open');
+    if (icon) icon.classList.toggle('open', open);
+    if (open && _bkSlides.length === 0) bkInit();
+  }
+
+  /* ── Initialise ── */
+  function bkInit() {
+    bkLoadBrand();
+    if (_bkSlides.length === 0) {
+      _bkSlides = [bkBlankSlide()];
+      _bkCurrent = 0;
+    }
+    bkRenderStrip();
+    bkRenderCanvas();
+    bkRenderLayers();
+  }
+
+  function bkBlankSlide() {
+    return {
+      bg: { type: 'color', color: '#1a1a2e', imageB64: null },
+      layers: [],
+    };
+  }
+
+  /* ── Brand persistence ── */
+  function bkSaveBrand() {
+    try {
+      localStorage.setItem(BK_STORAGE_KEY, JSON.stringify({ brand: _bkBrand, slides: _bkSlides }));
+      bkStatus('✅ Brand kit saved to this browser');
+    } catch(e) { bkStatus('⚠️ Could not save (storage full?)'); }
+  }
+
+  function bkLoadBrand() {
+    try {
+      const raw = localStorage.getItem(BK_STORAGE_KEY);
+      if (!raw) return;
+      const data = JSON.parse(raw);
+      if (data.brand) Object.assign(_bkBrand, data.brand);
+      if (data.slides && data.slides.length) _bkSlides = data.slides;
+      _bkCurrent = 0;
+      // Sync UI
+      const fontSel  = document.getElementById('bkFont');
+      const fontSize = document.getElementById('bkFontSize');
+      if (fontSel)  fontSel.value  = _bkBrand.font;
+      if (fontSize) fontSize.value = _bkBrand.fontSize;
+      bkStatus('Brand kit loaded');
+    } catch(e) {}
+  }
+
+  /* ── Settings ── */
+  let _bkActiveSwatch = 0;
+  const _bkSwatchColors = ['#f0a060','#7040e0','#ffffff','#000000'];
+
+  function bkSelectSwatch(idx) {
+    _bkActiveSwatch = idx;
+    document.querySelectorAll('.bk-color-swatch').forEach((s,i) => s.classList.toggle('active', i === idx));
+  }
+
+  function bkUpdateColor(idx, val) {
+    _bkSwatchColors[idx] = val;
+    const swatch = document.getElementById('bkSwatch' + idx);
+    if (swatch) swatch.style.background = val;
+    if (idx === 0) _bkBrand.primaryColor = val;
+    if (idx === 1) _bkBrand.accentColor  = val;
+    if (idx === 2) _bkBrand.textColor    = val;
+  }
+
+  function bkSetFont(val) {
+    _bkBrand.font = val;
+    bkRenderCanvas();
+  }
+
+  function bkSetFontSize(val) {
+    const n = parseInt(val);
+    if (n > 10 && n < 400) { _bkBrand.fontSize = n; bkRenderCanvas(); }
+  }
+
+  /* ── Slide management ── */
+  function bkSelectSlide(idx) {
+    _bkCurrent = idx;
+    _bkSelected = null;
+    bkRenderStrip();
+    bkRenderCanvas();
+    bkRenderLayers();
+  }
+
+  function bkAddSlide() {
+    if (_bkSlides.length >= BK_MAX_SLIDES) { bkStatus('Max 10 slides per carousel'); return; }
+    const newSlide = bkBlankSlide();
+    // Auto-copy bg from current photo if available
+    const photoEl = document.getElementById('photoPreview');
+    if (photoEl && photoEl.src && !photoEl.src.startsWith('data:,')) {
+      newSlide.bg = { type: 'image', color: '#000', imageB64: window.originalImageBase64 || photoEl.src };
+    }
+    _bkSlides.push(newSlide);
+    _bkCurrent = _bkSlides.length - 1;
+    bkRenderStrip();
+    bkRenderCanvas();
+    bkRenderLayers();
+  }
+
+  function bkDeleteSlide(idx, evt) {
+    evt.stopPropagation();
+    if (_bkSlides.length <= 1) { bkStatus('Need at least 1 slide'); return; }
+    _bkSlides.splice(idx, 1);
+    _bkCurrent = Math.min(_bkCurrent, _bkSlides.length - 1);
+    bkRenderStrip();
+    bkRenderCanvas();
+    bkRenderLayers();
+  }
+
+  function bkLoadFromPhoto() {
+    const photoEl = document.getElementById('photoPreview');
+    if (!photoEl || !photoEl.src || photoEl.src.startsWith('data:,')) {
+      bkStatus('⚠️ No photo uploaded yet'); return;
+    }
+    const slide = _bkSlides[_bkCurrent];
+    slide.bg = { type: 'image', color: '#000', imageB64: window.originalImageBase64 || photoEl.src };
+    bkRenderCanvas();
+    bkThumbnailUpdate(_bkCurrent);
+    bkStatus('✅ Photo applied to slide ' + (_bkCurrent + 1));
+  }
+
+  /* ── Layers ── */
+  function bkAddLayer() {
+    const slide = _bkSlides[_bkCurrent];
+    slide.layers.push({
+      text:   'Your text here',
+      x:      BK_SLIDE_SIZE / 2,
+      y:      BK_SLIDE_SIZE / 2 + slide.layers.length * 90,
+      size:   _bkBrand.fontSize,
+      color:  _bkBrand.textColor,
+      font:   _bkBrand.font,
+      align:  'center',
+    });
+    _bkSelected = slide.layers.length - 1;
+    bkRenderCanvas();
+    bkRenderLayers();
+  }
+
+  function bkDeleteLayer(idx) {
+    _bkSlides[_bkCurrent].layers.splice(idx, 1);
+    if (_bkSelected >= idx) _bkSelected = Math.max(0, _bkSelected - 1);
+    bkRenderCanvas();
+    bkRenderLayers();
+  }
+
+  function bkUpdateLayerText(idx, val) {
+    if (_bkSlides[_bkCurrent] && _bkSlides[_bkCurrent].layers[idx]) {
+      _bkSlides[_bkCurrent].layers[idx].text = val;
+      bkRenderCanvas();
+      bkThumbnailUpdate(_bkCurrent);
+    }
+  }
+
+  function bkLayerSetColor(idx) {
+    if (_bkSlides[_bkCurrent] && _bkSlides[_bkCurrent].layers[idx]) {
+      _bkSlides[_bkCurrent].layers[idx].color = _bkSwatchColors[_bkActiveSwatch];
+      bkRenderCanvas();
+      bkRenderLayers();
+    }
+  }
+
+  /* ── Render strip ── */
+  function bkRenderStrip() {
+    const strip = document.getElementById('bkSlideStrip');
+    if (!strip) return;
+    let html = '';
+    _bkSlides.forEach((slide, i) => {
+      html += `<div class="bk-slide-thumb ${i === _bkCurrent ? 'active' : ''}" onclick="bkSelectSlide(${i})" id="bkThumb${i}">
+        <canvas id="bkThumbCanvas${i}" width="72" height="72"></canvas>
+        <button class="bk-slide-del" onclick="bkDeleteSlide(${i},event)">✕</button>
+      </div>`;
+    });
+    html += `<button class="bk-add-slide" onclick="bkAddSlide()" title="Add slide">＋</button>`;
+    strip.innerHTML = html;
+    // Render all thumbnails
+    _bkSlides.forEach((_, i) => bkThumbnailUpdate(i));
+  }
+
+  /* ── Render main canvas ── */
+  function bkRenderCanvas() {
+    const canvas = document.getElementById('bkCanvas');
+    if (!canvas) return;
+    const ctx  = canvas.getContext('2d');
+    const W    = BK_SLIDE_SIZE;
+    const slide = _bkSlides[_bkCurrent];
+    if (!slide) return;
+    bkDrawSlide(ctx, slide, W, W, true);
+    bkThumbnailUpdate(_bkCurrent);
+  }
+
+  function bkDrawSlide(ctx, slide, W, H, showGuides) {
+    ctx.clearRect(0, 0, W, H);
+    // Background
+    if (slide.bg.type === 'image' && slide.bg.imageB64) {
+      const img = new Image();
+      img.onload = () => {
+        // Cover fit
+        const scale = Math.max(W / img.width, H / img.height);
+        const sw = img.width * scale, sh = img.height * scale;
+        const sx = (W - sw) / 2, sy = (H - sh) / 2;
+        ctx.drawImage(img, sx, sy, sw, sh);
+        // Overlay
+        ctx.fillStyle = 'rgba(0,0,0,0.35)';
+        ctx.fillRect(0, 0, W, H);
+        bkDrawLayers(ctx, slide, W, H, showGuides);
+      };
+      img.onerror = () => { bkDrawFallbackBg(ctx, slide, W, H); bkDrawLayers(ctx, slide, W, H, showGuides); };
+      img.src = slide.bg.imageB64;
+    } else {
+      bkDrawFallbackBg(ctx, slide, W, H);
+      bkDrawLayers(ctx, slide, W, H, showGuides);
+    }
+  }
+
+  function bkDrawFallbackBg(ctx, slide, W, H) {
+    ctx.fillStyle = slide.bg.color || '#1a1a2e';
+    ctx.fillRect(0, 0, W, H);
+    // Subtle gradient overlay using brand colors
+    const grd = ctx.createLinearGradient(0, 0, W, H);
+    grd.addColorStop(0, _bkBrand.primaryColor + '55');
+    grd.addColorStop(1, _bkBrand.accentColor  + '33');
+    ctx.fillStyle = grd;
+    ctx.fillRect(0, 0, W, H);
+  }
+
+  function bkDrawLayers(ctx, slide, W, H, showGuides) {
+    if (!slide.layers) return;
+    slide.layers.forEach((layer, i) => {
+      const size  = Math.round((layer.size || 72) * (W / BK_SLIDE_SIZE));
+      ctx.font      = `bold ${size}px "${layer.font || _bkBrand.font}", Arial, sans-serif`;
+      ctx.textAlign = layer.align || 'center';
+      ctx.textBaseline = 'middle';
+      // Shadow
+      ctx.shadowColor   = 'rgba(0,0,0,0.6)';
+      ctx.shadowBlur    = Math.round(size * 0.15);
+      ctx.shadowOffsetX = 0; ctx.shadowOffsetY = Math.round(size * 0.04);
+      ctx.fillStyle = layer.color || '#fff';
+      // Scale x,y to actual canvas size
+      const sx = layer.x * (W / BK_SLIDE_SIZE);
+      const sy = layer.y * (W / BK_SLIDE_SIZE);
+      ctx.fillText(layer.text || '', sx, sy);
+      ctx.shadowBlur = 0;
+      // Selection indicator on main canvas
+      if (showGuides && i === _bkSelected) {
+        const measured = ctx.measureText(layer.text || '');
+        ctx.strokeStyle = '#f0a060';
+        ctx.lineWidth   = 2;
+        ctx.strokeRect(sx - measured.width / 2 - 6, sy - size / 2 - 6, measured.width + 12, size + 12);
+      }
+    });
+  }
+
+  /* ── Thumbnail update ── */
+  function bkThumbnailUpdate(idx) {
+    const tc = document.getElementById('bkThumbCanvas' + idx);
+    if (!tc) return;
+    const slide = _bkSlides[idx];
+    if (!slide) return;
+    const ctx = tc.getContext('2d');
+    bkDrawSlide(ctx, slide, 72, 72, false);
+  }
+
+  /* ── Layers UI ── */
+  function bkRenderLayers() {
+    const container = document.getElementById('bkLayers');
+    if (!container) return;
+    const slide = _bkSlides[_bkCurrent];
+    if (!slide) { container.innerHTML = ''; return; }
+    container.innerHTML = slide.layers.map((l, i) => `
+      <div class="bk-layer-row" onclick="_bkSelected=${i};bkRenderCanvas();">
+        <input type="text" value="${escAttr(l.text)}" oninput="bkUpdateLayerText(${i},this.value)" onclick="event.stopPropagation()" placeholder="Layer ${i+1} text">
+        <button class="bk-layer-del" onclick="bkDeleteLayer(${i})" title="Delete layer">🗑</button>
+      </div>`).join('');
+  }
+
+  /* ── Export ── */
+  async function bkExportAll() {
+    if (_bkSlides.length === 0) { bkStatus('No slides to export'); return; }
+    bkStatus('⏳ Exporting…');
+    const exportCanvas = document.createElement('canvas');
+    exportCanvas.width  = BK_SLIDE_SIZE;
+    exportCanvas.height = BK_SLIDE_SIZE;
+    const ctx = exportCanvas.getContext('2d');
+
+    for (let i = 0; i < _bkSlides.length; i++) {
+      await new Promise(resolve => {
+        // Draw to export canvas
+        const slide = _bkSlides[i];
+        ctx.clearRect(0, 0, BK_SLIDE_SIZE, BK_SLIDE_SIZE);
+        if (slide.bg.type === 'image' && slide.bg.imageB64) {
+          const img = new Image();
+          img.onload = () => {
+            const scale = Math.max(BK_SLIDE_SIZE / img.width, BK_SLIDE_SIZE / img.height);
+            const sw = img.width * scale, sh = img.height * scale;
+            ctx.drawImage(img, (BK_SLIDE_SIZE - sw) / 2, (BK_SLIDE_SIZE - sh) / 2, sw, sh);
+            ctx.fillStyle = 'rgba(0,0,0,0.35)';
+            ctx.fillRect(0, 0, BK_SLIDE_SIZE, BK_SLIDE_SIZE);
+            bkDrawLayers(ctx, slide, BK_SLIDE_SIZE, BK_SLIDE_SIZE, false);
+            const a = document.createElement('a');
+            a.href     = exportCanvas.toDataURL('image/png');
+            a.download = `carousel-slide-${i + 1}.png`;
+            a.click();
+            resolve();
+          };
+          img.onerror = () => {
+            bkDrawFallbackBg(ctx, slide, BK_SLIDE_SIZE, BK_SLIDE_SIZE);
+            bkDrawLayers(ctx, slide, BK_SLIDE_SIZE, BK_SLIDE_SIZE, false);
+            const a = document.createElement('a');
+            a.href     = exportCanvas.toDataURL('image/png');
+            a.download = `carousel-slide-${i + 1}.png`;
+            a.click();
+            resolve();
+          };
+          img.src = slide.bg.imageB64;
+        } else {
+          bkDrawFallbackBg(ctx, slide, BK_SLIDE_SIZE, BK_SLIDE_SIZE);
+          bkDrawLayers(ctx, slide, BK_SLIDE_SIZE, BK_SLIDE_SIZE, false);
+          const a = document.createElement('a');
+          a.href     = exportCanvas.toDataURL('image/png');
+          a.download = `carousel-slide-${i + 1}.png`;
+          a.click();
+          resolve();
+        }
+        // Small delay between downloads so browser doesn't block
+        setTimeout(() => {}, 300);
+      });
+      await new Promise(r => setTimeout(r, 350));
+    }
+    bkStatus(`✅ ${_bkSlides.length} slide${_bkSlides.length > 1 ? 's' : ''} exported as PNG`);
+  }
+
+  function bkStatus(msg) {
+    const el = document.getElementById('bkStatus');
+    if (el) el.textContent = msg;
   }
 
   /* ═══════════════════════════════════════════════════
