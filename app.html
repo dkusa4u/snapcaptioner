@@ -6092,11 +6092,67 @@ function openScheduleModal(captionText, platform) {
   tomorrow.setHours(10, 0, 0, 0);
   document.getElementById('schedDate').value = tomorrow.toISOString().split('T')[0];
   document.getElementById('schedTime').value = '10:00';
+  // Initialize best-time hint for current platform
+  _updateBestTimeHint();
+  // Wire platform change to update hint
+  const platSel = document.getElementById('schedPlatform');
+  if (platSel && !platSel._btWired) {
+    platSel.addEventListener('change', _updateBestTimeHint);
+    platSel._btWired = true;
+  }
   document.getElementById('schedOverlay').classList.add('show');
 }
 
 function closeScheduleModal() {
   document.getElementById('schedOverlay').classList.remove('show');
+}
+
+/* ── Best-Time-to-Post lookup table (research-backed peak hours, local time) ── */
+const _BEST_TIMES = {
+  instagram: { hours: [11, 14, 17, 20], label: '11 AM, 2 PM, 5 PM, 8 PM', note: 'Highest saves & shares on Tue–Fri' },
+  tiktok:    { hours: [7, 12, 19, 21],  label: '7 AM, 12 PM, 7 PM, 9 PM', note: 'FYP algorithm rewards morning + primetime' },
+  linkedin:  { hours: [8, 10, 12, 17],  label: '8 AM, 10 AM, 12 PM, 5 PM', note: 'Professional hours; Tue–Thu best days' },
+  facebook:  { hours: [9, 13, 15, 20],  label: '9 AM, 1 PM, 3 PM, 8 PM',  note: 'Groups & news feed peak mid-day & evening' },
+  twitter:   { hours: [8, 12, 17, 20],  label: '8 AM, 12 PM, 5 PM, 8 PM', note: 'Trending topics peak during news cycles' },
+  pinterest: { hours: [14, 16, 20, 21], label: '2 PM, 4 PM, 8 PM, 9 PM',  note: 'Evening browsing drives saves & clicks' },
+  youtube:   { hours: [12, 15, 17, 20], label: '12 PM, 3 PM, 5 PM, 8 PM', note: 'Upload 2–3 hrs before target peak for indexing' },
+};
+
+function _updateBestTimeHint() {
+  const platform = document.getElementById('schedPlatform')?.value || 'instagram';
+  const bt = _BEST_TIMES[platform] || _BEST_TIMES.instagram;
+  document.getElementById('bestTimeText').textContent = bt.label;
+  document.getElementById('bestTimeSub').textContent  = bt.note;
+}
+
+function scheduleAtBestTime() {
+  const platform = document.getElementById('schedPlatform')?.value || 'instagram';
+  const bt       = _BEST_TIMES[platform] || _BEST_TIMES.instagram;
+  const now      = new Date();
+  const target   = new Date();
+
+  // Find the next upcoming peak hour (today or tomorrow)
+  let found = false;
+  for (const h of bt.hours.sort((a,b) => a-b)) {
+    const candidate = new Date(now);
+    candidate.setHours(h, 0, 0, 0);
+    if (candidate > now) {
+      target.setHours(h, 0, 0, 0);
+      found = true;
+      break;
+    }
+  }
+  if (!found) {
+    // All today's peaks passed — use first peak tomorrow
+    target.setDate(target.getDate() + 1);
+    target.setHours(bt.hours[0], 0, 0, 0);
+  }
+
+  // Set date and time inputs
+  document.getElementById('schedDate').value = target.toISOString().split('T')[0];
+  const hh = String(target.getHours()).padStart(2, '0');
+  document.getElementById('schedTime').value = `${hh}:00`;
+  _showToast(`⚡ Set to next ${platform} peak: ${target.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})}`);
 }
 
 async function saveScheduledPost() {
@@ -6193,6 +6249,17 @@ async function saveScheduledPost() {
         <label>Time</label>
         <input type="time" id="schedTime">
       </div>
+    </div>
+    <!-- Best Time Hint (Premium) -->
+    <div id="bestTimeHint" style="margin-bottom:12px;padding:10px 13px;background:rgba(168,85,247,.08);border:1px solid rgba(168,85,247,.2);border-radius:9px;font-size:.78rem">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap">
+        <div>
+          <span style="color:#c084fc;font-weight:700">⚡ Best Time:</span>
+          <span id="bestTimeText" style="color:#a0a0b8;margin-left:4px">Select platform</span>
+        </div>
+        <button onclick="scheduleAtBestTime()" style="padding:5px 11px;background:linear-gradient(135deg,var(--grad1),var(--grad2));border:none;border-radius:7px;color:#fff;font-size:.74rem;font-weight:700;cursor:pointer">⚡ Use Best Time</button>
+      </div>
+      <div id="bestTimeSub" style="color:#78788a;font-size:.7rem;margin-top:3px"></div>
     </div>
     <div class="sched-modal-btns">
       <button class="sched-cancel" onclick="closeScheduleModal()">Cancel</button>
