@@ -1811,6 +1811,35 @@
   .vibe-lock-btn.locked:hover { border-color:#f87171; color:#f87171; background:rgba(248,113,113,.08); }
   .vibe-label { font-size:.72rem; color:#78788a; }
 
+  /* ── Text Overlay (Carousel Stamp) ─────────────────── */
+  .text-overlay-bar { display:none; flex-direction:column; gap:10px; background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.07); border-radius:12px; padding:12px 14px; margin-top:10px; }
+  .text-overlay-bar.active { display:flex; }
+  .text-overlay-head { display:flex; align-items:center; justify-content:space-between; }
+  .text-overlay-title { font-size:.78rem; font-weight:700; color:var(--text); display:flex; align-items:center; gap:5px; }
+  .tov-prem-tag { font-size:.64rem; background:linear-gradient(135deg,var(--grad1),var(--grad2)); color:#fff; padding:2px 7px; border-radius:20px; font-weight:700; }
+  .tov-row { display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
+  .tov-input { flex:1; min-width:160px; background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.12); border-radius:8px; color:var(--text); font-size:.82rem; padding:7px 10px; outline:none; }
+  .tov-input:focus { border-color:rgba(168,85,247,.5); }
+  .tov-input::placeholder { color:#78788a; }
+  .tov-select { background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.12); border-radius:8px; color:var(--text); font-size:.78rem; padding:7px 8px; cursor:pointer; outline:none; }
+  .tov-select:focus { border-color:rgba(168,85,247,.5); }
+  .tov-color { width:34px; height:34px; border-radius:8px; border:1px solid rgba(255,255,255,.18); cursor:pointer; padding:2px; background:transparent; }
+  .tov-size-row { display:flex; align-items:center; gap:8px; }
+  .tov-size-label { font-size:.72rem; color:#78788a; white-space:nowrap; }
+  .tov-size-slider { flex:1; }
+  .tov-size-val { font-size:.72rem; color:#a0a0b8; min-width:28px; text-align:right; }
+  .tov-pos-row { display:flex; gap:6px; flex-wrap:wrap; }
+  .tov-pos-btn { flex:1; min-width:70px; padding:5px 4px; background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.1); border-radius:7px; color:#a0a0b8; font-size:.72rem; cursor:pointer; text-align:center; transition:all .15s; }
+  .tov-pos-btn:hover { border-color:rgba(168,85,247,.4); color:#c084fc; }
+  .tov-pos-btn.active { background:rgba(168,85,247,.18); border-color:rgba(168,85,247,.6); color:#c084fc; }
+  .tov-action-row { display:flex; gap:8px; }
+  .tov-preview-btn { flex:1; padding:8px; background:rgba(168,85,247,.15); border:1px solid rgba(168,85,247,.35); border-radius:9px; color:#c084fc; font-size:.8rem; font-weight:600; cursor:pointer; transition:all .18s; }
+  .tov-preview-btn:hover { background:rgba(168,85,247,.28); }
+  .tov-stamp-btn { flex:1; padding:8px; background:linear-gradient(135deg,var(--grad1),var(--grad2)); border:none; border-radius:9px; color:#fff; font-size:.8rem; font-weight:700; cursor:pointer; transition:opacity .18s; }
+  .tov-stamp-btn:hover { opacity:.88; }
+  .tov-clear-btn { padding:8px 12px; background:none; border:1px solid rgba(255,255,255,.1); border-radius:9px; color:#78788a; font-size:.78rem; cursor:pointer; transition:all .15s; }
+  .tov-clear-btn:hover { border-color:#f87171; color:#f87171; }
+
   /* ── Schedule Modal ─────────────────────────────────── */
   .sched-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.7); z-index:3000; align-items:center; justify-content:center; }
   .sched-overlay.show { display:flex; }
@@ -2689,6 +2718,55 @@
       </div>
     </div>
 
+    <!-- Text Overlay / Carousel Stamp (Premium) -->
+    <div class="text-overlay-bar" id="textOverlayBar">
+      <div class="text-overlay-head">
+        <span class="text-overlay-title">✍️ Text Overlay <span class="tov-prem-tag">PREMIUM</span></span>
+      </div>
+      <!-- Text input row -->
+      <div class="tov-row">
+        <input type="text" class="tov-input" id="tovText" placeholder="Your headline, quote or caption…" maxlength="120">
+        <select class="tov-select" id="tovFont">
+          <option value="bold 700 sans-serif">Bold Sans</option>
+          <option value="800 serif">Heavy Serif</option>
+          <option value="700 monospace">Mono</option>
+          <option value="italic 700 sans-serif">Bold Italic</option>
+        </select>
+        <input type="color" class="tov-color" id="tovColor" value="#ffffff" title="Text color">
+      </div>
+      <!-- Size slider -->
+      <div class="tov-size-row">
+        <span class="tov-size-label">Size</span>
+        <input type="range" class="tov-size-slider" id="tovSize" min="12" max="80" value="32" oninput="document.getElementById('tovSizeVal').textContent=this.value+'px'">
+        <span class="tov-size-val" id="tovSizeVal">32px</span>
+      </div>
+      <!-- Position buttons -->
+      <div class="tov-pos-row">
+        <button class="tov-pos-btn" onclick="setTovPos('top',this)">⬆ Top</button>
+        <button class="tov-pos-btn active" onclick="setTovPos('center',this)">⬛ Center</button>
+        <button class="tov-pos-btn" onclick="setTovPos('bottom',this)">⬇ Bottom</button>
+        <button class="tov-pos-btn" onclick="setTovPos('top-left',this)">↖ T-Left</button>
+        <button class="tov-pos-btn" onclick="setTovPos('top-right',this)">↗ T-Right</button>
+        <button class="tov-pos-btn" onclick="setTovPos('bottom-left',this)">↙ B-Left</button>
+        <button class="tov-pos-btn" onclick="setTovPos('bottom-right',this)">↘ B-Right</button>
+      </div>
+      <!-- Action buttons -->
+      <div class="tov-action-row">
+        <button class="tov-preview-btn" onclick="previewTextOverlay()">👁 Preview</button>
+        <button class="tov-stamp-btn" onclick="stampTextOverlay()">✍️ Stamp Text</button>
+        <button class="tov-clear-btn" onclick="clearTextOverlay()">✕</button>
+      </div>
+    </div>
+    <!-- Text Overlay Locked teaser (non-premium) -->
+    <div class="ai-transform-locked" id="textOverlayLocked" style="display:none;">
+      <div class="atl-icon">✍️</div>
+      <div class="atl-text">
+        <strong>Text Overlay</strong>
+        <span>Stamp headlines, quotes or CTAs directly onto your photo for carousel slides</span>
+      </div>
+      <a href="pricing.html" class="atl-btn">Unlock</a>
+    </div>
+
     <!-- Free limit info -->
     <div id="planInfoText" style="padding:10px 4px;font-size:.72rem;color:var(--muted);text-align:center;line-height:1.6;">
       Free plan: 3 AI captions/day · 3 photo edits/day · <a href="pricing.html" style="color:var(--grad2);font-weight:600;">Upgrade for unlimited captions &amp; edits</a>
@@ -3114,6 +3192,9 @@
       document.getElementById('aiTransformBar').classList.toggle('active', isPrem);
       document.getElementById('aiTransformLocked').classList.toggle('active', !isPrem);
       if (isPrem) updateTransformCtr();
+      // Show Text Overlay (Premium)
+      document.getElementById('textOverlayBar').classList.toggle('active', isPrem);
+      document.getElementById('textOverlayLocked').style.display = isPrem ? 'none' : '';
       // Reset any prior transform state
       activeTransform = null;
       preTransformB64 = null;
@@ -5880,6 +5961,117 @@ function _onPhotoLoaded(dataUrl) {
     document.getElementById('vibeLockBtn').classList.add('locked');
     document.getElementById('vibeLockBtn').textContent = '🔓 Vibe Locked — tap to unlock';
     document.getElementById('vibeLabel').textContent = 'Color palette locked for future photos';
+  }
+}
+
+/* ── Text Overlay (Carousel Stamp) ───────────────────────── */
+let _tovPos = 'center';
+let _tovPreviewActive = false;
+
+function setTovPos(pos, btn) {
+  _tovPos = pos;
+  document.querySelectorAll('.tov-pos-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function _drawTextOverlay(ctx, canvas, text, font, color, size, pos, shadow) {
+  if (!text.trim()) return;
+  const w = canvas.width, h = canvas.height;
+  ctx.save();
+  ctx.font = `${font.replace('bold 700','700').replace('800','800').replace('700 monospace','700').replace('italic 700','italic 700')} ${size}px ${font.includes('serif') && !font.includes('sans') ? 'Georgia,serif' : font.includes('mono') ? 'monospace' : 'Arial,sans-serif'}`;
+  ctx.fillStyle = color;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  if (shadow) {
+    ctx.shadowColor = 'rgba(0,0,0,0.75)';
+    ctx.shadowBlur = Math.round(size * 0.3);
+    ctx.shadowOffsetX = 2; ctx.shadowOffsetY = 2;
+  }
+  const margin = size * 0.6;
+  let x = w / 2, y = h / 2;
+  if (pos === 'top')          { y = margin + size; x = w/2; }
+  else if (pos === 'bottom')  { y = h - margin - size; x = w/2; }
+  else if (pos === 'top-left')    { x = margin + w*0.15; y = margin + size; ctx.textAlign='left'; }
+  else if (pos === 'top-right')   { x = w - margin - w*0.05; y = margin + size; ctx.textAlign='right'; }
+  else if (pos === 'bottom-left') { x = margin + w*0.05; y = h - margin - size; ctx.textAlign='left'; }
+  else if (pos === 'bottom-right'){ x = w - margin - w*0.05; y = h - margin - size; ctx.textAlign='right'; }
+
+  // Word wrap
+  const words = text.split(' ');
+  const maxW = w - margin * 3;
+  let line = '', lines = [];
+  for (const word of words) {
+    const test = line ? line + ' ' + word : word;
+    if (ctx.measureText(test).width > maxW && line) { lines.push(line); line = word; }
+    else line = test;
+  }
+  if (line) lines.push(line);
+  const lineH = size * 1.25;
+  const startY = y - ((lines.length - 1) * lineH) / 2;
+  lines.forEach((l, i) => ctx.fillText(l, x, startY + i * lineH));
+  ctx.restore();
+}
+
+function previewTextOverlay() {
+  const text = document.getElementById('tovText').value.trim();
+  if (!text) { _showToast('Enter some text first'); return; }
+  if (!currentImageBase64) { _showToast('Upload a photo first'); return; }
+  const font  = document.getElementById('tovFont').value;
+  const color = document.getElementById('tovColor').value;
+  const size  = parseInt(document.getElementById('tovSize').value, 10);
+
+  const img = new Image();
+  img.onload = () => {
+    const canvas = document.createElement('canvas');
+    canvas.width = img.width; canvas.height = img.height;
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(img, 0, 0);
+    _drawTextOverlay(ctx, canvas, text, font, color, size, _tovPos, true);
+    // Show preview in the upload zone
+    const previewEl = document.querySelector('#uploadZone img.preview-img') || document.querySelector('#uploadZone img');
+    if (previewEl) { previewEl.src = canvas.toDataURL('image/jpeg', 0.92); }
+    _tovPreviewActive = true;
+    _showToast('Preview applied — click Stamp to save');
+  };
+  img.src = 'data:image/jpeg;base64,' + currentImageBase64;
+}
+
+function stampTextOverlay() {
+  const text = document.getElementById('tovText').value.trim();
+  if (!text) { _showToast('Enter some text first'); return; }
+  if (!currentImageBase64) { _showToast('Upload a photo first'); return; }
+  const font  = document.getElementById('tovFont').value;
+  const color = document.getElementById('tovColor').value;
+  const size  = parseInt(document.getElementById('tovSize').value, 10);
+
+  const img = new Image();
+  img.onload = () => {
+    const canvas = document.createElement('canvas');
+    canvas.width = img.width; canvas.height = img.height;
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(img, 0, 0);
+    _drawTextOverlay(ctx, canvas, text, font, color, size, _tovPos, true);
+    const dataUrl = canvas.toDataURL('image/jpeg', 0.92);
+    const b64 = dataUrl.split(',')[1];
+    currentImageBase64 = b64;
+    originalImageBase64 = originalImageBase64 || b64;
+    // Update preview
+    const previewEl = document.querySelector('#uploadZone img.preview-img') || document.querySelector('#uploadZone img');
+    if (previewEl) previewEl.src = dataUrl;
+    _tovPreviewActive = false;
+    _showToast('✅ Text stamped onto photo!');
+    // Auto-clear input
+    document.getElementById('tovText').value = '';
+  };
+  img.src = 'data:image/jpeg;base64,' + currentImageBase64;
+}
+
+function clearTextOverlay() {
+  document.getElementById('tovText').value = '';
+  if (_tovPreviewActive && originalImageBase64) {
+    const previewEl = document.querySelector('#uploadZone img.preview-img') || document.querySelector('#uploadZone img');
+    if (previewEl) previewEl.src = 'data:image/jpeg;base64,' + originalImageBase64;
+    _tovPreviewActive = false;
   }
 }
 
