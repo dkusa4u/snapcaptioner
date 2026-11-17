@@ -11,7 +11,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="SnapCaption">
 <link rel="apple-touch-icon" href="/icons/icon-192.png">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@600;700&display=swap" rel="stylesheet">
 <!-- exifr: client-side EXIF reader for time-gap framing -->
 <script src="https://cdn.jsdelivr.net/npm/exifr/dist/full.esm.js" type="module" id="exifrModule"></script>
 <style>
@@ -457,6 +457,90 @@
   }
   .enh-btn:hover { opacity: .9; }
   .enh-note { font-size: .82rem; color: #b0b8d0; text-align: center; margin-top: 8px; }
+
+  /* PLATFORM FORMATTER */
+  .pf-block {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 16px; overflow: hidden; margin-top: 16px;
+  }
+  .pf-header {
+    display: flex; align-items: center; gap: 10px;
+    padding: 14px 16px 10px; border-bottom: 1px solid var(--border);
+    font-size: .9rem; font-weight: 700;
+  }
+  .pf-subtitle { font-size: .72rem; color: var(--muted); font-weight: 400; margin-left: auto; }
+  .pf-badge {
+    font-size: .6rem; font-weight: 800; letter-spacing: .05em;
+    background: linear-gradient(135deg,#0891b2,#06b6d4);
+    color: #fff; border-radius: 6px; padding: 2px 7px;
+  }
+  .pf-locked {
+    padding: 14px 16px; font-size: .82rem; color: var(--muted2); line-height: 1.5;
+  }
+  .pf-caption-select {
+    padding: 12px 16px 8px; display: flex; align-items: center; gap: 10px;
+  }
+  .pf-sel-label { font-size: .78rem; color: var(--muted); white-space: nowrap; }
+  .pf-select {
+    flex: 1; background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 8px; color: var(--text); font-size: .82rem; padding: 6px 10px;
+  }
+  .pf-plat-grid {
+    display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; padding: 8px 16px 14px;
+  }
+  @media(max-width:420px){ .pf-plat-grid { grid-template-columns: repeat(2,1fr); } }
+  .pf-plat-btn {
+    display: flex; flex-direction: column; align-items: center; gap: 3px;
+    background: var(--bg2); border: 1px solid var(--border); border-radius: 10px;
+    padding: 10px 6px; cursor: pointer; transition: all .15s; font-family: inherit;
+  }
+  .pf-plat-btn:hover { border-color: var(--brand); background: rgba(8,145,178,.08); }
+  .pf-plat-btn.pf-active { border-color: var(--brand); background: rgba(8,145,178,.14); }
+  .pf-plat-btn.pf-working { opacity: .6; pointer-events: none; }
+  .pf-icon { font-size: 1.3rem; }
+  .pf-name { font-size: .68rem; font-weight: 600; color: var(--text); }
+  .pf-chars { font-size: .58rem; color: var(--muted); }
+  .pf-loading {
+    display: flex; align-items: center; gap: 10px; padding: 14px 16px;
+    font-size: .82rem; color: var(--muted2);
+  }
+  .pf-spin {
+    width: 16px; height: 16px; border: 2px solid var(--brand); border-top-color: transparent;
+    border-radius: 50%; animation: spin .7s linear infinite; flex-shrink: 0;
+  }
+  .pf-result {
+    margin: 0 16px 16px; background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 12px; overflow: hidden;
+  }
+  .pf-result-header {
+    display: flex; align-items: center; gap: 8px; padding: 10px 14px 8px;
+    font-size: .82rem; font-weight: 700; border-bottom: 1px solid var(--border);
+  }
+  .pf-char-badge {
+    margin-left: auto; font-size: .68rem; font-weight: 600;
+    padding: 2px 8px; border-radius: 20px;
+  }
+  .pf-char-badge.pf-ok { background: rgba(16,185,129,.15); color: #10b981; }
+  .pf-char-badge.pf-over { background: rgba(239,68,68,.15); color: #ef4444; }
+  .pf-result-text {
+    padding: 12px 14px; font-size: .82rem; line-height: 1.6; color: var(--text);
+    white-space: pre-wrap; word-break: break-word;
+  }
+  .pf-tip {
+    padding: 0 14px 10px; font-size: .75rem; color: var(--muted2); line-height: 1.5; display: none;
+  }
+  .pf-result-actions {
+    display: flex; gap: 8px; padding: 10px 14px; border-top: 1px solid var(--border);
+  }
+  .pf-copy-btn, .pf-replace-btn {
+    flex: 1; padding: 8px 12px; border-radius: 8px; font-size: .78rem;
+    font-weight: 600; cursor: pointer; border: 1px solid var(--border);
+    font-family: inherit; transition: all .15s;
+  }
+  .pf-copy-btn { background: var(--brand); color: #fff; border-color: var(--brand); }
+  .pf-copy-btn:hover { opacity: .88; }
+  .pf-replace-btn { background: var(--bg); color: var(--text); }
+  .pf-replace-btn:hover { border-color: var(--brand); color: var(--brand); }
 
   /* RELIGHT PANEL */
   .relight-block {
@@ -1898,6 +1982,31 @@
   .cal-legend { display: flex; align-items: center; gap: 6px; justify-content: center; font-size: .7rem; color: var(--muted); flex-wrap: wrap; }
   .cal-leg-dot { width: 8px; height: 8px; border-radius: 2px; display: inline-block; flex-shrink: 0; }
 
+  /* ── Widget 10: Post Performance Radar ─────────────────────── */
+  .mw-post-radar { overflow: visible; }
+  .post-score-master { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+  .master-dial { position: relative; width: 60px; height: 60px; flex-shrink: 0; }
+  .dial-svg { width: 60px; height: 60px; display: block; }
+  .dial-num { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; font-weight: 700; color: #00F0FF; font-family: 'JetBrains Mono', 'Courier New', monospace; letter-spacing: -.03em; }
+  .master-label-row { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+  .master-title { font-size: .78rem; font-weight: 600; color: rgba(255,255,255,.8); }
+  .master-pct { font-size: .67rem; color: rgba(0,240,255,.7); min-height: 1em; }
+  .post-radar-wrap { position: relative; }
+  .post-radar-svg { width: 100%; max-width: 164px; display: block; margin: 0 auto; overflow: visible; }
+  .radar-lock-overlay { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); background: rgba(11,14,20,.6); border-radius: 10px; z-index: 3; }
+  .radar-lock-overlay span { font-size: 1.5rem; }
+  .radar-lock-overlay small { font-size: .68rem; color: rgba(255,255,255,.5); }
+  .radar-lock-overlay a { font-size: .7rem; color: #00F0FF; text-decoration: none; margin-top: 2px; }
+  .radar-lock-overlay.unlocked { display: none; }
+  .radar-hint { font-size: .68rem; color: rgba(255,255,255,.35); text-align: center; margin-top: 6px; min-height: 1em; }
+  .post-radar-badges { display: flex; gap: 5px; flex-wrap: wrap; margin-top: 7px; min-height: 20px; }
+  .pr-badge { font-size: .64rem; padding: 2px 7px; border-radius: 10px; background: rgba(0,240,255,.1); color: #00F0FF; border: 1px solid rgba(0,240,255,.2); white-space: nowrap; }
+  .pr-badge.warn { background: rgba(255,140,0,.1); color: #ffa040; border-color: rgba(255,140,0,.2); }
+  .pr-badge.good { background: rgba(0,230,118,.1); color: #00e676; border-color: rgba(0,230,118,.2); }
+  .boost-btn { font-size: .68rem; padding: 3px 9px; border-radius: 8px; background: rgba(124,92,255,.15); color: #a78bfa; border: 1px solid rgba(124,92,255,.3); cursor: pointer; transition: background .15s; white-space: nowrap; }
+  .boost-btn:hover { background: rgba(124,92,255,.3); }
+  .boost-btn:disabled { opacity: .5; cursor: not-allowed; }
+
   /* Upgrade CTA */
   .metrics-cta { background: linear-gradient(135deg,rgba(139,92,246,.12),rgba(6,182,212,.06)); border: 1px solid rgba(139,92,246,.2); border-radius: 12px; padding: 12px; text-align: center; }
   .mcta-text { font-size: .78rem; color: var(--muted2); margin-bottom: 9px; font-weight: 600; }
@@ -2287,14 +2396,68 @@
         <div>
           <div class="rp-label">Language</div>
           <select id="rpLanguage" class="rp-select">
-            <option value="English">English</option>
-            <option value="Spanish">Spanish</option>
-            <option value="French">French</option>
-            <option value="German">German</option>
-            <option value="Portuguese">Portuguese</option>
-            <option value="Italian">Italian</option>
-            <option value="Hindi">Hindi</option>
-            <option value="Japanese">Japanese</option>
+            <optgroup label="Most Spoken">
+              <option value="English">🇺🇸 English</option>
+              <option value="Mandarin Chinese">🇨🇳 Chinese (Mandarin)</option>
+              <option value="Hindi">🇮🇳 Hindi</option>
+              <option value="Spanish">🇪🇸 Spanish</option>
+              <option value="French">🇫🇷 French</option>
+              <option value="Arabic">🇸🇦 Arabic</option>
+              <option value="Bengali">🇧🇩 Bengali</option>
+              <option value="Portuguese">🇵🇹 Portuguese</option>
+              <option value="Russian">🇷🇺 Russian</option>
+              <option value="Urdu">🇵🇰 Urdu</option>
+            </optgroup>
+            <optgroup label="Asia Pacific">
+              <option value="Japanese">🇯🇵 Japanese</option>
+              <option value="Korean">🇰🇷 Korean</option>
+              <option value="Cantonese Chinese">🇭🇰 Chinese (Cantonese)</option>
+              <option value="Indonesian">🇮🇩 Indonesian</option>
+              <option value="Filipino">🇵🇭 Filipino</option>
+              <option value="Malay">🇲🇾 Malay</option>
+              <option value="Vietnamese">🇻🇳 Vietnamese</option>
+              <option value="Thai">🇹🇭 Thai</option>
+              <option value="Burmese">🇲🇲 Burmese</option>
+              <option value="Mongolian">🇲🇳 Mongolian</option>
+            </optgroup>
+            <optgroup label="South Asia">
+              <option value="Tamil">🇮🇳 Tamil</option>
+              <option value="Telugu">🇮🇳 Telugu</option>
+              <option value="Marathi">🇮🇳 Marathi</option>
+              <option value="Gujarati">🇮🇳 Gujarati</option>
+              <option value="Kannada">🇮🇳 Kannada</option>
+              <option value="Malayalam">🇮🇳 Malayalam</option>
+              <option value="Punjabi">🇮🇳 Punjabi</option>
+              <option value="Nepali">🇳🇵 Nepali</option>
+              <option value="Sinhala">🇱🇰 Sinhala</option>
+            </optgroup>
+            <optgroup label="Middle East & Central Asia">
+              <option value="Persian">🇮🇷 Persian (Farsi)</option>
+              <option value="Hebrew">🇮🇱 Hebrew</option>
+              <option value="Turkish">🇹🇷 Turkish</option>
+              <option value="Kazakh">🇰🇿 Kazakh</option>
+              <option value="Uzbek">🇺🇿 Uzbek</option>
+            </optgroup>
+            <optgroup label="Africa">
+              <option value="Swahili">🇰🇪 Swahili</option>
+              <option value="Hausa">🇳🇬 Hausa</option>
+              <option value="Yoruba">🇳🇬 Yoruba</option>
+              <option value="Amharic">🇪🇹 Amharic</option>
+              <option value="Zulu">🇿🇦 Zulu</option>
+              <option value="Afrikaans">🇿🇦 Afrikaans</option>
+            </optgroup>
+            <optgroup label="Europe">
+              <option value="German">🇩🇪 German</option>
+              <option value="Italian">🇮🇹 Italian</option>
+              <option value="Dutch">🇳🇱 Dutch</option>
+              <option value="Swedish">🇸🇪 Swedish</option>
+              <option value="Polish">🇵🇱 Polish</option>
+              <option value="Ukrainian">🇺🇦 Ukrainian</option>
+              <option value="Romanian">🇷🇴 Romanian</option>
+              <option value="Greek">🇬🇷 Greek</option>
+              <option value="Czech">🇨🇿 Czech</option>
+              <option value="Hungarian">🇭🇺 Hungarian</option>
+            </optgroup>
           </select>
         </div>
       </div>
@@ -2777,6 +2940,7 @@
               <optgroup label="Asia Pacific">
                 <option value="Japanese">🇯🇵 Japanese</option>
                 <option value="Korean">🇰🇷 Korean</option>
+                <option value="Cantonese Chinese">🇭🇰 Chinese (Cantonese)</option>
                 <option value="Indonesian">🇮🇩 Indonesian</option>
                 <option value="Javanese">🇮🇩 Javanese</option>
                 <option value="Sundanese">🇮🇩 Sundanese</option>
@@ -2789,6 +2953,7 @@
                 <option value="Khmer">🇰🇭 Khmer</option>
                 <option value="Lao">🇱🇦 Lao</option>
                 <option value="Mongolian">🇲🇳 Mongolian</option>
+                <option value="Tibetan">🇨🇳 Tibetan</option>
                 <option value="Maori">🇳🇿 Māori</option>
               </optgroup>
               <optgroup label="South Asia">
@@ -2821,6 +2986,7 @@
                 <option value="Hausa">🇳🇬 Hausa</option>
                 <option value="Yoruba">🇳🇬 Yoruba</option>
                 <option value="Igbo">🇳🇬 Igbo</option>
+                <option value="Twi">🇬🇭 Twi (Akan)</option>
                 <option value="Amharic">🇪🇹 Amharic</option>
                 <option value="Oromo">🇪🇹 Oromo</option>
                 <option value="Somali">🇸🇴 Somali</option>
@@ -2840,7 +3006,9 @@
                 <option value="Norwegian">🇳🇴 Norwegian</option>
                 <option value="Danish">🇩🇰 Danish</option>
                 <option value="Finnish">🇫🇮 Finnish</option>
+                <option value="Icelandic">🇮🇸 Icelandic</option>
                 <option value="Greek">🇬🇷 Greek</option>
+                <option value="Maltese">🇲🇹 Maltese</option>
                 <option value="Catalan">🏳️ Catalan</option>
                 <option value="Galician">🏳️ Galician</option>
                 <option value="Basque">🏳️ Basque</option>
@@ -2866,6 +3034,7 @@
               </optgroup>
               <optgroup label="Americas & Caribbean">
                 <option value="Haitian Creole">🇭🇹 Haitian Creole</option>
+                <option value="Quechua">🇵🇪 Quechua</option>
               </optgroup>
             </select>
             </div>
@@ -3149,6 +3318,57 @@
         <span class="cal-leg-dot" style="background:rgba(139,92,246,.4)"></span><span>Some</span>
         <span class="cal-leg-dot" style="background:#8b5cf6"></span><span>Active</span>
       </div>
+    </div>
+
+    <!-- Widget 10: Post Performance Score (GPT-scored 5-axis pentagon radar) -->
+    <div class="mw mw-post-radar" id="postRadarWidget">
+      <div class="mw-title">⚡ Post Performance Score</div>
+      <div class="post-score-master">
+        <div class="master-dial">
+          <svg viewBox="0 0 80 80" class="dial-svg">
+            <circle cx="40" cy="40" r="34" fill="none" stroke="rgba(255,255,255,.07)" stroke-width="6"
+              stroke-dasharray="213.6" stroke-linecap="round" transform="rotate(-90 40 40)"/>
+            <circle id="dialArc" cx="40" cy="40" r="34" fill="none" stroke="#00F0FF" stroke-width="6"
+              stroke-dasharray="213.6" stroke-dashoffset="213.6" stroke-linecap="round"
+              transform="rotate(-90 40 40)" style="transition:stroke-dashoffset .4s ease,stroke .4s ease"/>
+          </svg>
+          <div class="dial-num" id="masterScoreNum">—</div>
+        </div>
+        <div class="master-label-row">
+          <div class="master-title">Master Score</div>
+          <div class="master-pct" id="masterScorePct"></div>
+        </div>
+      </div>
+      <div class="post-radar-wrap" id="postRadarWrap">
+        <div class="radar-lock-overlay unlocked" id="radarLockOverlay">
+          <span>🔒</span>
+          <small>Radar unlocks on Starter</small>
+          <a href="pricing.html">Upgrade →</a>
+        </div>
+        <svg class="post-radar-svg" viewBox="0 0 164 150">
+          <!-- Pentagon grid rings (3×) -->
+          <polygon points="82,22 135,61 115,123 49,123 29,61" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="1"/>
+          <polygon points="82,41 117,67 104,108 60,108 47,67" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="1"/>
+          <polygon points="82,59 100,72 93,93 71,93 64,72" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="1"/>
+          <!-- Axis lines from center (82,78) to outer ring -->
+          <line x1="82" y1="78" x2="82"  y2="22"  stroke="rgba(255,255,255,.08)" stroke-width="1"/>
+          <line x1="82" y1="78" x2="135" y2="61"  stroke="rgba(255,255,255,.08)" stroke-width="1"/>
+          <line x1="82" y1="78" x2="115" y2="123" stroke="rgba(255,255,255,.08)" stroke-width="1"/>
+          <line x1="82" y1="78" x2="49"  y2="123" stroke="rgba(255,255,255,.08)" stroke-width="1"/>
+          <line x1="82" y1="78" x2="29"  y2="61"  stroke="rgba(255,255,255,.08)" stroke-width="1"/>
+          <!-- Score polygon — JS-animated -->
+          <polygon id="postRadarPoly" points="82,78 82,78 82,78 82,78 82,78"
+            fill="rgba(0,240,255,.13)" stroke="#00F0FF" stroke-width="1.5"/>
+          <!-- Axis labels -->
+          <text x="82"  y="16"  text-anchor="middle" fill="rgba(255,255,255,.5)" font-size="7.5">Scroll-Stop</text>
+          <text x="142" y="63"  text-anchor="start"  fill="rgba(255,255,255,.5)" font-size="7.5">Aesthetic</text>
+          <text x="119" y="133" text-anchor="middle" fill="rgba(255,255,255,.5)" font-size="7.5">Authentic</text>
+          <text x="45"  y="133" text-anchor="middle" fill="rgba(255,255,255,.5)" font-size="7.5">Social SEO</text>
+          <text x="22"  y="63"  text-anchor="end"    fill="rgba(255,255,255,.5)" font-size="7.5">Engagement</text>
+        </svg>
+      </div>
+      <div class="radar-hint" id="postRadarHint">Generate captions to see scores</div>
+      <div class="post-radar-badges" id="postRadarBadges"></div>
     </div>
 
     <!-- Upgrade CTA (free users) -->
@@ -3867,12 +4087,19 @@
     };
     const icon = platIcons[platform] || '📲';
 
+    // Store captions for post-radar hover morphing
+    window._lastCaptions = data.captions;
+
     let captionHTML = data.captions.map((cap, i) => {
       const isBlurred = !isPremium && i >= 3;
       const hookW = Math.round((cap.hook_score / 10) * 100);
       const engScore = calcEngagementScore(cap.text, cap.hook_score, platform);
+      const hasWeakScore = cap.scores && Object.values(cap.scores).some(v => v < 70);
+      const isPremiumOrPro = currentUser && ['premium','pro','teams'].includes(currentUser.plan);
+      const scoresJSON = JSON.stringify(cap.scores || {}).replace(/'/g, '&#39;');
+      const masterScore = cap.master_score || 0;
       return `
-      <div class="caption-item ${isBlurred ? 'blurred-row' : ''}">
+      <div class="caption-item ${isBlurred ? 'blurred-row' : ''}" data-idx="${i}" data-scores='${scoresJSON}' data-master="${masterScore}">
         <div class="caption-top">
           <div class="cap-num">${i+1}</div>
           <div class="cap-text">${escHtml(cap.text)}</div>
@@ -3887,6 +4114,7 @@
           <button class="cap-btn" onclick="copyCaption(this,'${escAttr(cap.text)}')">Copy</button>
           <button class="cap-btn" onclick="openPreview('${escAttr(cap.text)}')" title="Preview as Instagram post">🖼 Preview</button>
           <button class="schedule-btn" onclick="scheduleCaption('${escAttr(cap.text)}')">📅 Schedule</button>
+          ${isPremiumOrPro && hasWeakScore ? `<button class="boost-btn" onclick="boostCaption(${i},this)">⚡ Boost</button>` : ''}
         </div>
         ${engMeterHTML(engScore)}
       </div>`;
@@ -4046,6 +4274,9 @@
         </div>
       </div>`}
 
+      <!-- Platform Formatter (Premium+) -->
+      ${_platformFormatterPanel(platform)}
+
       <!-- AI Relight Panel (Pro/Teams) -->
       ${_relightPanel()}
 
@@ -4060,11 +4291,217 @@
     if (currentUser?.plan === 'pro' || currentUser?.plan === 'teams') {
       loadSocialStatus();
     }
+
+    // ── Post Radar: bind hover on caption items to morph radar ──
+    panel.querySelectorAll('.caption-item[data-scores]').forEach((el, idx) => {
+      el.addEventListener('mouseenter', () => {
+        try {
+          const scores = JSON.parse(el.dataset.scores || '{}');
+          const master = parseFloat(el.dataset.master || '0');
+          _prAnimate(scores, master);
+        } catch(e) {}
+      });
+      el.addEventListener('mouseleave', () => {
+        // Revert to first caption scores
+        const first = panel.querySelector('.caption-item[data-scores]');
+        if (first && first !== el) {
+          try {
+            const scores = JSON.parse(first.dataset.scores || '{}');
+            const master = parseFloat(first.dataset.master || '0');
+            _prAnimate(scores, master);
+          } catch(e) {}
+        }
+      });
+    });
+    // Show first caption scores by default
+    const firstCap = panel.querySelector('.caption-item[data-scores]');
+    if (firstCap) {
+      try {
+        const scores = JSON.parse(firstCap.dataset.scores || '{}');
+        const master = parseFloat(firstCap.dataset.master || '0');
+        _prAnimate(scores, master);
+      } catch(e) {}
+    }
   }
 
   /* ═══════════════════════════════════════════════════════════════════
      FEATURE 5 — AI Photo Relighting (Pro/Teams)
      ═══════════════════════════════════════════════════════════════════ */
+
+  /* ═══════════════════════════════════════════════════════════════════
+     FEATURE 5 — Platform Formatter (Premium+)
+     Reformats any caption for a specific platform using GPT-4o-mini
+     ═══════════════════════════════════════════════════════════════════ */
+
+  const _platFormatterDefs = {
+    Instagram:  { icon: '📸', label: 'Instagram',   chars: 2200, hashGuide: '20–30 tags' },
+    TikTok:     { icon: '🎵', label: 'TikTok',      chars: 2200, hashGuide: '3–7 tags'  },
+    LinkedIn:   { icon: '💼', label: 'LinkedIn',    chars: 3000, hashGuide: '3–5 tags'  },
+    Pinterest:  { icon: '📌', label: 'Pinterest',   chars: 500,  hashGuide: '2–5 tags'  },
+    Facebook:   { icon: '📘', label: 'Facebook',    chars: null, hashGuide: '1–3 tags'  },
+    'Twitter/X': { icon: '🐦', label: 'Twitter / X', chars: 280,  hashGuide: '1–2 tags'  },
+  };
+
+  function _platformFormatterPanel(currentPlatform) {
+    const isPremium = currentUser && ['premium','pro','teams'].includes(currentUser.plan);
+    if (!isPremium) return `
+      <div class="pf-block">
+        <div class="pf-header">
+          <span>🔄 Platform Formatter</span>
+          <span class="pf-badge">PREMIUM</span>
+        </div>
+        <div class="pf-locked">
+          🔒 Instantly reformat any caption for Instagram, TikTok, LinkedIn, Pinterest, Facebook, or Twitter/X — optimized rules, hashtags, and tone for each platform.
+          <a href="pricing.html" style="color:var(--brand);font-weight:600;margin-left:4px;">Upgrade to Premium</a>
+        </div>
+      </div>`;
+
+    const btnHTML = Object.entries(_platFormatterDefs).map(([key, def]) => {
+      const isActive = key === currentPlatform || (key === 'Twitter/X' && currentPlatform === 'X');
+      return `<button class="pf-plat-btn${isActive ? ' pf-active' : ''}" data-plat="${key}" onclick="reformatForPlatform('${key}',this)">
+        <span class="pf-icon">${def.icon}</span>
+        <span class="pf-name">${def.label}</span>
+        ${def.chars ? `<span class="pf-chars">${def.chars < 500 ? def.chars+' chr' : (def.chars/1000)+'K'}</span>` : ''}
+      </button>`;
+    }).join('');
+
+    return `
+      <div class="pf-block" id="platformFormatterBlock">
+        <div class="pf-header">
+          <span>🔄 Platform Formatter</span>
+          <span class="pf-subtitle">Reformat any caption for another platform</span>
+        </div>
+        <div class="pf-caption-select">
+          <label class="pf-sel-label">Select caption to reformat:</label>
+          <select id="pfCaptionSel" class="pf-select">
+            <option value="0">Caption 1</option>
+            <option value="1">Caption 2</option>
+            <option value="2">Caption 3</option>
+            <option value="3">Caption 4</option>
+            <option value="4">Caption 5</option>
+          </select>
+        </div>
+        <div class="pf-plat-grid">
+          ${btnHTML}
+        </div>
+        <div class="pf-loading" id="pfLoading" style="display:none;">
+          <div class="pf-spin"></div>
+          <span>Reformatting for <span id="pfLoadingPlat"></span>…</span>
+        </div>
+        <div class="pf-result" id="pfResult" style="display:none;">
+          <div class="pf-result-header">
+            <span id="pfResultTitle">Reformatted for Instagram</span>
+            <span class="pf-char-badge" id="pfCharBadge"></span>
+          </div>
+          <div class="pf-result-text" id="pfResultText"></div>
+          <div class="pf-tip" id="pfTip"></div>
+          <div class="pf-result-actions">
+            <button class="pf-copy-btn" onclick="copyPfResult(this)">📋 Copy</button>
+            <button class="pf-replace-btn" onclick="replaceCaptionWithPf()">↩️ Replace Caption</button>
+          </div>
+        </div>
+      </div>`;
+  }
+
+  async function reformatForPlatform(platform, btn) {
+    // Get selected caption text
+    const selIdx = parseInt(document.getElementById('pfCaptionSel')?.value || '0', 10);
+    const capItems = document.querySelectorAll('.caption-item');
+    const capEl = capItems[selIdx];
+    if (!capEl) { showToast('No caption found'); return; }
+    const capText = capEl.querySelector('.cap-text')?.textContent?.trim();
+    if (!capText) { showToast('No caption text found'); return; }
+
+    // UI state
+    const loading = document.getElementById('pfLoading');
+    const result  = document.getElementById('pfResult');
+    const loadPlat = document.getElementById('pfLoadingPlat');
+    document.querySelectorAll('.pf-plat-btn').forEach(b => b.classList.remove('pf-active','pf-working'));
+    btn.classList.add('pf-working');
+    if (loading) { loading.style.display = 'flex'; loadPlat.textContent = _platFormatterDefs[platform]?.label || platform; }
+    if (result) result.style.display = 'none';
+
+    // Get current platform from badge
+    const platBadge = document.querySelector('.plat-badge');
+    const originalPlatform = platBadge ? platBadge.textContent.replace(/[^\w\s\/]/g,'').trim() : '';
+
+    try {
+      const token = localStorage.getItem('sc_token');
+      const res = await fetch('/api/reformat-caption.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+        body: JSON.stringify({ caption: capText, platform, original_platform: originalPlatform }),
+      });
+      const data = await res.json();
+
+      btn.classList.remove('pf-working');
+      btn.classList.add('pf-active');
+      if (loading) loading.style.display = 'none';
+
+      if (!data.success) {
+        if (data.upgrade) {
+          showToast('Upgrade to Premium to use Platform Formatter');
+        } else {
+          showToast(data.message || 'Reformat failed');
+        }
+        return;
+      }
+
+      // Show result
+      const def = _platFormatterDefs[platform] || { icon: '📲', label: platform };
+      const charBadge = document.getElementById('pfCharBadge');
+      const title = document.getElementById('pfResultTitle');
+      const textEl = document.getElementById('pfResultText');
+      const tipEl = document.getElementById('pfTip');
+
+      if (title) title.textContent = `${def.icon} Reformatted for ${def.label}`;
+      if (textEl) textEl.textContent = data.reformatted;
+      if (charBadge) {
+        const over = def.chars && data.char_count > def.chars;
+        charBadge.textContent = `${data.char_count} chars · ${data.hashtag_count} #`;
+        charBadge.className = 'pf-char-badge' + (over ? ' pf-over' : ' pf-ok');
+      }
+      if (tipEl) {
+        tipEl.innerHTML = data.tip ? `💡 <em>${escHtml(data.tip)}</em>` : '';
+        tipEl.style.display = data.tip ? 'block' : 'none';
+      }
+
+      // Store for copy/replace
+      window._pfLastResult = { text: data.reformatted, platform, capIdx: selIdx };
+
+      if (result) result.style.display = 'block';
+      result?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+    } catch(err) {
+      btn.classList.remove('pf-working');
+      if (loading) loading.style.display = 'none';
+      showToast('Network error — please try again');
+    }
+  }
+
+  function copyPfResult(btn) {
+    if (!window._pfLastResult) return;
+    navigator.clipboard.writeText(window._pfLastResult.text).then(() => {
+      const orig = btn.textContent;
+      btn.textContent = '✅ Copied!';
+      setTimeout(() => btn.textContent = orig, 2000);
+    });
+  }
+
+  function replaceCaptionWithPf() {
+    if (!window._pfLastResult) return;
+    const { text, capIdx } = window._pfLastResult;
+    const capItems = document.querySelectorAll('.caption-item');
+    const capEl = capItems[capIdx];
+    if (!capEl) return;
+    const textEl = capEl.querySelector('.cap-text');
+    if (textEl) {
+      textEl.textContent = text;
+      showToast('Caption replaced ✅');
+      // Scroll to the caption
+      capEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+  }
 
   let _relightResult = null; // last relit image base64
 
@@ -6433,6 +6870,122 @@
       }
     }
 
+    // ── Widget 10: Post Performance Radar (GPT-scored 5-axis pentagon) ──────
+    const _PR_CX = 82, _PR_CY = 78, _PR_R = 56;
+    const _PR_AXES = [
+      ['scroll_stop',  -Math.PI / 2],
+      ['aesthetic',    -18 * Math.PI / 180],
+      ['authenticity',  54 * Math.PI / 180],
+      ['social_seo',   126 * Math.PI / 180],
+      ['engagement',   198 * Math.PI / 180],
+    ];
+
+    function _prPts(scores) {
+      return _PR_AXES.map(([k, rad]) => {
+        const v = Math.min(1, Math.max(0, ((scores && scores[k]) || 0) / 100));
+        return [
+          +(_PR_CX + _PR_R * v * Math.cos(rad)).toFixed(1),
+          +(_PR_CY + _PR_R * v * Math.sin(rad)).toFixed(1)
+        ];
+      });
+    }
+
+    function _prDialColor(score) {
+      if (score >= 80) return '#00e676';
+      if (score >= 60) return '#00F0FF';
+      return '#ff8c00';
+    }
+
+    function _prPercentile(score) {
+      if (score >= 90) return 'Top 5% of posts';
+      if (score >= 80) return 'Top 20% of posts';
+      if (score >= 70) return 'Top 40% of posts';
+      if (score >= 60) return 'Top 55% of posts';
+      return 'Below average';
+    }
+
+    let _prFrom = {scroll_stop:0,aesthetic:0,authenticity:0,social_seo:0,engagement:0};
+    let _prFromMaster = 0;
+    let _prAnimId = null;
+
+    function _prAnimate(toScores, toMaster) {
+      if (_prAnimId) cancelAnimationFrame(_prAnimId);
+      const from = {..._prFrom};
+      const fromM = _prFromMaster;
+      const start = performance.now();
+      const dur = 400;
+      function step(now) {
+        const t = Math.min(1, (now - start) / dur);
+        const e = t < 0.5 ? 2*t*t : -1+(4-2*t)*t; // ease-in-out quad
+        const cur = {};
+        for (const k of Object.keys(toScores)) {
+          cur[k] = (from[k] || 0) + ((toScores[k] || 0) - (from[k] || 0)) * e;
+        }
+        const curM = fromM + (toMaster - fromM) * e;
+        // Update polygon
+        const poly = $id('postRadarPoly');
+        if (poly) poly.setAttribute('points', _prPts(cur).map(p => p.join(',')).join(' '));
+        // Update dial
+        const arc = $id('dialArc');
+        const numEl = $id('masterScoreNum');
+        if (arc) {
+          const offset = 213.6 * (1 - Math.min(100, Math.max(0, curM)) / 100);
+          arc.style.strokeDashoffset = offset;
+          arc.style.stroke = _prDialColor(curM);
+        }
+        if (numEl) {
+          numEl.textContent = Math.round(curM);
+          numEl.style.color = _prDialColor(curM);
+        }
+        if (t < 1) _prAnimId = requestAnimationFrame(step);
+        else {
+          _prFrom = {...toScores};
+          _prFromMaster = toMaster;
+          // Update percentile + tier-lock state once animation settles
+          const pct = $id('masterScorePct');
+          if (pct) pct.textContent = _prPercentile(toMaster);
+          _prUpdateBadges(toScores);
+          _prUpdateLock();
+        }
+      }
+      _prAnimId = requestAnimationFrame(step);
+    }
+
+    function _prUpdateBadges(scores) {
+      const badges = $id('postRadarBadges');
+      if (!badges) return;
+      const labels = {scroll_stop:'Scroll-Stop',aesthetic:'Aesthetic',authenticity:'Authentic',social_seo:'Social SEO',engagement:'Engagement'};
+      const weak = [], strong = [];
+      for (const [k, v] of Object.entries(scores)) {
+        if (v >= 85)      strong.push(labels[k]);
+        else if (v < 65)  weak.push(labels[k]);
+      }
+      let html = '';
+      strong.slice(0,2).forEach(l => { html += `<span class="pr-badge good">✓ ${l}</span>`; });
+      weak.slice(0,2).forEach(l =>   { html += `<span class="pr-badge warn">↓ ${l}</span>`; });
+      badges.innerHTML = html;
+    }
+
+    function _prUpdateLock() {
+      const overlay = $id('radarLockOverlay');
+      if (!overlay) return;
+      const plan = window.currentUser?.plan;
+      const isUnlocked = plan && ['starter','premium','pro','teams'].includes(plan);
+      overlay.classList.toggle('unlocked', isUnlocked);
+      // Update hint text
+      const hint = $id('postRadarHint');
+      if (hint) {
+        if (isUnlocked) {
+          hint.textContent = 'Hover captions to compare performance';
+        } else {
+          hint.innerHTML = '<a href="pricing.html" style="color:#00F0FF;text-decoration:none;">Upgrade to Starter</a> to unlock the radar';
+        }
+      }
+    }
+
+    // Public hook for caption hover
+    window._prAnimate = _prAnimate;
+
     // ── Public API ───────────────────────────────────────────────────────
     window.updateCaptionScoreWidget = function(data, platform) {
       const s = window._mState;
@@ -6450,11 +7003,56 @@
       updateTimeline();
       updateRadar(platform);
       updateCalendar();
+      updatePostRadar(data);
       const ctaEl = $id('metricsCta');
       if (ctaEl) {
         ctaEl.style.display = (window.currentUser?.plan === 'premium' || window.currentUser?.plan === 'teams') ? 'none' : '';
       }
     };
+
+    // ── Widget 10: Boost Caption (⚡ Premium/Pro/Teams) ──────────────────
+    async function boostCaption(idx, btn) {
+      const caps = window._lastCaptions;
+      if (!caps || !caps[idx]) return;
+      btn.disabled = true;
+      btn.textContent = '⚡ Boosting…';
+      try {
+        const resp = await fetch('api/boost-caption.php', {
+          method: 'POST',
+          headers: {'Content-Type':'application/json'},
+          body: JSON.stringify({ caption: caps[idx].text, scores: caps[idx].scores, idx })
+        });
+        const result = await resp.json();
+        if (result.error) throw new Error(result.error);
+        // Update stored caption
+        caps[idx].text = result.caption;
+        caps[idx].scores = result.scores;
+        caps[idx].master_score = result.master_score;
+        window._lastCaptions = caps;
+        // Update the DOM card
+        const panel = document.querySelector('.captions-panel') || document.querySelector('#captionsOutput');
+        if (panel) {
+          const item = panel.querySelector(`.caption-item[data-idx="${idx}"]`);
+          if (item) {
+            const textEl = item.querySelector('.caption-text') || item.querySelector('p') || item.querySelector('.cap-body');
+            if (textEl) textEl.textContent = result.caption;
+            item.dataset.scores = JSON.stringify(result.scores);
+            item.dataset.master = result.master_score;
+          }
+        }
+        // Animate radar to new scores
+        _prAnimate(result.scores, result.master_score);
+        btn.textContent = '✓ Boosted';
+        btn.style.color = '#00e676';
+        btn.style.borderColor = 'rgba(0,230,118,.3)';
+      } catch(e) {
+        console.error('Boost failed:', e);
+        btn.disabled = false;
+        btn.textContent = '⚡ Boost';
+        btn.title = e.message || 'Boost failed';
+      }
+    }
+    window.boostCaption = boostCaption;
 
     window.updateTransformMetrics = function(transformKey) {
       if (!transformKey) return;

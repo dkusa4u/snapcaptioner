@@ -267,7 +267,7 @@ const currentUser  = (() => { try { return JSON.parse(localStorage.getItem('sc_u
 
 function isPro() {
   const plan = (currentUser?.plan || '').toLowerCase();
-  return plan === 'pro';
+  return plan === 'pro' || plan === 'teams';
 }
 
 if (!currentToken) {
