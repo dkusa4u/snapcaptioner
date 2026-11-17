@@ -84,6 +84,9 @@ select.inp{cursor:pointer}
 .diff-medium{background:var(--amber)}
 .diff-high{background:var(--red)}
 .tag-reach{font-size:.65rem;color:var(--muted);white-space:nowrap}
+.live-badge{display:inline-flex;align-items:center;gap:3px;font-size:.62rem;font-weight:700;color:#22c55e;background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.25);border-radius:4px;padding:1px 5px;white-space:nowrap}
+.live-data-banner{display:flex;align-items:center;gap:8px;background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.2);border-radius:10px;padding:10px 14px;margin-bottom:16px;font-size:.8rem;color:#22c55e}
+.live-data-banner .live-icon{font-size:1rem;flex-shrink:0}
 
 /* ── ACTION BAR ── */
 .action-bar{display:flex;align-items:center;gap:10px;margin-top:20px;flex-wrap:wrap}
@@ -194,7 +197,7 @@ select.inp{cursor:pointer}
     <div id="loadingArea" style="display:none">
       <div class="loading-state">
         <div class="spinner"></div>
-        <p>Researching hashtags for <strong id="loadingTopic"></strong>…</p>
+        <p id="loadingMsg">Researching hashtags for <strong id="loadingTopic"></strong>…</p>
       </div>
     </div>
 
@@ -208,6 +211,12 @@ select.inp{cursor:pointer}
         <div style="display:flex;align-items:center;gap:8px">
           <div class="best-count-badge">✅ Use <span id="bestCountNum"></span> tags per post</div>
         </div>
+      </div>
+
+      <!-- Live data banner -->
+      <div class="live-data-banner" id="liveDataBanner" style="display:none">
+        <div class="live-icon">⚡</div>
+        <div><strong>Live Volume Data</strong> — Post counts for niche &amp; trending tags are real-time from Instagram</div>
       </div>
 
       <!-- Strategy tip -->
@@ -358,6 +367,9 @@ function renderResults(data) {
                 (data.broad?.length || 0) + (data.long_tail?.length || 0);
   document.getElementById('resultsTitle').textContent = `#️⃣ Results for "${data.topic}"`;
   document.getElementById('resultsMeta').textContent  = `${total} hashtags for ${data.platform}`;
+
+  // Live data banner
+  document.getElementById('liveDataBanner').style.display = data.live_data ? 'flex' : 'none';
   document.getElementById('bestCountNum').textContent = data.best_count || 15;
 
   // Strategy tip
@@ -414,10 +426,13 @@ function renderResults(data) {
 
 function tagChipHtml(t) {
   const diffClass = { low: 'diff-low', medium: 'diff-medium', high: 'diff-high' }[t.difficulty] || 'diff-medium';
-  return `<div class="tag-chip" id="chip-${cssId(t.tag)}" onclick="toggleTag('${escAttr(t.tag)}')" title="${escAttr(t.tag)} · reach: ${escAttr(t.reach||'')} · difficulty: ${escAttr(t.difficulty||'')}">
+  const liveHtml  = t.live ? `<span class="live-badge">⚡ LIVE</span>` : '';
+  const reachHtml = t.reach ? `<span class="tag-reach">${escHtml(t.reach)}</span>` : '';
+  return `<div class="tag-chip" id="chip-${cssId(t.tag)}" onclick="toggleTag('${escAttr(t.tag)}')" title="${escAttr(t.tag)} · posts: ${escAttr(t.reach||'')} · difficulty: ${escAttr(t.difficulty||'')}${t.live ? ' (live data)' : ''}">
     <div class="diff-dot ${diffClass}"></div>
     <span>${escHtml(t.tag)}</span>
-    <span class="tag-reach">${escHtml(t.reach||'')}</span>
+    ${reachHtml}
+    ${liveHtml}
   </div>`;
 }
 

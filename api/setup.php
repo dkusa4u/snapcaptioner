@@ -9,7 +9,10 @@
  * IMPORTANT: Delete or rename this file after running it successfully.
  *
  * Steps:
- *   1. Add to api/config.php:  define('SETUP_TOKEN', 'your-random-secret');
+ *   1. Add to api/config.php:
+ *        define('SETUP_TOKEN',   'your-random-secret');
+ *        define('RAPIDAPI_KEY',  '');  // Optional: RapidAPI key for live hashtag volumes
+ *                                     // Get key at rapidapi.com → "Instagram Scraper API2"
  *   2. Visit https://yourdomain.com/api/setup.php?token=your-random-secret
  *   3. Confirm all tables show ✓
  *   4. Delete this file from the server
