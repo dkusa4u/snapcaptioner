@@ -1,0 +1,59 @@
+<?php
+/**
+ * SnapCaptioner — Live Configuration Template
+ *
+ * INSTRUCTIONS:
+ *   1. Copy this file: cp api/config.php.example api/config.php
+ *   2. Fill in every value below with your real credentials
+ *   3. NEVER commit api/config.php to git (it's already in .gitignore)
+ *
+ * On Hostinger: upload/edit api/config.php via File Manager or SSH.
+ */
+
+/* ── Database ──────────────────────────────────────────────── */
+define('DB_HOST', 'localhost');
+define('DB_NAME', 'u922271352_snapcap');   // your Hostinger DB name
+define('DB_USER', 'u922271352_snapcap');   // your Hostinger DB user
+define('DB_PASS', 'YOUR_DB_PASSWORD');      // ← replace
+
+/* ── OpenAI ────────────────────────────────────────────────── */
+define('OPENAI_API_KEY', 'sk-YOUR_OPENAI_KEY');   // ← replace
+
+/* ── Photoroom (Feature 5 — AI Photo Relighting) ──────────── */
+// Get your key at: https://www.photoroom.com/api
+define('PHOTOROOM_API_KEY', 'YOUR_PHOTOROOM_KEY');  // ← replace
+
+/* ── RapidAPI (Feature 2 — Live Hashtag Volume) ───────────── */
+// Optional: sign up at https://rapidapi.com and subscribe to
+// "Instagram Scraper API2". Leave blank to fall back to GPT estimates.
+define('RAPIDAPI_KEY', '');   // ← replace or leave blank
+
+/* ── Meta / Instagram (Feature 4 — Social Publish) ──────────
+ *  Create app at: https://developers.facebook.com/apps/
+ *  Products: Facebook Login, Instagram Basic Display, Instagram Graph API
+ *  Valid OAuth Redirect URI: https://snapcaptioner.com/api/social-auth.php
+ */
+define('META_APP_ID',     'YOUR_META_APP_ID');      // ← replace
+define('META_APP_SECRET', 'YOUR_META_APP_SECRET');  // ← replace
+
+/* ── Pinterest (Feature 4 — Social Publish) ──────────────────
+ *  Create app at: https://developers.pinterest.com/apps/
+ *  Redirect URI: https://snapcaptioner.com/api/social-auth.php
+ */
+define('PINTEREST_APP_ID',     'YOUR_PINTEREST_APP_ID');      // ← replace
+define('PINTEREST_APP_SECRET', 'YOUR_PINTEREST_APP_SECRET');  // ← replace
+
+/* ── Stripe ────────────────────────────────────────────────── */
+// Live keys from: https://dashboard.stripe.com/apikeys
+define('STRIPE_SECRET_KEY',      'sk_live_YOUR_KEY');    // ← replace
+define('STRIPE_WEBHOOK_SECRET',  'whsec_YOUR_SECRET');   // ← replace
+
+// Price IDs from Stripe Dashboard → Products
+// Create 4 products: Starter $3/mo, Premium $7/mo, Pro $14/mo, Teams $29/mo
+define('STRIPE_PRICE_STARTER',   'price_YOUR_STARTER_ID');   // ← replace
+define('STRIPE_PRICE_PREMIUM',   'price_YOUR_PREMIUM_ID');   // ← replace
+define('STRIPE_PRICE_PRO',       'price_YOUR_PRO_ID');       // ← replace
+define('STRIPE_PRICE_TEAMS',     'price_YOUR_TEAMS_ID');     // ← replace
+
+/* ── App URL ───────────────────────────────────────────────── */
+define('APP_URL', 'https://snapcaptioner.com');

@@ -120,6 +120,8 @@ function initDB(): void {
     migrateStripeColumns($db);
     // Migrate social_connections table (safe no-op for new installs)
     migrateSocialConnections($db);
+    // Migrate usage_log to add meta column for relight logging (safe no-op if already present)
+    migrateUsageLogMeta($db);
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -220,6 +222,18 @@ function migrateSocialConnections(PDO $db): void {
         ");
     } catch (PDOException $e) {
         error_log('migrateSocialConnections: ' . $e->getMessage());
+    }
+}
+
+function migrateUsageLogMeta(PDO $db): void {
+    try {
+        // Add meta column to usage_log if not present (needed by relight.php for Feature 5)
+        $cols = $db->query("SHOW COLUMNS FROM usage_log LIKE 'meta'")->fetchAll();
+        if (empty($cols)) {
+            $db->exec("ALTER TABLE usage_log ADD COLUMN meta TEXT NULL AFTER action");
+        }
+    } catch (PDOException $e) {
+        error_log('migrateUsageLogMeta: ' . $e->getMessage());
     }
 }
 
