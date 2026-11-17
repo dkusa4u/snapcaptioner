@@ -147,11 +147,11 @@ Platform guidelines: $platGuide$contextNote$brandVoiceNote
 Return ONLY valid JSON (no markdown, no explanation) in exactly this format:
 {
   "captions": [
-    {"text": "caption text here", "hook_score": 9},
-    {"text": "caption text here", "hook_score": 8},
-    {"text": "caption text here", "hook_score": 8},
-    {"text": "caption text here", "hook_score": 7},
-    {"text": "caption text here", "hook_score": 7}
+    {"text": "caption text here", "hook_score": 9, "scores": {"scroll_stop": 85, "aesthetic": 72, "authenticity": 88, "social_seo": 76, "engagement": 90}, "master_score": 82},
+    {"text": "caption text here", "hook_score": 8, "scores": {"scroll_stop": 70, "aesthetic": 68, "authenticity": 75, "social_seo": 72, "engagement": 80}, "master_score": 73},
+    {"text": "caption text here", "hook_score": 8, "scores": {"scroll_stop": 65, "aesthetic": 80, "authenticity": 70, "social_seo": 68, "engagement": 74}, "master_score": 71},
+    {"text": "caption text here", "hook_score": 7, "scores": {"scroll_stop": 60, "aesthetic": 65, "authenticity": 72, "social_seo": 70, "engagement": 68}, "master_score": 67},
+    {"text": "caption text here", "hook_score": 7, "scores": {"scroll_stop": 58, "aesthetic": 60, "authenticity": 65, "social_seo": 62, "engagement": 60}, "master_score": 61}
   ],
   "hashtags": [
     {"tag": "hashtagword", "tier": "sweet"},
@@ -168,6 +168,8 @@ Return ONLY valid JSON (no markdown, no explanation) in exactly this format:
 Rules:
 - Write ALL 5 captions AND the alt_text natively in $language (not English then translated)
 - hook_score is 1-10 (10 = irresistible scroll-stopper opening line)
+- scores: rate each caption 0-100 on exactly these 5 axes: scroll_stop (how powerfully the opening line interrupts the scroll — curiosity, pattern-break, visual hook), aesthetic (visual/sensory language quality and image-caption harmony), authenticity (genuine human voice vs generic/AI-sounding), social_seo (keyword richness, trending phrases, hashtag-ready language), engagement (predicted comment/share/save likelihood based on CTA clarity, question-bait, value-offer)
+- master_score: round(average of the 5 scores) as an integer 0-100
 - Provide EXACTLY 20 hashtags split as: 8 "sweet" (niche, 10K–500K posts), 7 "comp" (competitive, 500K–2M posts), 5 "sat" (oversaturated, 2M+ posts)
 - hashtag tags: lowercase, no spaces, no # symbol
 - Each caption must follow the $platform guidelines above
@@ -179,7 +181,7 @@ PROMPT;
 // ── Call OpenAI API ────────────────────────────────────────────────────────
 $payload = [
     'model'       => 'gpt-4o-mini',
-    'max_tokens'  => 1800,
+    'max_tokens'  => 2500,
     'temperature' => 0.8,
     'messages'    => [
         [
@@ -276,6 +278,18 @@ foreach ($result['captions'] as &$cap) {
     if (!isset($cap['text']))       $cap['text'] = '';
     if (!isset($cap['hook_score'])) $cap['hook_score'] = 7;
     $cap['hook_score'] = max(1, min(10, (int)$cap['hook_score']));
+    // Validate post performance scores
+    $axes = ['scroll_stop','aesthetic','authenticity','social_seo','engagement'];
+    if (!isset($cap['scores']) || !is_array($cap['scores'])) {
+        $cap['scores'] = array_fill_keys($axes, 70);
+    }
+    foreach ($axes as $ax) {
+        $cap['scores'][$ax] = max(0, min(100, (int)($cap['scores'][$ax] ?? 70)));
+    }
+    if (!isset($cap['master_score'])) {
+        $cap['master_score'] = (int)round(array_sum(array_map(fn($ax) => $cap['scores'][$ax], $axes)) / 5);
+    }
+    $cap['master_score'] = max(0, min(100, (int)$cap['master_score']));
 }
 unset($cap);
 

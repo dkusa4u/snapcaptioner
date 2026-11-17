@@ -368,12 +368,12 @@
     <div class="plan-price-block">
       <div class="plan-price" id="price-starter">
         <span class="currency">$</span>
-        <span id="amt-starter">4</span>
-        <span class="cents" id="cents-starter">.99</span>
+        <span id="amt-starter">3</span>
+        <span class="cents" id="cents-starter"></span>
       </div>
       <div class="plan-period" id="period-starter">per month</div>
-      <div class="plan-orig-price" id="orig-starter">$4.99 / mo</div>
-      <div class="plan-yearly-note" id="yn-starter">$47.90 / year · 2 months free</div>
+      <div class="plan-orig-price" id="orig-starter">$3 / mo</div>
+      <div class="plan-yearly-note" id="yn-starter">$30 / year · 2 months free</div>
     </div>
     <button class="plan-btn starter-btn" onclick="startCheckout('starter')">Start with Starter</button>
     <div class="feat-divider"></div>
@@ -399,12 +399,12 @@
     <div class="plan-price-block">
       <div class="plan-price" id="price-premium">
         <span class="currency">$</span>
-        <span id="amt-premium">9</span>
-        <span class="cents" id="cents-premium">.99</span>
+        <span id="amt-premium">7</span>
+        <span class="cents" id="cents-premium"></span>
       </div>
       <div class="plan-period" id="period-premium">per month</div>
-      <div class="plan-orig-price" id="orig-premium">$9.99 / mo</div>
-      <div class="plan-yearly-note" id="yn-premium">$95.90 / year · 2 months free</div>
+      <div class="plan-orig-price" id="orig-premium">$7 / mo</div>
+      <div class="plan-yearly-note" id="yn-premium">$70 / year · 2 months free</div>
     </div>
     <button class="plan-btn premium-btn" onclick="startCheckout('premium')">Upgrade to Premium ✨</button>
     <div class="feat-divider"></div>
@@ -429,12 +429,12 @@
     <div class="plan-price-block">
       <div class="plan-price" id="price-pro">
         <span class="currency">$</span>
-        <span id="amt-pro">19</span>
-        <span class="cents" id="cents-pro">.99</span>
+        <span id="amt-pro">14</span>
+        <span class="cents" id="cents-pro"></span>
       </div>
       <div class="plan-period" id="period-pro">per month</div>
-      <div class="plan-orig-price" id="orig-pro">$19.99 / mo</div>
-      <div class="plan-yearly-note" id="yn-pro">$191.90 / year · 2 months free</div>
+      <div class="plan-orig-price" id="orig-pro">$14 / mo</div>
+      <div class="plan-yearly-note" id="yn-pro">$140 / year · 2 months free</div>
     </div>
     <button class="plan-btn pro-btn" onclick="startCheckout('pro')">Go Pro 🚀</button>
     <div class="feat-divider"></div>
@@ -451,6 +451,36 @@
     </ul>
   </div>
 
+  <!-- TEAMS -->
+  <div class="plan-card" id="card-teams">
+    <div class="plan-icon">🏢</div>
+    <div class="plan-name">Teams</div>
+    <div class="plan-tagline">Unlimited everything for agencies and growing teams.</div>
+    <div class="plan-price-block">
+      <div class="plan-price" id="price-teams">
+        <span class="currency">$</span>
+        <span id="amt-teams">29</span>
+        <span class="cents" id="cents-teams"></span>
+      </div>
+      <div class="plan-period" id="period-teams">per month</div>
+      <div class="plan-orig-price" id="orig-teams">$29 / mo</div>
+      <div class="plan-yearly-note" id="yn-teams">$290 / year · 2 months free</div>
+    </div>
+    <button class="plan-btn" style="background:linear-gradient(135deg,#0891B2,#06b6d4);color:#fff;border:none;" onclick="startCheckout('teams')">Get Teams 🏢</button>
+    <div class="feat-divider"></div>
+    <div class="feat-label">Everything in Pro, plus</div>
+    <ul class="feat-list">
+      <li class="feat-item on"><span class="feat-check">✅</span>Up to 5 team seats</li>
+      <li class="feat-item on"><span class="feat-check">✅</span>Unlimited brand profiles</li>
+      <li class="feat-item on"><span class="feat-check">✅</span>Shared brand voice library</li>
+      <li class="feat-item on"><span class="feat-check">✅</span>Unlimited transforms / day</li>
+      <li class="feat-item on"><span class="feat-check">✅</span>Team usage analytics</li>
+      <li class="feat-item on"><span class="feat-check">✅</span>Dedicated onboarding call</li>
+      <li class="feat-item on"><span class="feat-check">✅</span>Slack/email priority support</li>
+      <li class="feat-item on"><span class="feat-check">✅</span>Custom invoicing available</li>
+    </ul>
+  </div>
+
 </div>
 
 <!-- COMPARE TABLE -->
@@ -462,24 +492,26 @@
       <tr>
         <th>Feature</th>
         <th>Free</th>
-        <th>Starter<br><span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--muted);font-size:.72rem;">$4.99/mo</span></th>
-        <th class="featured-col">Premium<br><span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:.72rem;">$9.99/mo</span></th>
-        <th>Pro<br><span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--muted);font-size:.72rem;">$19.99/mo</span></th>
+        <th>Starter<br><span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--muted);font-size:.72rem;">$3/mo</span></th>
+        <th class="featured-col">Premium<br><span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:.72rem;">$7/mo</span></th>
+        <th>Pro<br><span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--muted);font-size:.72rem;">$14/mo</span></th>
+        <th>Teams<br><span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--muted);font-size:.72rem;">$29/mo</span></th>
       </tr>
     </thead>
     <tbody>
-      <tr><td>Captions / day</td><td>3</td><td>15</td><td class="featured-col">Unlimited</td><td>Unlimited</td></tr>
-      <tr><td>Languages</td><td>English</td><td>50+</td><td class="featured-col">50+</td><td>50+</td></tr>
-      <tr><td>Caption transforms</td><td><span class="cx">✕</span></td><td><span class="cx">✕</span></td><td class="featured-col">10 / day</td><td>25 / day</td></tr>
-      <tr><td>Brand voice training</td><td><span class="cx">✕</span></td><td><span class="cx">✕</span></td><td class="featured-col"><span class="ct">✓</span></td><td><span class="ct">✓</span></td></tr>
-      <tr><td>Caption history</td><td><span class="cx">✕</span></td><td>30 sets</td><td class="featured-col">Unlimited</td><td>Unlimited</td></tr>
-      <tr><td>Content Calendar</td><td><span class="cx">✕</span></td><td><span class="cx">✕</span></td><td class="featured-col"><span class="ct">✓</span></td><td><span class="ct">✓</span></td></tr>
-      <tr><td>Repurpose / Reel scripts</td><td><span class="cx">✕</span></td><td><span class="cx">✕</span></td><td class="featured-col"><span class="ct">✓</span></td><td><span class="ct">✓</span></td></tr>
-      <tr><td>A/B Caption Tracker</td><td><span class="cx">✕</span></td><td><span class="cx">✕</span></td><td class="featured-col"><span class="ct">✓</span></td><td><span class="ct">✓</span></td></tr>
-      <tr><td>Bulk generation</td><td><span class="cx">✕</span></td><td><span class="cx">✕</span></td><td class="featured-col"><span class="cx">✕</span></td><td><span class="ct">✓</span></td></tr>
-      <tr><td>Chrome extension</td><td><span class="cx">✕</span></td><td><span class="cx">✕</span></td><td class="featured-col"><span class="cx">✕</span></td><td><span class="ct">✓</span></td></tr>
-      <tr><td>Advanced hashtag research</td><td><span class="cx">✕</span></td><td><span class="cx">✕</span></td><td class="featured-col"><span class="cx">✕</span></td><td><span class="ct">✓</span></td></tr>
-      <tr><td>Multi-brand (up to 4)</td><td><span class="cx">✕</span></td><td><span class="cx">✕</span></td><td class="featured-col"><span class="cx">✕</span></td><td><span class="ct">✓</span></td></tr>
+      <tr><td>Captions / day</td><td>3</td><td>15</td><td class="featured-col">Unlimited</td><td>Unlimited</td><td>Unlimited</td></tr>
+      <tr><td>Languages</td><td>English</td><td>95</td><td class="featured-col">95</td><td>95</td><td>95</td></tr>
+      <tr><td>Caption transforms</td><td><span class="cx">✕</span></td><td><span class="cx">✕</span></td><td class="featured-col">10 / day</td><td>25 / day</td><td>Unlimited</td></tr>
+      <tr><td>Brand voice training</td><td><span class="cx">✕</span></td><td><span class="cx">✕</span></td><td class="featured-col"><span class="ct">✓</span></td><td><span class="ct">✓</span></td><td><span class="ct">✓</span></td></tr>
+      <tr><td>Caption history</td><td><span class="cx">✕</span></td><td>30 sets</td><td class="featured-col">Unlimited</td><td>Unlimited</td><td>Unlimited</td></tr>
+      <tr><td>Content Calendar</td><td><span class="cx">✕</span></td><td><span class="cx">✕</span></td><td class="featured-col"><span class="ct">✓</span></td><td><span class="ct">✓</span></td><td><span class="ct">✓</span></td></tr>
+      <tr><td>Repurpose / Reel scripts</td><td><span class="cx">✕</span></td><td><span class="cx">✕</span></td><td class="featured-col"><span class="ct">✓</span></td><td><span class="ct">✓</span></td><td><span class="ct">✓</span></td></tr>
+      <tr><td>A/B Caption Tracker</td><td><span class="cx">✕</span></td><td><span class="cx">✕</span></td><td class="featured-col"><span class="ct">✓</span></td><td><span class="ct">✓</span></td><td><span class="ct">✓</span></td></tr>
+      <tr><td>Bulk generation</td><td><span class="cx">✕</span></td><td><span class="cx">✕</span></td><td class="featured-col"><span class="cx">✕</span></td><td><span class="ct">✓</span></td><td><span class="ct">✓</span></td></tr>
+      <tr><td>Chrome extension</td><td><span class="cx">✕</span></td><td><span class="cx">✕</span></td><td class="featured-col"><span class="cx">✕</span></td><td><span class="ct">✓</span></td><td><span class="ct">✓</span></td></tr>
+      <tr><td>Advanced hashtag research</td><td><span class="cx">✕</span></td><td><span class="cx">✕</span></td><td class="featured-col"><span class="cx">✕</span></td><td><span class="ct">✓</span></td><td><span class="ct">✓</span></td></tr>
+      <tr><td>Team seats</td><td><span class="cx">✕</span></td><td><span class="cx">✕</span></td><td class="featured-col"><span class="cx">✕</span></td><td><span class="cx">✕</span></td><td>Up to 5</td></tr>
+      <tr><td>Multi-brand profiles</td><td><span class="cx">✕</span></td><td><span class="cx">✕</span></td><td class="featured-col"><span class="cx">✕</span></td><td>4</td><td>Unlimited</td></tr>
     </tbody>
   </table>
 </div>
@@ -547,9 +579,10 @@
   let isYearly = false;
 
   const prices = {
-    starter: { mo: { whole: '4', cents: '.99' }, yr: { whole: '3', cents: '.99' } },
-    premium: { mo: { whole: '9', cents: '.99' }, yr: { whole: '7', cents: '.99' } },
-    pro:     { mo: { whole: '19', cents: '.99' }, yr: { whole: '15', cents: '.99' } },
+    starter: { mo: { whole: '3',  cents: '' }, yr: { whole: '2',  cents: '.50' } },
+    premium: { mo: { whole: '7',  cents: '' }, yr: { whole: '6',  cents: '' } },
+    pro:     { mo: { whole: '14', cents: '' }, yr: { whole: '12', cents: '' } },
+    teams:   { mo: { whole: '29', cents: '' }, yr: { whole: '24', cents: '' } },
   };
 
   function toggleBilling() {
@@ -562,7 +595,7 @@
     lblM.classList.toggle('active', !isYearly);
     lblY.classList.toggle('active', isYearly);
 
-    ['starter','premium','pro'].forEach(plan => {
+    ['starter','premium','pro','teams'].forEach(plan => {
       const p = prices[plan];
       const priceset = isYearly ? p.yr : p.mo;
       document.getElementById(`amt-${plan}`).textContent   = priceset.whole;
