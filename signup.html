@@ -106,12 +106,12 @@
 
   /* Plan selector at top */
   .plan-selector {
-    display: grid; grid-template-columns: 1fr 1fr 1fr;
-    gap: 8px; margin-bottom: 28px;
+    display: grid; grid-template-columns: repeat(5, 1fr);
+    gap: 6px; margin-bottom: 28px;
   }
   .plan-opt {
     border: 1px solid var(--border);
-    border-radius: 10px; padding: 10px 8px;
+    border-radius: 10px; padding: 9px 4px;
     text-align: center; cursor: pointer;
     transition: border-color .2s, background .2s;
     user-select: none;
@@ -121,26 +121,36 @@
     border-color: var(--grad2);
     background: rgba(168,85,247,.08);
   }
+  .plan-opt.selected-starter {
+    border-color: #06B6D4;
+    background: rgba(6,182,212,.08);
+  }
   .plan-opt.selected-premium {
     border-color: transparent;
     background: linear-gradient(var(--card), var(--card)) padding-box,
                 linear-gradient(135deg, var(--grad1), var(--grad3)) border-box;
+  }
+  .plan-opt.selected-pro {
+    border-color: #3B82F6;
+    background: rgba(59,130,246,.08);
   }
   .plan-opt.selected-teams {
     border-color: var(--yellow);
     background: rgba(245,158,11,.08);
   }
   .plan-opt-name {
-    font-size: .78rem; font-weight: 700;
-    letter-spacing: .05em; text-transform: uppercase; margin-bottom: 2px;
+    font-size: .7rem; font-weight: 700;
+    letter-spacing: .04em; text-transform: uppercase; margin-bottom: 2px;
   }
   .plan-opt-name.free { color: var(--muted2); }
+  .plan-opt-name.starter { color: #06B6D4; }
   .plan-opt-name.premium { color: var(--grad2); }
+  .plan-opt-name.pro { color: #3B82F6; }
   .plan-opt-name.teams { color: var(--yellow); }
   .plan-opt-price {
-    font-size: .88rem; font-weight: 700; color: var(--text);
+    font-size: .82rem; font-weight: 700; color: var(--text);
   }
-  .plan-opt-note { font-size: .68rem; color: var(--muted); margin-top: 1px; }
+  .plan-opt-note { font-size: .62rem; color: var(--muted); margin-top: 1px; }
 
   .auth-heading {
     font-size: 1.5rem; font-weight: 800;
@@ -352,10 +362,20 @@
           <div class="plan-opt-price">$0</div>
           <div class="plan-opt-note">Forever</div>
         </div>
+        <div class="plan-opt" data-plan="starter" onclick="selectPlan('starter', this)">
+          <div class="plan-opt-name starter">Starter</div>
+          <div class="plan-opt-price">$3/mo</div>
+          <div class="plan-opt-note">Best value</div>
+        </div>
         <div class="plan-opt" data-plan="premium" onclick="selectPlan('premium', this)">
           <div class="plan-opt-name premium">Premium</div>
           <div class="plan-opt-price">$7/mo</div>
           <div class="plan-opt-note">Most popular</div>
+        </div>
+        <div class="plan-opt" data-plan="pro" onclick="selectPlan('pro', this)">
+          <div class="plan-opt-name pro">Pro</div>
+          <div class="plan-opt-price">$14/mo</div>
+          <div class="plan-opt-note">Power users</div>
         </div>
         <div class="plan-opt" data-plan="teams" onclick="selectPlan('teams', this)">
           <div class="plan-opt-name teams">Teams</div>
@@ -472,7 +492,7 @@
   // Pre-select plan from URL
   const urlParams = new URLSearchParams(window.location.search);
   const planParam = urlParams.get('plan');
-  if (planParam && ['premium','teams'].includes(planParam)) {
+  if (planParam && ['starter','premium','pro','teams'].includes(planParam)) {
     selectPlan(planParam, document.querySelector(`[data-plan="${planParam}"]`));
   }
 
@@ -492,7 +512,9 @@
     document.querySelectorAll('.plan-opt').forEach(o => {
       o.className = 'plan-opt';
     });
-    if (plan === 'premium') el.classList.add('plan-opt', 'selected-premium');
+    if (plan === 'starter') el.classList.add('plan-opt', 'selected-starter');
+    else if (plan === 'premium') el.classList.add('plan-opt', 'selected-premium');
+    else if (plan === 'pro') el.classList.add('plan-opt', 'selected-pro');
     else if (plan === 'teams') el.classList.add('plan-opt', 'selected-teams');
     else el.classList.add('plan-opt', 'selected');
     document.getElementById('selected-plan').value = plan;
@@ -500,7 +522,9 @@
     // Update button text
     const btnText = document.getElementById('btn-text');
     if (plan === 'free') btnText.textContent = 'Create Free Account';
+    else if (plan === 'starter') btnText.textContent = 'Start Starter — $3/mo';
     else if (plan === 'premium') btnText.textContent = 'Start Premium — $7/mo';
+    else if (plan === 'pro') btnText.textContent = 'Start Pro — $14/mo';
     else btnText.textContent = 'Start Teams Plan — $29/mo';
   }
 

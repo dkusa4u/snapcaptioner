@@ -112,6 +112,16 @@ function initDB(): void {
             UNIQUE KEY uq_user_platform (user_id, platform),
             FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+        CREATE TABLE IF NOT EXISTS password_reset_tokens (
+            id         INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+            user_id    INT UNSIGNED NOT NULL,
+            token      VARCHAR(64)  NOT NULL UNIQUE,
+            expires_at DATETIME     NOT NULL,
+            used       TINYINT(1)   NOT NULL DEFAULT 0,
+            created_at DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
     ");
 
     // Migrate ENUM to include new plans (safe no-op if already migrated)

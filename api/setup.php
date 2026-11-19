@@ -91,7 +91,7 @@ if (!$expected || $provided !== $expected) {
       initDB();
       $db = getDB();
 
-      $tables = ['users', 'tokens', 'captions', 'usage_log', 'social_connections'];
+      $tables = ['users', 'tokens', 'captions', 'usage_log', 'social_connections', 'password_reset_tokens'];
       foreach ($tables as $t) {
           $stmt = $db->query("SHOW TABLES LIKE " . $db->quote($t));
           $found = ($stmt->rowCount() > 0);
