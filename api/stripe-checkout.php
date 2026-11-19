@@ -13,7 +13,9 @@
  *
  * Config.php must define:
  *   STRIPE_SECRET_KEY       sk_live_...
+ *   STRIPE_STARTER_PRICE    price_...   ($3/mo)
  *   STRIPE_PREMIUM_PRICE    price_...   ($7/mo)
+ *   STRIPE_PRO_PRICE        price_...   ($14/mo)
  *   STRIPE_TEAMS_PRICE      price_...   ($29/mo)
  *   APP_URL                 https://snapcaptioner.com
  */
