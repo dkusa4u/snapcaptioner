@@ -12,10 +12,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="manifest" href="/manifest.json">
-<meta name="theme-color" content="#7c3aed">
+<meta name="theme-color" content="#6E26E2">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="SnapCaption">
-<link rel="apple-touch-icon" href="/icons/icon-192.png">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon-180.png">
 <title>Sign In — SnapCaption AI</title>
 <meta name="description" content="Sign in to your SnapCaption AI account.">
 <link rel="canonical" href="https://snapcaptioner.com/login.html">
@@ -24,13 +24,14 @@
 <meta property="og:url" content="https://snapcaptioner.com/login.html">
 <meta property="og:title" content="Sign In — SnapCaption AI">
 <meta property="og:description" content="Sign in to your SnapCaption AI account.">
-<meta property="og:image" content="https://snapcaptioner.com/icons/icon-512.png">
+<meta property="og:image" content="https://snapcaptioner.com/assets/og-share-image-1200x630.png">
 <meta property="og:site_name" content="SnapCaption AI">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Sign In — SnapCaption AI">
-<meta name="twitter:image" content="https://snapcaptioner.com/icons/icon-512.png">
-<link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-192.png">
-<link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png">
+<meta name="twitter:image" content="https://snapcaptioner.com/assets/og-share-image-1200x630.png">
+<link rel="icon" href="/assets/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="/assets/favicon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
@@ -41,9 +42,9 @@
     --card: #13131f;
     --border: #1e1e32;
     --border2: #2a2a44;
-    --grad1: #7c3aed;
-    --grad2: #a855f7;
-    --grad3: #ec4899;
+    --grad1: #6E26E2;
+    --grad2: #9B64FF;
+    --grad3: #F97316;
     --text: #e8e8f0;
     --muted: #6b7280;
     --muted2: #9ca3af;
@@ -183,7 +184,7 @@
   .form-input::placeholder { color: var(--muted); }
   .form-input:focus {
     border-color: var(--grad2);
-    box-shadow: 0 0 0 3px rgba(168,85,247,.12);
+    box-shadow: 0 0 0 3px rgba(155,100,255,.12);
   }
   .form-input.error { border-color: var(--red); }
 
@@ -277,9 +278,8 @@
 </div>
 
 <nav>
-  <a href="index.html" class="nav-logo">
-    <div class="logo-icon">📸</div>
-    SnapCaption AI
+  <a href="/" class="nav-logo">
+    <img src="/assets/logo-800x200.png" alt="SnapCaption" height="36" style="display:block;width:auto;">
   </a>
   <a href="signup.html" class="nav-link">New here? <span>Sign up free →</span></a>
 </nav>
@@ -287,9 +287,8 @@
 <main>
   <div class="auth-card">
 
-    <div class="auth-logo">
-      <div class="logo-icon-sm">📸</div>
-      SnapCaption AI
+    <div class="auth-logo" style="justify-content:center;margin-bottom:28px;">
+      <img src="/assets/logo-800x200.png" alt="SnapCaption" height="34" style="display:block;width:auto;">
     </div>
 
     <!-- shown when ?plan=premium in URL -->

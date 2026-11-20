@@ -10,9 +10,9 @@
 :root {
   --bg:    #0f0f1a;
   --card:  #1a1a2e;
-  --grad1: #7c3aed;
-  --grad2: #a855f7;
-  --grad3: #ec4899;
+  --grad1: #6E26E2;
+  --grad2: #9B64FF;
+  --grad3: #F97316;
   --text:  #f1f5f9;
   --muted: #94a3b8;
   --border:#2d2d4e;
@@ -33,7 +33,7 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSy
 .page-sub{color:var(--muted);font-size:.88rem;margin-bottom:24px}
 
 /* ── PRO GATE ── */
-.pro-gate{background:linear-gradient(135deg,rgba(124,58,237,.15),rgba(236,72,153,.15));border:1px solid rgba(168,85,247,.3);border-radius:16px;padding:32px;text-align:center;max-width:480px;margin:0 auto}
+.pro-gate{background:linear-gradient(135deg,rgba(124,58,237,.15),rgba(236,72,153,.15));border:1px solid rgba(155,100,255,.3);border-radius:16px;padding:32px;text-align:center;max-width:480px;margin:0 auto}
 .pro-gate h2{font-size:1.3rem;margin-bottom:8px}
 .pro-gate p{color:var(--muted);font-size:.9rem;margin-bottom:20px;line-height:1.5}
 .btn-primary{display:inline-flex;align-items:center;gap:7px;padding:10px 22px;border-radius:10px;background:linear-gradient(135deg,var(--grad1),var(--grad3));color:#fff;font-weight:700;font-size:.88rem;text-decoration:none;cursor:pointer;border:none}
@@ -44,14 +44,14 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSy
 .brands-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;margin-bottom:24px}
 
 .brand-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:0;overflow:hidden;position:relative;transition:border-color .2s}
-.brand-card:hover{border-color:rgba(168,85,247,.4)}
-.brand-card.is-default{border-color:rgba(168,85,247,.5)}
+.brand-card:hover{border-color:rgba(155,100,255,.4)}
+.brand-card.is-default{border-color:rgba(155,100,255,.5)}
 .brand-accent{height:4px;width:100%}
 .brand-body{padding:16px}
 .brand-name-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
 .brand-avatar{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;font-weight:700;color:#fff;flex-shrink:0}
 .brand-name{font-size:.95rem;font-weight:700;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.default-badge{font-size:.65rem;font-weight:700;padding:2px 7px;border-radius:4px;background:rgba(168,85,247,.2);color:var(--grad2);white-space:nowrap;flex-shrink:0}
+.default-badge{font-size:.65rem;font-weight:700;padding:2px 7px;border-radius:4px;background:rgba(155,100,255,.2);color:var(--grad2);white-space:nowrap;flex-shrink:0}
 
 .brand-meta{display:flex;flex-direction:column;gap:4px;margin-bottom:12px}
 .brand-meta-row{display:flex;align-items:center;gap:6px;font-size:.76rem;color:var(--muted)}
@@ -86,7 +86,7 @@ textarea.inp{resize:vertical;min-height:70px;line-height:1.5}
 
 .hashtag-editor{display:flex;gap:7px;margin-bottom:7px}
 .hashtag-chips{display:flex;flex-wrap:wrap;gap:5px;min-height:28px}
-.htag-edit-pill{display:inline-flex;align-items:center;gap:5px;padding:4px 9px;border-radius:6px;background:rgba(168,85,247,.15);border:1px solid rgba(168,85,247,.3);font-size:.76rem;color:var(--grad2)}
+.htag-edit-pill{display:inline-flex;align-items:center;gap:5px;padding:4px 9px;border-radius:6px;background:rgba(155,100,255,.15);border:1px solid rgba(155,100,255,.3);font-size:.76rem;color:var(--grad2)}
 .htag-edit-pill button{background:none;border:none;color:var(--muted);cursor:pointer;font-size:.75rem;padding:0;line-height:1}
 .htag-edit-pill button:hover{color:#f43f5e}
 
@@ -275,7 +275,7 @@ if (!currentToken) {
 }
 
 // ─── Color palette ──────────────────────────────────────────────────────────
-const COLORS = ['#7c3aed','#a855f7','#ec4899','#f43f5e','#f59e0b','#22c55e','#38bdf8','#64748b','#0ea5e9','#d946ef'];
+const COLORS = ['#6E26E2','#9B64FF','#F97316','#f43f5e','#f59e0b','#22c55e','#38bdf8','#64748b','#0ea5e9','#d946ef'];
 let _currentColor = COLORS[0];
 
 function buildColorRow() {

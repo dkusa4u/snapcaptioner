@@ -18,9 +18,9 @@
 :root {
   --bg:    #0f0f1a;
   --card:  #1a1a2e;
-  --grad1: #7c3aed;
-  --grad2: #a855f7;
-  --grad3: #ec4899;
+  --grad1: #6E26E2;
+  --grad2: #9B64FF;
+  --grad3: #F97316;
   --text:  #f1f5f9;
   --muted: #94a3b8;
   --border:#2d2d4e;
@@ -297,7 +297,7 @@ function renderBarChart(byDay) {
 }
 
 // ─── Donut chart ───────────────────────────────────────────────────────────
-const DONUT_COLORS = ['#7c3aed','#a855f7','#ec4899','#38bdf8','#22c55e','#f59e0b','#f43f5e','#64748b'];
+const DONUT_COLORS = ['#6E26E2','#9B64FF','#F97316','#38bdf8','#22c55e','#f59e0b','#f43f5e','#64748b'];
 
 function renderDonut(elId, items, key) {
   const el = document.getElementById(elId);
@@ -388,7 +388,7 @@ function renderLineChart(trend) {
 
   // Dots
   let dots = trend.map((t, i) => `
-    <circle cx="${toX(i)}" cy="${toY(t.avg_hook)}" r="3" fill="#a855f7">
+    <circle cx="${toX(i)}" cy="${toY(t.avg_hook)}" r="3" fill="#9B64FF">
       <title>${t.date}: ${t.avg_hook}/10</title>
     </circle>`).join('');
 
@@ -396,12 +396,12 @@ function renderLineChart(trend) {
   svg.innerHTML = `
     <defs>
       <linearGradient id="lineGrad" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stop-color="#a855f7" stop-opacity="0.3"/>
-        <stop offset="100%" stop-color="#a855f7" stop-opacity="0"/>
+        <stop offset="0%" stop-color="#9B64FF" stop-opacity="0.3"/>
+        <stop offset="100%" stop-color="#9B64FF" stop-opacity="0"/>
       </linearGradient>
     </defs>
     <path d="${area}" fill="url(#lineGrad)"/>
-    <path d="${line}" fill="none" stroke="#a855f7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="${line}" fill="none" stroke="#9B64FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
     ${dots}`;
 }
 
