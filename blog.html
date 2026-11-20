@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blog — Social Media Caption Tips & AI Tools | SnapCaption AI</title>
+<meta name="description" content="Creator tips, social media caption strategies, and AI tool guides from the SnapCaption AI team. Learn how to write captions that drive engagement.">
+<link rel="canonical" href="https://snapcaptioner.com/blog.html">
+<meta name="robots" content="index, follow">
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://snapcaptioner.com/blog.html">
+<meta property="og:title" content="Blog — Social Media Caption Tips & AI Tools | SnapCaption AI">
+<meta property="og:description" content="Creator tips, caption strategies, and AI tool guides. Learn how to write captions that stop the scroll.">
+<meta property="og:image" content="https://snapcaptioner.com/icons/icon-512.png">
+<meta property="og:site_name" content="SnapCaption AI">
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Blog — Social Media Caption Tips | SnapCaption AI">
+<meta name="twitter:description" content="Creator tips, caption strategies, and AI tool guides. Learn how to write captions that stop the scroll.">
+<meta name="twitter:image" content="https://snapcaptioner.com/icons/icon-512.png">
+<!-- Favicon -->
+<link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-192.png">
+<link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#7c3aed">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Blog",
+  "name": "SnapCaption AI Blog",
+  "url": "https://snapcaptioner.com/blog.html",
+  "description": "Social media caption tips, AI content creation guides, and creator strategies from SnapCaption AI.",
+  "publisher": {
+    "@type": "Organization",
+    "name": "SnapCaption AI",
+    "url": "https://snapcaptioner.com",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://snapcaptioner.com/icons/icon-512.png"
+    }
+  }
+}
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #09090f;
+    --bg2: #0f0f1a;
+    --card: #13131f;
+    --border: #1e1e32;
+    --border2: #2a2a44;
+    --grad1: #7c3aed;
+    --grad2: #a855f7;
+    --grad3: #ec4899;
+    --text: #e8e8f0;
+    --muted: #9090b0;
+    --muted2: #6868888;
+    --green: #22c55e;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: var(--grad2); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  /* NAV */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(9,9,15,.85);
+    backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 24px;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 58px;
+  }
+  .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+  .nav-logo-icon {
+    width: 30px; height: 30px; border-radius: 8px;
+    background: linear-gradient(135deg, var(--grad1), var(--grad3));
+    display: flex; align-items: center; justify-content: center; font-size: 15px;
+  }
+  .nav-logo span { font-weight: 700; color: var(--text); font-size: .95rem; }
+  .nav-links { display: flex; gap: 20px; align-items: center; }
+  .nav-links a { color: var(--muted); font-size: .88rem; text-decoration: none; transition: color .15s; }
+  .nav-links a:hover, .nav-links a.active { color: var(--text); }
+  .nav-cta {
+    background: linear-gradient(135deg, var(--grad1), var(--grad2));
+    color: #fff !important; padding: 7px 16px; border-radius: 8px;
+    font-weight: 600; font-size: .84rem;
+  }
+  @media (max-width: 600px) {
+    .nav-links { gap: 10px; }
+    .nav-links .hide-mob { display: none; }
+  }
+
+  /* HERO */
+  .blog-hero {
+    padding: 72px 24px 48px;
+    text-align: center;
+    background: radial-gradient(ellipse 60% 50% at 50% 0%, rgba(124,58,237,.18) 0%, transparent 70%);
+  }
+  .blog-hero .label {
+    display: inline-block;
+    font-size: .72rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+    color: var(--grad2); background: rgba(168,85,247,.12); border: 1px solid rgba(168,85,247,.25);
+    padding: 4px 12px; border-radius: 20px; margin-bottom: 20px;
+  }
+  .blog-hero h1 {
+    font-size: clamp(2rem, 5vw, 3rem); font-weight: 800; letter-spacing: -.03em;
+    max-width: 640px; margin: 0 auto 16px;
+  }
+  .blog-hero p { color: var(--muted); max-width: 500px; margin: 0 auto; font-size: 1.05rem; }
+
+  /* ARTICLES GRID */
+  .container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+  .articles-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 24px;
+    padding: 48px 0 80px;
+  }
+  .article-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    transition: border-color .2s, transform .2s;
+    display: flex; flex-direction: column;
+  }
+  .article-card:hover { border-color: var(--border2); transform: translateY(-2px); }
+  .article-thumb {
+    height: 180px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 3rem;
+  }
+  .article-body { padding: 22px; flex: 1; display: flex; flex-direction: column; gap: 10px; }
+  .article-meta { display: flex; gap: 10px; align-items: center; }
+  .article-tag {
+    font-size: .7rem; font-weight: 700; text-transform: uppercase; letter-spacing: .07em;
+    color: var(--grad2); background: rgba(168,85,247,.1);
+    padding: 3px 9px; border-radius: 20px;
+  }
+  .article-date { font-size: .75rem; color: var(--muted); }
+  .article-card h2 { font-size: 1.08rem; font-weight: 700; line-height: 1.4; color: var(--text); }
+  .article-card h2 a { color: inherit; text-decoration: none; }
+  .article-card h2 a:hover { color: var(--grad2); }
+  .article-card p { font-size: .88rem; color: var(--muted); line-height: 1.6; flex: 1; }
+  .article-read {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: .82rem; font-weight: 600; color: var(--grad2);
+    margin-top: 4px;
+  }
+
+  /* Featured article */
+  .article-featured {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: 1fr 1.6fr;
+    max-height: 320px;
+  }
+  .article-featured .article-thumb { height: auto; font-size: 5rem; }
+  @media (max-width: 700px) {
+    .article-featured { grid-template-columns: 1fr; max-height: none; }
+    .article-featured .article-thumb { height: 160px; }
+  }
+
+  /* CTA */
+  .blog-cta {
+    background: linear-gradient(135deg, rgba(124,58,237,.18), rgba(236,72,153,.12));
+    border: 1px solid var(--border2);
+    border-radius: 20px;
+    padding: 48px 32px;
+    text-align: center;
+    margin-bottom: 80px;
+  }
+  .blog-cta h2 { font-size: 1.6rem; font-weight: 800; margin-bottom: 10px; }
+  .blog-cta p { color: var(--muted); max-width: 440px; margin: 0 auto 24px; }
+  .grad-btn {
+    display: inline-block;
+    background: linear-gradient(135deg, var(--grad1), var(--grad2));
+    color: #fff; border: none; border-radius: 10px;
+    padding: 12px 28px; font-size: .95rem; font-weight: 700;
+    cursor: pointer; text-decoration: none; transition: opacity .15s;
+  }
+  .grad-btn:hover { opacity: .88; text-decoration: none; }
+
+  /* FOOTER */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 32px 24px;
+    display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px;
+    font-size: .82rem; color: var(--muted);
+  }
+  footer a { color: var(--muted); text-decoration: none; }
+  footer a:hover { color: var(--text); }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="/">
+    <div class="nav-logo-icon">📸</div>
+    <span>SnapCaption AI</span>
+  </a>
+  <div class="nav-links">
+    <a href="/" class="hide-mob">Home</a>
+    <a href="pricing.html" class="hide-mob">Pricing</a>
+    <a href="blog.html" class="active">Blog</a>
+    <a href="chrome-extension.html" class="hide-mob">Extension</a>
+    <a href="app.html" class="nav-cta">Try Free</a>
+  </div>
+</nav>
+
+<!-- BLOG HERO -->
+<div class="blog-hero">
+  <span class="label">Creator Resources</span>
+  <h1>Social Media Tips & AI Caption Guides</h1>
+  <p>Strategies, tutorials, and insights to help creators and brands write captions that stop the scroll.</p>
+</div>
+
+<!-- ARTICLES -->
+<div class="container">
+  <div class="articles-grid">
+
+    <!-- Featured -->
+    <article class="article-card article-featured">
+      <div class="article-thumb" style="background:linear-gradient(135deg,#1e1b4b,#4c1d95);">🤖</div>
+      <div class="article-body">
+        <div class="article-meta">
+          <span class="article-tag">AI Tools</span>
+          <span class="article-date">November 2026</span>
+        </div>
+        <h2><a href="#article-ai-captions">Why AI Photo Reading Changes Everything for Social Media Creators</a></h2>
+        <p>Most AI caption tools require you to describe your photo first. SnapCaption AI reads the image directly — here's how computer vision makes caption generation faster, smarter, and more accurate than ever before.</p>
+        <span class="article-read">Read article →</span>
+      </div>
+    </article>
+
+    <!-- Article 2 -->
+    <article class="article-card">
+      <div class="article-thumb" style="background:linear-gradient(135deg,#0c4a6e,#0369a1);">📸</div>
+      <div class="article-body">
+        <div class="article-meta">
+          <span class="article-tag">Instagram</span>
+          <span class="article-date">November 2026</span>
+        </div>
+        <h2><a href="#article-instagram-captions">Instagram Caption Formula: 5 Types That Get More Saves & Comments</a></h2>
+        <p>Discover the five caption structures that consistently outperform generic text — from curiosity hooks to storytelling openers. With examples you can copy today.</p>
+        <span class="article-read">Read article →</span>
+      </div>
+    </article>
+
+    <!-- Article 3 -->
+    <article class="article-card">
+      <div class="article-thumb" style="background:linear-gradient(135deg,#064e3b,#065f46);">🌍</div>
+      <div class="article-body">
+        <div class="article-meta">
+          <span class="article-tag">Global Creators</span>
+          <span class="article-date">November 2026</span>
+        </div>
+        <h2><a href="#article-multilingual">How to Reach a Global Audience: Multilingual Captions for 95 Languages</a></h2>
+        <p>Growing your audience internationally starts with captions written for your audience — not translated from English. Here's why native-language generation beats translation every time.</p>
+        <span class="article-read">Read article →</span>
+      </div>
+    </article>
+
+    <!-- Article 4 -->
+    <article class="article-card">
+      <div class="article-thumb" style="background:linear-gradient(135deg,#4c1d95,#6d28d9);">⚡</div>
+      <div class="article-body">
+        <div class="article-meta">
+          <span class="article-tag">Productivity</span>
+          <span class="article-date">October 2026</span>
+        </div>
+        <h2><a href="#article-hook-score">What Is a Hook Strength Score? How to Write Captions That Stop the Scroll</a></h2>
+        <p>Your first line determines whether anyone reads the rest. Learn how hook scoring works and the specific words and structures that earn top scores on Instagram, TikTok, and LinkedIn.</p>
+        <span class="article-read">Read article →</span>
+      </div>
+    </article>
+
+    <!-- Article 5 -->
+    <article class="article-card">
+      <div class="article-thumb" style="background:linear-gradient(135deg,#7c2d12,#c2410c);">🏷️</div>
+      <div class="article-body">
+        <div class="article-meta">
+          <span class="article-tag">Hashtags</span>
+          <span class="article-date">October 2026</span>
+        </div>
+        <h2><a href="#article-hashtags">The 20-Hashtag Strategy: How to Get Discovered Without Looking Desperate</a></h2>
+        <p>Using 30 hashtags on every post is outdated advice. Here's how to use 15–20 highly relevant, strength-scored hashtags that actually put your posts in front of new audiences.</p>
+        <span class="article-read">Read article →</span>
+      </div>
+    </article>
+
+    <!-- Article 6 -->
+    <article class="article-card">
+      <div class="article-thumb" style="background:linear-gradient(135deg,#1e3a5f,#1e40af);">🎙️</div>
+      <div class="article-body">
+        <div class="article-meta">
+          <span class="article-tag">Mobile</span>
+          <span class="article-date">October 2026</span>
+        </div>
+        <h2><a href="#article-voice-input">Hands-Free Captions: Using Voice Input to Post Faster on Mobile</a></h2>
+        <p>Typing captions on a phone is slow. SnapCaption AI's voice input lets you speak your photo's context and get five captions instantly — perfect for creators on the go.</p>
+        <span class="article-read">Read article →</span>
+      </div>
+    </article>
+
+    <!-- Article 7 -->
+    <article class="article-card">
+      <div class="article-thumb" style="background:linear-gradient(135deg,#374151,#1f2937);">🏢</div>
+      <div class="article-body">
+        <div class="article-meta">
+          <span class="article-tag">Business</span>
+          <span class="article-date">September 2026</span>
+        </div>
+        <h2><a href="#article-brand-voice">Brand Voice 101: How to Keep Your AI Captions Consistent Across Every Post</a></h2>
+        <p>AI-generated captions can sound generic without a brand voice profile. Learn how to train SnapCaption AI to write in your tone — whether you're a solo creator or a 10-person marketing team.</p>
+        <span class="article-read">Read article →</span>
+      </div>
+    </article>
+
+    <!-- Article 8 -->
+    <article class="article-card">
+      <div class="article-thumb" style="background:linear-gradient(135deg,#115e59,#0f766e);">📊</div>
+      <div class="article-body">
+        <div class="article-meta">
+          <span class="article-tag">Strategy</span>
+          <span class="article-date">September 2026</span>
+        </div>
+        <h2><a href="#article-best-time">Best Time to Post on Instagram and TikTok in 2026 (By Niche)</a></h2>
+        <p>Posting at the wrong time cuts your reach by up to 60%. Here's the data-backed guide to optimal posting times for fitness, food, travel, fashion, and B2B content — by platform.</p>
+        <span class="article-read">Read article →</span>
+      </div>
+    </article>
+
+  </div>
+
+  <!-- CTA -->
+  <div class="blog-cta">
+    <h2>Ready to caption smarter?</h2>
+    <p>Join thousands of creators using AI to write better captions in seconds — free, no credit card required.</p>
+    <a href="app.html" class="grad-btn">🚀 Start Free — 3 Captions Daily</a>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div style="display:flex;align-items:center;gap:10px;">
+    <div style="width:28px;height:28px;border-radius:7px;background:linear-gradient(135deg,#7c3aed,#ec4899);display:flex;align-items:center;justify-content:center;font-size:14px;">📸</div>
+    <span style="font-weight:700;color:#e8e8f0;">SnapCaption AI</span>
+  </div>
+  <div style="display:flex;gap:24px;flex-wrap:wrap;">
+    <a href="/">Home</a>
+    <a href="pricing.html">Pricing</a>
+    <a href="blog.html">Blog</a>
+    <a href="chrome-extension.html">Chrome Extension</a>
+    <a href="privacy.html">Privacy</a>
+    <a href="terms.html">Terms</a>
+    <a href="contact.html">Contact</a>
+    <a href="login.html">Sign In</a>
+  </div>
+  <div>© 2026 SnapCaption AI. All rights reserved.</div>
+</footer>
+
+</body>
+</html>

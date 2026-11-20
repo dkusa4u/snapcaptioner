@@ -7527,7 +7527,7 @@ function _renderBurstGrid() {
     wrap.className = 'burst-thumb' + (idx === 0 ? ' best' : cls === 'weak' ? ' worst' : '');
     wrap.onclick = () => _selectBurst(idx);
     wrap.innerHTML = `
-      <img src="${item.dataUrl}" loading="lazy">
+      <img src="${item.dataUrl}" loading="lazy" alt="Caption burst variation ${idx + 1}">
       <div class="burst-score-badge ${badge}">${idx === 0 ? '🏆' : '#' + (idx+1)}</div>
     `;
     grid.appendChild(wrap);

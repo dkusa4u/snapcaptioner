@@ -64,6 +64,70 @@
   }
 }
 </script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "How does SnapCaption AI generate captions?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "SnapCaption AI reads your photo directly using computer vision — no text description needed. Upload any image and our AI analyzes the scene, objects, mood, and context to generate 5 unique, platform-ready captions in seconds."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Is SnapCaption AI free to use?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes! SnapCaption AI offers a free tier with 3 AI captions per day — no credit card required. The Premium plan at $7/month unlocks unlimited captions, AI photo enhancement, brand voice saving, and advanced analytics."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What social media platforms does SnapCaption AI support?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "SnapCaption AI generates captions optimized for Instagram, TikTok, LinkedIn, Twitter/X, Facebook, and Pinterest. Each caption is tailored to fit the tone and character limits of the selected platform."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How many languages does SnapCaption AI support?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "SnapCaption AI generates captions natively in 95 languages — not translations. This covers 99% of the world's speakers, making it ideal for global creators and international brands."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is a Hook Strength Score?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The Hook Strength Score rates each generated caption on how likely it is to stop the scroll and drive engagement. Scores factor in emotional triggers, power words, curiosity gaps, and platform-specific best practices."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I use SnapCaption AI on my phone?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes! SnapCaption AI is a web app that works on any device — iPhone, Android, tablet, or desktop. No app download required. You can also use voice input to describe your photo hands-free on mobile."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Is there a Chrome Extension for SnapCaption AI?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes! The SnapCaption AI Chrome Extension lets you generate captions directly in your browser while browsing Instagram, LinkedIn, or any social media site. Install it free from the Chrome Web Store."
+      }
+    }
+  ]
+}
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
@@ -518,6 +582,47 @@
   .trust-role { font-size: .72rem; color: var(--muted); }
 
   /* ── BOTTOM CTA ── */
+  /* FAQ Section */
+  .faq-section { padding: 80px 24px; }
+  .faq-list { max-width: 760px; margin: 0 auto; }
+  .faq-item {
+    border: 1px solid var(--border2);
+    border-radius: 12px;
+    margin-bottom: 12px;
+    background: var(--card);
+    overflow: hidden;
+  }
+  .faq-q {
+    width: 100%;
+    text-align: left;
+    background: none;
+    border: none;
+    color: var(--text);
+    font-size: .97rem;
+    font-weight: 600;
+    padding: 18px 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    font-family: inherit;
+    line-height: 1.4;
+  }
+  .faq-q:hover { color: var(--grad2); }
+  .faq-q .faq-icon { font-size: 1.1rem; flex-shrink: 0; transition: transform .2s; }
+  .faq-item.open .faq-icon { transform: rotate(45deg); }
+  .faq-a {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height .3s ease, padding .3s;
+    padding: 0 20px;
+    color: var(--muted2);
+    font-size: .9rem;
+    line-height: 1.65;
+  }
+  .faq-item.open .faq-a { max-height: 300px; padding: 0 20px 18px; }
+
   .cta-section {
     padding: 96px 24px;
     text-align: center;
@@ -1108,6 +1213,68 @@
 </section>
 
 <!-- BOTTOM CTA -->
+<!-- FAQ SECTION -->
+<section class="faq-section" id="faq">
+  <div class="container">
+    <div class="section-head" style="text-align:center;margin-bottom:40px;">
+      <span class="section-label">Common Questions</span>
+      <h2>Frequently Asked Questions</h2>
+      <p class="section-sub">Everything you need to know about SnapCaption AI. Need more help? <a href="contact.html" style="color:var(--grad2);">Contact us</a>.</p>
+    </div>
+    <div class="faq-list" role="list">
+      <div class="faq-item" role="listitem">
+        <button class="faq-q" aria-expanded="false" onclick="toggleFaq(this)">
+          How does SnapCaption AI generate captions?
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-a">SnapCaption AI reads your photo directly using computer vision — no text description needed. Upload any image and our AI analyzes the scene, objects, mood, and context to generate 5 unique, platform-ready captions in seconds.</div>
+      </div>
+      <div class="faq-item" role="listitem">
+        <button class="faq-q" aria-expanded="false" onclick="toggleFaq(this)">
+          Is SnapCaption AI free to use?
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-a">Yes! SnapCaption AI offers a free tier with 3 AI captions per day — no credit card required. The <a href="pricing.html" style="color:var(--grad2);">Premium plan at $7/month</a> unlocks unlimited captions, AI photo enhancement, brand voice saving, and advanced analytics.</div>
+      </div>
+      <div class="faq-item" role="listitem">
+        <button class="faq-q" aria-expanded="false" onclick="toggleFaq(this)">
+          What social media platforms does SnapCaption AI support?
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-a">SnapCaption AI generates captions optimized for Instagram, TikTok, LinkedIn, Twitter/X, Facebook, and Pinterest. Each caption is tailored to fit the tone and character limits of the selected platform.</div>
+      </div>
+      <div class="faq-item" role="listitem">
+        <button class="faq-q" aria-expanded="false" onclick="toggleFaq(this)">
+          How many languages does SnapCaption AI support?
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-a">SnapCaption AI generates captions natively in 95 languages — not translations. This covers 99% of the world's speakers, making it ideal for global creators and international brands.</div>
+      </div>
+      <div class="faq-item" role="listitem">
+        <button class="faq-q" aria-expanded="false" onclick="toggleFaq(this)">
+          What is a Hook Strength Score?
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-a">The Hook Strength Score rates each generated caption on how likely it is to stop the scroll and drive engagement. Scores factor in emotional triggers, power words, curiosity gaps, and platform-specific best practices.</div>
+      </div>
+      <div class="faq-item" role="listitem">
+        <button class="faq-q" aria-expanded="false" onclick="toggleFaq(this)">
+          Can I use SnapCaption AI on my phone?
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-a">Yes! SnapCaption AI is a web app that works on any device — iPhone, Android, tablet, or desktop. No app download required. You can also use voice input to describe your photo hands-free on mobile.</div>
+      </div>
+      <div class="faq-item" role="listitem">
+        <button class="faq-q" aria-expanded="false" onclick="toggleFaq(this)">
+          Is there a Chrome Extension for SnapCaption AI?
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-a">Yes! The <a href="chrome-extension.html" style="color:var(--grad2);">SnapCaption AI Chrome Extension</a> lets you generate captions directly in your browser while browsing Instagram, LinkedIn, or any social media site — no tab switching required.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <div class="cta-section">
   <div class="container" style="text-align:center;">
     <span class="section-label">Get Started Today</span>
@@ -1127,16 +1294,32 @@
     <span style="font-weight:700;color:var(--text);">SnapCaption AI</span>
   </div>
   <div style="display:flex;gap:24px;flex-wrap:wrap;">
+    <a href="pricing.html">Pricing</a>
+    <a href="blog.html">Blog</a>
+    <a href="chrome-extension.html">Chrome Extension</a>
     <a href="privacy.html">Privacy</a>
     <a href="terms.html">Terms</a>
     <a href="contact.html">Contact</a>
-    <a href="pricing.html">Pricing</a>
     <a href="login.html">Sign In</a>
   </div>
   <div>© 2026 SnapCaption AI. All rights reserved.</div>
 </footer>
 
 <script>
+  // FAQ accordion
+  function toggleFaq(btn) {
+    const item = btn.closest('.faq-item');
+    const isOpen = item.classList.contains('open');
+    document.querySelectorAll('.faq-item.open').forEach(el => {
+      el.classList.remove('open');
+      el.querySelector('.faq-q').setAttribute('aria-expanded', 'false');
+    });
+    if (!isOpen) {
+      item.classList.add('open');
+      btn.setAttribute('aria-expanded', 'true');
+    }
+  }
+
   // Demo animation — auto-runs after 2 seconds
   setTimeout(() => {
     const scanning = document.getElementById('scanning');
