@@ -1,0 +1,21 @@
+User-agent: *
+Allow: /
+
+# Block private/app pages from indexing
+Disallow: /dashboard.html
+Disallow: /app.html
+Disallow: /api/
+Disallow: /checkout-success.html
+Disallow: /checkout-cancel.html
+Disallow: /reset-password.html
+Disallow: /brand-voice.html
+Disallow: /brands.html
+Disallow: /bulk.html
+Disallow: /calendar.html
+Disallow: /tracker.html
+Disallow: /analytics.html
+Disallow: /hashtag-research.html
+Disallow: /preview.html
+
+# Sitemap location
+Sitemap: https://snapcaptioner.com/sitemap.xml
