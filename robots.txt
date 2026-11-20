@@ -16,6 +16,8 @@ Disallow: /tracker.html
 Disallow: /analytics.html
 Disallow: /hashtag-research.html
 Disallow: /preview.html
+Disallow: /master-plan.html
+Disallow: /forgot-password.html
 
 # Sitemap location
 Sitemap: https://snapcaptioner.com/sitemap.xml
