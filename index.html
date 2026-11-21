@@ -237,7 +237,7 @@
     display: flex; align-items: center;
     text-decoration: none; line-height: 1;
   }
-  .nav-logo img { max-height: 36px; width: auto; }
+  .nav-logo img { max-height: 48px; width: auto; }
   .nav-links { display: flex; align-items: center; gap: 32px; }
   .nav-links a {
     color: var(--muted2); text-decoration: none;
@@ -252,7 +252,11 @@
   .nav-mobile-hide { display: flex; }
   @media(max-width:640px){
     .nav-mobile-hide { display: none; }
-    .nav-cta { padding: 8px 14px; font-size: .82rem; }
+    nav { padding: 0 16px; height: 60px; }
+    .nav-logo img { max-height: 40px; }
+    .nav-cta { padding: 8px 12px; font-size: .78rem; white-space: nowrap; }
+    .nav-cta-long { display: none; }
+    .nav-cta-short { display: inline !important; }
   }
 
   /* ── HERO ── */
@@ -695,11 +699,38 @@
 
   /* ── RESPONSIVE ── */
   @media(max-width:900px){
-    .hero { flex-direction: column; padding-top: 96px; }
+    .hero { flex-direction: column; padding-top: 96px; gap: 40px; }
     .hero-right { width: 100%; }
     .demo-card { max-width: 100%; }
     .diff-table { font-size: .75rem; }
     .diff-table td, .diff-table th { padding: 10px 12px; }
+  }
+  @media(max-width:640px){
+    section { padding: 64px 16px; }
+    .hero { padding: 88px 16px 56px; min-height: auto; }
+    .hero h1 { font-size: clamp(1.6rem, 7vw, 2.4rem); margin-bottom: 16px; }
+    .hero p { font-size: .95rem; margin-bottom: 28px; }
+    .hero-ctas { flex-direction: column; align-items: stretch; }
+    .hero-cta-primary, .hero-cta-secondary { width: 100%; text-align: center; padding: 14px 20px; }
+    .hero-stats { gap: 20px; }
+    .stat .num { font-size: 1.3rem; }
+    .section-head { margin-bottom: 36px; }
+    h2 { font-size: clamp(1.4rem, 6vw, 2rem); }
+    .container { padding: 0; }
+    .logos-inner { gap: 20px; }
+    .steps-grid { border-radius: 12px; }
+    .step { padding: 24px 20px; }
+    .pricing-grid { grid-template-columns: 1fr; }
+    .trust-row { flex-direction: column; }
+    .trust-card { min-width: unset; }
+    footer { flex-direction: column; gap: 28px; align-items: flex-start; }
+  }
+  @media(max-width:420px){
+    nav { padding: 0 12px; }
+    .nav-logo img { max-height: 36px; }
+    .nav-cta { font-size: .74rem; padding: 7px 10px; }
+    .hero h1 { font-size: 1.5rem; }
+    .hero-badge { font-size: .72rem; padding: 5px 10px; }
   }
 
   /* scrollbar */
@@ -724,7 +755,10 @@
     <a href="#languages">Languages</a>
     <a href="login.html" style="color:var(--muted2);">Sign In</a>
   </div>
-  <button class="grad-btn nav-cta" onclick="location.href='app.html'" style="border-radius:8px;">Try Free — 3 Captions/Day</button>
+  <button class="grad-btn nav-cta" onclick="location.href='app.html'" style="border-radius:8px;">
+    <span class="nav-cta-long">Try Free — 3 Captions/Day</span>
+    <span class="nav-cta-short" style="display:none;">Try Free</span>
+  </button>
 </nav>
 
 <!-- HERO -->

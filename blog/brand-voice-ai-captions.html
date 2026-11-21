@@ -93,12 +93,12 @@
   a:hover { text-decoration: underline; }
   nav { position: sticky; top: 0; z-index: 100; background: rgba(9,9,15,.85); backdrop-filter: blur(14px); border-bottom: 1px solid var(--border); padding: 0 24px; display: flex; align-items: center; justify-content: space-between; height: 58px; }
   .nav-logo { display: flex; align-items: center; text-decoration: none; line-height: 1; }
-  .nav-logo img { max-height: 34px; width: auto; }
+  .nav-logo img { max-height: 48px; width: auto; }
   .nav-links { display: flex; gap: 20px; align-items: center; }
   .nav-links a { color: var(--muted); font-size: .88rem; text-decoration: none; transition: color .15s; }
   .nav-links a:hover, .nav-links a.active { color: var(--text); }
   .nav-cta { background: linear-gradient(135deg, var(--grad1), var(--grad2)); color: #fff !important; padding: 7px 16px; border-radius: 8px; font-weight: 600; font-size: .84rem; }
-  @media (max-width: 600px) { .nav-links { gap: 10px; } .nav-links .hide-mob { display: none; } }
+  @media (max-width: 600px) { nav { padding: 0 16px; height: 56px; } .nav-logo img { max-height: 40px; } .nav-links { gap: 10px; } .nav-links .hide-mob { display: none; } .article-wrap { padding: 32px 16px 60px; } h1 { font-size: clamp(1.3rem, 6vw, 2rem); } }
   .article-wrap { max-width: 760px; margin: 0 auto; padding: 48px 24px 80px; }
   .breadcrumb { display: flex; gap: 8px; align-items: center; font-size: .78rem; color: var(--muted); margin-bottom: 32px; flex-wrap: wrap; }
   .breadcrumb a { color: var(--muted); } .breadcrumb a:hover { color: var(--grad2); }
@@ -142,7 +142,7 @@
 <body>
 <nav>
   <a href="/" class="nav-logo">
-    <img src="/assets/logo-800x200.png" alt="SnapCaption" height="34" style="display:block;width:auto;">
+    <img src="/assets/logo-800x200.png" alt="SnapCaption" height="48" style="display:block;width:auto;">
   </a>
   <div class="nav-links">
     <a href="/pricing.html" class="hide-mob">Pricing</a>
@@ -241,7 +241,7 @@
 </main>
 <footer>
   <div style="display:flex;flex-direction:column;gap:4px;">
-    <img src="/assets/logo-800x200.png" alt="SnapCaption" height="30" style="display:block;width:auto;">
+    <img src="/assets/logo-800x200.png" alt="SnapCaption" height="38" style="display:block;width:auto;">
     <span style="font-size:.72rem;font-weight:600;color:#F97316;letter-spacing:.08em;">Edit. Caption. Post.</span>
   </div>
   <div class="footer-links">

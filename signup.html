@@ -339,6 +339,22 @@
     .auth-card { padding: 28px 18px; }
     .form-row-2 { grid-template-columns: 1fr; }
   }
+
+  @media(max-width:640px){
+    .nav-mobile-hide { display: none !important; }
+    nav { padding: 0 16px !important; height: 60px !important; }
+    .nav-logo img { max-height: 40px !important; }
+    .nav-cta { padding: 8px 12px !important; font-size: .78rem !important; white-space: nowrap !important; }
+    section { padding: 64px 16px !important; }
+    .container { padding: 0 !important; }
+    h2 { font-size: clamp(1.4rem, 6vw, 2rem) !important; }
+    .section-head { margin-bottom: 36px !important; }
+    footer { flex-direction: column !important; gap: 28px !important; align-items: flex-start !important; }
+  }
+  @media(max-width:420px){
+    nav { padding: 0 12px !important; }
+    .nav-logo img { max-height: 34px !important; }
+  }
 </style>
 </head>
 <body>
@@ -350,7 +366,7 @@
 
 <nav>
   <a href="/" class="nav-logo">
-    <img src="/assets/logo-800x200.png" alt="SnapCaption" height="36" style="display:block;width:auto;">
+    <img src="/assets/logo-800x200.png" alt="SnapCaption" height="48" style="display:block;width:auto;">
   </a>
   <a href="login.html" class="nav-link">Already have an account? <span>Sign in →</span></a>
 </nav>
@@ -359,7 +375,7 @@
   <div class="auth-card">
 
     <div class="auth-logo" style="justify-content:center;margin-bottom:28px;">
-      <img src="/assets/logo-800x200.png" alt="SnapCaption" height="34" style="display:block;width:auto;">
+      <img src="/assets/logo-800x200.png" alt="SnapCaption" height="48" style="display:block;width:auto;">
     </div>
 
     <!-- FORM CONTENT (hidden on success) -->
